@@ -1,14 +1,14 @@
-﻿using ApplicationTracker.Controllers;
+﻿using ApplicationTracker.Common;
+using ApplicationTracker.Controllers;
 using ApplicationTracker.Data;
+using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
-using Microsoft.AspNetCore.Mvc;
-using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Common;
-using Microsoft.AspNetCore.Http;
 
 namespace ApplicationTrackerTests.Controllers
 {
@@ -28,13 +28,13 @@ namespace ApplicationTrackerTests.Controllers
 
             var context = new TrackerDbContext(options);
 
-            // same seed data for most tests
+            // seed data for tests
             context.WorkEnvironments.AddRange(new List<WorkEnvironment>
             {
-                new WorkEnvironment { Id = 1, Name = "Unknown" },
-                new WorkEnvironment { Id = 2, Name = "On-Site" },
-                new WorkEnvironment { Id = 3, Name = "Hybrid" },
-                new WorkEnvironment { Id = 4, Name = "Remote" }
+                new WorkEnvironment { Id = 1, Name = "Test1" },
+                new WorkEnvironment { Id = 2, Name = "Test2" },
+                new WorkEnvironment { Id = 3, Name = "Test3" },
+                new WorkEnvironment { Id = 4, Name = "Test4" }
             });
             context.SaveChanges();
 
@@ -58,7 +58,7 @@ namespace ApplicationTrackerTests.Controllers
             var returnedEnvironments = okResult.Value as IEnumerable<WorkEnvironmentDto>;
             Assert.That(returnedEnvironments, Is.Not.Null);
             Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
-            Assert.That(returnedEnvironments.First().Name, Is.EqualTo("Unknown"));
+            Assert.That(returnedEnvironments.First().Name, Is.EqualTo("Test1"));
         }
 
         [Test]
@@ -79,12 +79,11 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
             var notFoundResult = result.Result as NotFoundObjectResult;
 
-            Assert.That(notFoundResult, Is.Not.Null); 
+            Assert.That(notFoundResult, Is.Not.Null);
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
-            Assert.That(errorResponse, Is.Not.Null); 
-            // verify error message returned by controller
-            Assert.That(errorResponse.Message, Is.EqualTo("WorkEnvironments empty or missing")); 
+            Assert.That(errorResponse, Is.Not.Null);
+            Assert.That(errorResponse.Message, Is.EqualTo("WorkEnvironments missing"));
         }
 
         [Test]
@@ -102,7 +101,7 @@ namespace ApplicationTrackerTests.Controllers
 
             Assert.That(returnedEnvironment, Is.Not.Null);
             Assert.That(returnedEnvironment.Id, Is.EqualTo(1));
-            Assert.That(returnedEnvironment.Name, Is.EqualTo("Unknown"));
+            Assert.That(returnedEnvironment.Name, Is.EqualTo("Test1"));
         }
 
         [Test]

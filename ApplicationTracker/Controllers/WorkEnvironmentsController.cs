@@ -1,10 +1,8 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Serilog;
 
 namespace ApplicationTracker.Controllers
@@ -32,20 +30,17 @@ namespace ApplicationTracker.Controllers
                 .OrderBy(x => x.Id)
                 .ToListAsync();
             
-            if (result != null && result.Any())
+            if (!result.Any())
             {
-                return Ok(result);
-            }
-            else
-            {
-                _logger.LogError(message: "No WorkEnvironments returned. WorkEnvironments are required for the application to function");
+                _logger.LogError(message: "No WorkEnvironments returned. WorkEnvironments are required for the application");
                 return NotFound(new ErrorResponse
                 {
-                    Message = "WorkEnvironments empty or missing",
+                    Message = "WorkEnvironments missing",
                     StatusCode = StatusCodes.Status404NotFound,
-                    Detail = "No WorkEnvironments returned. WorkEnviroments missing or missconfigured"
-                });
+                    Detail = "No WorkEnvironments returned. WorkEnviroments missing or misconfigured"
+                });                
             }
+            return Ok(result);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -53,12 +48,8 @@ namespace ApplicationTracker.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<WorkEnvironmentDto>> GetWorkEnvironment(int id)
         {
-            var workEnvironment = await _context.WorkEnvironments
-                .Where(x => x.Id == id)
-                .Select(x => new WorkEnvironmentDto { Id = x.Id, Name = x.Name })
-                .FirstOrDefaultAsync();
-
-            if (workEnvironment == null)
+            var exists = await _context.WorkEnvironments.AnyAsync(x => x.Id == id);
+            if(!exists)
             {
                 _logger.LogWarning(message: $"No WorkEnvironment with id {id} found");
                 return NotFound(new ErrorResponse
@@ -68,7 +59,13 @@ namespace ApplicationTracker.Controllers
                     Detail = $"No WorkEnvironment with id {id} not found"
                 });
             }
-            return Ok(workEnvironment);
+
+            var result = await _context.WorkEnvironments
+                .Where(x => x.Id == id)
+                .Select(x => new WorkEnvironmentDto { Id = x.Id, Name = x.Name })
+                .FirstOrDefaultAsync();
+
+            return Ok(result);
         }
     }
 }
