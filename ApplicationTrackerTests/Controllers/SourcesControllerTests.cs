@@ -30,10 +30,10 @@ namespace ApplicationTrackerTests.Controllers
             // seed data for tests
             context.Sources.AddRange(new List<Source>()
             {
-                new Source { Id = 1, Name = "Test1" },
-                new Source { Id = 2, Name = "Test2" },
-                new Source { Id = 3, Name = "Test3" },
-                new Source { Id = 4, Name = "Test4" }
+                new() { Id = 1, Name = "Test1" },
+                new() { Id = 2, Name = "Test2" },
+                new() { Id = 3, Name = "Test3" },
+                new() { Id = 4, Name = "Test4" }
             });
             context.SaveChanges();
 

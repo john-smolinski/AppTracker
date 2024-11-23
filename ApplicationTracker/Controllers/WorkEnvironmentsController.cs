@@ -32,7 +32,7 @@ namespace ApplicationTracker.Controllers
             
             if (!result.Any())
             {
-                _logger.LogError(message: "No WorkEnvironments returned. WorkEnvironments are required for the application");
+                _logger.LogWarning(message: "No WorkEnvironments returned. WorkEnvironments are required for the application");
                 return NotFound(new ErrorResponse
                 {
                     Message = "WorkEnvironments missing",
@@ -51,10 +51,10 @@ namespace ApplicationTracker.Controllers
             var exists = await _context.WorkEnvironments.AnyAsync(x => x.Id == id);
             if(!exists)
             {
-                _logger.LogWarning(message: $"No WorkEnvironment with id {id} found");
+                _logger.LogInformation(message: $"No WorkEnvironment with id {id} found");
                 return NotFound(new ErrorResponse
                 {
-                    Message = $"WorkEnvironment not found",
+                    Message = "WorkEnvironment not found",
                     StatusCode = StatusCodes.Status404NotFound,
                     Detail = $"No WorkEnvironment with id {id} not found"
                 });
