@@ -107,7 +107,7 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetWorkEnvironment_ReturnsNotFound_WhenEnvironmentDoesNotExist()
         {
             // Act 
-            var result = await _controller.GetWorkEnvironment(999); // non existant value
+            var result = await _controller.GetWorkEnvironment(999); 
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());

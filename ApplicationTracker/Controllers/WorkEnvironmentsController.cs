@@ -56,7 +56,7 @@ namespace ApplicationTracker.Controllers
                 {
                     Message = "WorkEnvironment not found",
                     StatusCode = StatusCodes.Status404NotFound,
-                    Detail = $"No WorkEnvironment with id {id} not found"
+                    Detail = $"No WorkEnvironment with id {id} found"
                 });
             }
 

@@ -3,9 +3,11 @@
 namespace ApplicationTracker.Data.Entities
 {
 #pragma warning disable CS8618
-    public class Source : BaseEntity
+    public abstract class BaseEntity
     {
-        public List<Application> Applications { get; set; }
+        public int Id { get; set; }
+        [StringLength(100)]
+        public string Name { get; set; }
     }
 #pragma warning restore CS8618
 }

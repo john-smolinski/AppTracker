@@ -10,12 +10,12 @@ namespace ApplicationTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SourcesController : ControllerBase
+    public class LocationsController : ControllerBase
     {
         private readonly TrackerDbContext _context;
-        private readonly ILogger<SourcesController> _logger;
+        private readonly ILogger<LocationsController> _logger;
 
-        public SourcesController(TrackerDbContext context, ILogger<SourcesController> logger)
+        public LocationsController(TrackerDbContext context, ILogger<LocationsController> logger)
         {
             _context = context;
             _logger = logger;
@@ -24,21 +24,21 @@ namespace ApplicationTracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SourceDto>>> GetSources()
+        public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocations()
         {
-            var result = await _context.Sources
-                .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
-                .OrderBy(x => x.Id)
+            var result = await _context.Locations
+                .Select(x => new LocationDto 
+                    { Id = x.Id, City = x.City, State = x.State, Country = x.Country })
                 .ToListAsync();
 
             if (!result.Any())
             {
-                _logger.LogWarning(message: "No Sources returned. Sources are required for the application");
+                _logger.LogWarning(message: "No Locations returned.");
                 return NotFound(new ErrorResponse
                 {
-                    Message = "Sources missing",
+                    Message = "Locations not found",
                     StatusCode = StatusCodes.Status404NotFound,
-                    Detail = "No Sources returned. Sources missing or misconfigured"
+                    Detail = "No Locations have been added yet."
                 });
             }
             return Ok(result);
@@ -47,24 +47,25 @@ namespace ApplicationTracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Source>> GetSource(int id)
+        public async Task<ActionResult<LocationDto>> GetLocation(int id)
         {
-            var exists = await _context.Sources.AnyAsync(x => x.Id == id);
+            var exists = await _context.Locations.AnyAsync(x => x.Id == id);
 
             if (!exists)
             {
-                _logger.LogInformation(message: $"No Source with id {id} found");
+                _logger.LogInformation(message: $"No Location with id {id} found");
                 return NotFound(new ErrorResponse
                 {
-                    Message = "Source not found",
+                    Message = "Location not found",
                     StatusCode = StatusCodes.Status404NotFound,
-                    Detail = $"No Source with id {id} found"
+                    Detail =$"No Location with id {id} found"
                 });
             }
 
-            var result = await _context.Sources
+            var result = await _context.Locations
                 .Where(x => x.Id == id)
-                .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
+                .Select(x => new LocationDto
+                    { Id = x.Id, City = x.City, State = x.State, Country = x.Country })
                 .FirstOrDefaultAsync();
 
             return Ok(result);
