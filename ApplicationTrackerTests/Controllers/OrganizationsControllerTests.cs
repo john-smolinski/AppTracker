@@ -23,7 +23,7 @@ namespace ApplicationTrackerTests.Controllers
         public void Setup()
         {
             // create an in memory context with 4 rows of test data 
-            var context = TestContextHelper.GetInMemoryContext<Organization>(4);
+            var context = ContextHelper.GetInMemoryContext<Organization>(4);
 
             _mockLogger = new Mock<ILogger<OrganizationsController>>();
             _controller = new OrganizationsController(context, _mockLogger.Object);
@@ -51,7 +51,7 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetOrganizations_ReturnsNotFound_WhenNoOrganizationsExists()
         {
             // Setup
-            var emptyContext = TestContextHelper.GetInMemoryContext<Organization>();
+            var emptyContext = ContextHelper.GetInMemoryContext<Organization>();
             var controller = new OrganizationsController(emptyContext, _mockLogger.Object);
 
             // Act

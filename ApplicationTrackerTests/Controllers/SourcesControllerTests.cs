@@ -23,7 +23,7 @@ namespace ApplicationTrackerTests.Controllers
         public void Setup()
         {
             // create an in memory context with 4 rows of test data 
-            var context = TestContextHelper.GetInMemoryContext<Source>(4);
+            var context = ContextHelper.GetInMemoryContext<Source>(4);
 
             _mockLogger = new Mock<ILogger<SourcesController>>();
             _controller = new SourcesController(context, _mockLogger.Object);
@@ -50,7 +50,7 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetSources_ReturnsNotFound_WhenNoSourcesExists()
         {
             // Setup
-            var emptyContext = TestContextHelper.GetInMemoryContext<Source>();
+            var emptyContext = ContextHelper.GetInMemoryContext<Source>();
             var controller = new SourcesController(emptyContext, _mockLogger.Object);
 
             // Act

@@ -28,7 +28,7 @@ namespace ApplicationTracker.Controllers
         {
             var result = await _context.Locations
                 .Select(x => new LocationDto 
-                    { Id = x.Id, City = x.City, State = x.State, Country = x.Country })
+                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
                 .ToListAsync();
 
             if (!result.Any())
@@ -65,7 +65,7 @@ namespace ApplicationTracker.Controllers
             var result = await _context.Locations
                 .Where(x => x.Id == id)
                 .Select(x => new LocationDto
-                    { Id = x.Id, City = x.City, State = x.State, Country = x.Country })
+                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
                 .FirstOrDefaultAsync();
 
             return Ok(result);

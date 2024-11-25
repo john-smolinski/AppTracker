@@ -23,7 +23,7 @@ namespace ApplicationTrackerTests.Controllers
         public void SetUp()
         {
             // create an in memory context with 4 rows of test data 
-            var context = TestContextHelper.GetInMemoryContext<WorkEnvironment>(4);
+            var context = ContextHelper.GetInMemoryContext<WorkEnvironment>(4);
 
             _mockLogger = new Mock<ILogger<WorkEnvironmentsController>>();
             _controller = new WorkEnvironmentsController(context, _mockLogger.Object);
@@ -51,7 +51,7 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetEnvironments_ReturnsNotFound_WhenNoEnvironmentsExist()
         {
             // Setup
-            var emptyContext = TestContextHelper.GetInMemoryContext<WorkEnvironment>();
+            var emptyContext = ContextHelper.GetInMemoryContext<WorkEnvironment>();
             var controller = new WorkEnvironmentsController(emptyContext, _mockLogger.Object);
 
             // Act

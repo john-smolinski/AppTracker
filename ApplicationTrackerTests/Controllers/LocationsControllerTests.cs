@@ -3,6 +3,7 @@ using ApplicationTracker.Controllers;
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTrackerTests.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,21 +21,7 @@ namespace ApplicationTrackerTests.Controllers
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var context = new TrackerDbContext(options);
-
-            // seed data for tests
-            context.Locations.AddRange(new List<Location>
-            {
-                new() { Id = 1, City = "Test1", State="Test1" },
-                new() { Id = 2, City = "Test2", State="Test1" },
-                new() { Id = 3, City = "Test3", State="Test1" },
-                new() { Id = 4, City = "Test4", State="Test1" }
-            });
-            context.SaveChanges();
+            var context = ContextHelper.GetInMemoryContext<Location>(4);
 
             _mockLogger = new Mock<ILogger<LocationsController>>();
             _controller = new LocationsController(context, _mockLogger.Object);
@@ -55,18 +42,14 @@ namespace ApplicationTrackerTests.Controllers
             var returnedLocations = okResult.Value as IEnumerable<LocationDto>;
             Assert.That(returnedLocations, Is.Not.Null);
             Assert.That(returnedLocations.Count(), Is.EqualTo(4));
-            Assert.That(returnedLocations.First().City, Is.EqualTo("Test1"));
+            Assert.That(returnedLocations.First().Name, Does.StartWith($"Test {typeof(Location).Name}"));
         }
 
         [Test]
         public async Task GetLocations_ReturnsNotFound_WhenNoLocationsExists()
         {
             // Setup
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var emptyContext = new TrackerDbContext(options);
+            var emptyContext = ContextHelper.GetInMemoryContext<Location>();
             var controller = new LocationsController(emptyContext, _mockLogger.Object);
 
             // Act 
@@ -87,7 +70,8 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetLocation_ReturnsOk_WhenLocationExists()
         {
             // Act 
-            var result = await _controller.GetLocation(1);
+            var id = 1;
+            var result = await _controller.GetLocation(id);
 
             // Asert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -97,8 +81,8 @@ namespace ApplicationTrackerTests.Controllers
             var returnedLocation = okResult.Value as LocationDto;
 
             Assert.That(returnedLocation, Is.Not.Null);
-            Assert.That(returnedLocation.Id, Is.EqualTo(1));
-            Assert.That(returnedLocation.City, Is.EqualTo("Test1"));
+            Assert.That(returnedLocation.Id, Is.EqualTo(id));
+            Assert.That(returnedLocation.Name, Is.EqualTo($"Test {typeof(Location).Name} {id}"));
         }
 
         [Test]

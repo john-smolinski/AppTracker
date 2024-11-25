@@ -3,13 +3,11 @@
 namespace ApplicationTracker.Data.Entities
 {
 #pragma warning disable CS8618
-    public class Location
+    public class Location : BaseEntity
     {
-        public int Id { get; set; }
-        [StringLength(50)]
-        public string City { get; set; }
+        public string? City { get; set; }
         [StringLength (50)]
-        public string State { get; set; }
+        public string? State { get; set; }
         [StringLength(50)]
         public string Country { get; set; } = "United States";
         public List<Application> Applications { get; set; }

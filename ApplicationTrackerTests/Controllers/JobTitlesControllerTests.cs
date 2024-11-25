@@ -24,7 +24,7 @@ namespace ApplicationTrackerTests.Controllers
         public void Setup()
         {
             // create an in memory context with 4 rows of test data 
-            var context = TestContextHelper.GetInMemoryContext<JobTitle>(4);
+            var context = ContextHelper.GetInMemoryContext<JobTitle>(4);
            
             _mockLogger = new Mock<ILogger<JobTitlesController>>();
             _controller = new JobTitlesController(context, _mockLogger.Object);
@@ -52,7 +52,7 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetJobTitles_ReturnsNotFound_WhenNoJobTitlesExists()
         {
             // Setup
-            var emptyContext = TestContextHelper.GetInMemoryContext<JobTitle>();
+            var emptyContext = ContextHelper.GetInMemoryContext<JobTitle>();
             var controller = new JobTitlesController(emptyContext, _mockLogger.Object);
 
             // Act

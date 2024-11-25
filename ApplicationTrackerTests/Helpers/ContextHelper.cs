@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationTrackerTests.Helpers
 {
-    public static class TestContextHelper
+    public static class ContextHelper
     {
         public static TrackerDbContext GetInMemoryContext<T>(int rows = 0)
             where T : BaseEntity, new()
