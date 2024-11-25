@@ -3,6 +3,7 @@ using ApplicationTracker.Controllers;
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTrackerTests.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,21 +22,8 @@ namespace ApplicationTrackerTests.Controllers
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var context = new TrackerDbContext(options);
-
-            // seed data for tests
-            context.Organizations.AddRange(new List<Organization>()
-            {
-                new() { Id = 1, Name = "Test1" },
-                new() { Id = 2, Name = "Test2" },
-                new() { Id = 3, Name = "Test3" },
-                new() { Id = 4, Name = "Test4" }
-             });
-            context.SaveChanges();
+            // create an in memory context with 4 rows of test data 
+            var context = TestContextHelper.GetInMemoryContext<Organization>(4);
 
             _mockLogger = new Mock<ILogger<OrganizationsController>>();
             _controller = new OrganizationsController(context, _mockLogger.Object);
@@ -56,18 +44,14 @@ namespace ApplicationTrackerTests.Controllers
             var returnedEnvironments = okResult.Value as IEnumerable<OrganizationDto>;
             Assert.That(returnedEnvironments, Is.Not.Null);
             Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
-            Assert.That(returnedEnvironments.First().Name, Is.EqualTo("Test1"));
+            Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(Organization).Name}"));
         }
 
         [Test]
         public async Task GetOrganizations_ReturnsNotFound_WhenNoOrganizationsExists()
         {
             // Setup
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var emptyContext = new TrackerDbContext(options);
+            var emptyContext = TestContextHelper.GetInMemoryContext<Organization>();
             var controller = new OrganizationsController(emptyContext, _mockLogger.Object);
 
             // Act
@@ -88,7 +72,8 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetOrganization_ReturnsOk_WhenOrganizationExists()
         {
             // Act 
-            var result = await _controller.GetOrganization(1);
+            var id = 1;
+            var result = await _controller.GetOrganization(id);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -98,8 +83,8 @@ namespace ApplicationTrackerTests.Controllers
             var returnedOrganization = okResult.Value as OrganizationDto;
 
             Assert.That(returnedOrganization, Is.Not.Null);
-            Assert.That(returnedOrganization.Id, Is.EqualTo(1));
-            Assert.That(returnedOrganization.Name, Is.EqualTo("Test1"));
+            Assert.That(returnedOrganization.Id, Is.EqualTo(id));
+            Assert.That(returnedOrganization.Name, Is.EqualTo($"Test {typeof(Organization).Name} {id}"));
         }
 
         [Test]

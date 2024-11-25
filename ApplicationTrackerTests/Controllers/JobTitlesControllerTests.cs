@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
+using ApplicationTrackerTests.Helpers;
 
 namespace ApplicationTrackerTests.Controllers
 {
@@ -22,22 +23,9 @@ namespace ApplicationTrackerTests.Controllers
         [SetUp]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var context = new TrackerDbContext(options);
-
-            // seed data for tests
-            context.JobTitles.AddRange(new List<JobTitle>()
-            {
-                new() { Id = 1, Name = "Test1" },
-                new() { Id = 2, Name = "Test2" },
-                new() { Id = 3, Name = "Test3" },
-                new() { Id = 4, Name = "Test4" }
-             });
-            context.SaveChanges();
-
+            // create an in memory context with 4 rows of test data 
+            var context = TestContextHelper.GetInMemoryContext<JobTitle>(4);
+           
             _mockLogger = new Mock<ILogger<JobTitlesController>>();
             _controller = new JobTitlesController(context, _mockLogger.Object);
         }
@@ -57,18 +45,14 @@ namespace ApplicationTrackerTests.Controllers
             var returnedJobTitles = okResult.Value as IEnumerable<JobTitleDto>;
             Assert.That(returnedJobTitles, Is.Not.Null);
             Assert.That(returnedJobTitles.Count(), Is.EqualTo(4));
-            Assert.That(returnedJobTitles.First().Name, Is.EqualTo("Test1"));
+            Assert.That(returnedJobTitles.First().Name, Does.StartWith($"Test {typeof(JobTitle).Name}")); 
         }
 
         [Test]
         public async Task GetJobTitles_ReturnsNotFound_WhenNoJobTitlesExists()
         {
             // Setup
-            var options = new DbContextOptionsBuilder<TrackerDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
-
-            var emptyContext = new TrackerDbContext(options);
+            var emptyContext = TestContextHelper.GetInMemoryContext<JobTitle>();
             var controller = new JobTitlesController(emptyContext, _mockLogger.Object);
 
             // Act
@@ -89,7 +73,8 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetJobTitle_ReturnsOk_WhenJobTitleExists()
         {
             // Act 
-            var result = await _controller.GetJobTitle(1);
+            var id = 1;
+            var result = await _controller.GetJobTitle(id);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -99,8 +84,8 @@ namespace ApplicationTrackerTests.Controllers
             var returnedJobTitle = okResult.Value as JobTitleDto;
 
             Assert.That(returnedJobTitle, Is.Not.Null);
-            Assert.That(returnedJobTitle.Id, Is.EqualTo(1));
-            Assert.That(returnedJobTitle.Name, Is.EqualTo("Test1"));
+            Assert.That(returnedJobTitle.Id, Is.EqualTo(id));
+            Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {typeof(JobTitle).Name} {id}"));
         }
 
         [Test]
