@@ -41,8 +41,11 @@ namespace ApplicationTrackerTests.Controllers
 
             var returnedLocations = okResult.Value as IEnumerable<LocationDto>;
             Assert.That(returnedLocations, Is.Not.Null);
-            Assert.That(returnedLocations.Count(), Is.EqualTo(4));
-            Assert.That(returnedLocations.First().Name, Does.StartWith($"Test {typeof(Location).Name}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedLocations.Count(), Is.EqualTo(4));
+                Assert.That(returnedLocations.First().Name, Does.StartWith($"Test {typeof(Location).Name}"));
+            });
         }
 
         [Test]
@@ -81,8 +84,11 @@ namespace ApplicationTrackerTests.Controllers
             var returnedLocation = okResult.Value as LocationDto;
 
             Assert.That(returnedLocation, Is.Not.Null);
-            Assert.That(returnedLocation.Id, Is.EqualTo(id));
-            Assert.That(returnedLocation.Name, Is.EqualTo($"Test {typeof(Location).Name} {id}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedLocation.Id, Is.EqualTo(id));
+                Assert.That(returnedLocation.Name, Is.EqualTo($"Test {typeof(Location).Name} {id}"));
+            });
         }
 
         [Test]
@@ -99,8 +105,11 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("Location not found"));
-            Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.Multiple(() =>
+            {
+                Assert.That(errorResponse.Message, Is.EqualTo("Location not found"));
+                Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            });
         }
     }
 }

@@ -43,8 +43,11 @@ namespace ApplicationTrackerTests.Controllers
 
             var returnedEnvironments = okResult.Value as IEnumerable<WorkEnvironmentDto>;
             Assert.That(returnedEnvironments, Is.Not.Null);
-            Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
-            Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(WorkEnvironment).Name}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
+                Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(WorkEnvironment).Name}"));
+            });
         }
 
         [Test]
@@ -83,8 +86,11 @@ namespace ApplicationTrackerTests.Controllers
             var returnedEnvironment = okResult.Value as WorkEnvironmentDto;
 
             Assert.That(returnedEnvironment, Is.Not.Null);
-            Assert.That(returnedEnvironment.Id, Is.EqualTo(id));
-            Assert.That(returnedEnvironment.Name, Is.EqualTo($"Test {typeof(WorkEnvironment).Name} {id}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedEnvironment.Id, Is.EqualTo(id));
+                Assert.That(returnedEnvironment.Name, Is.EqualTo($"Test {typeof(WorkEnvironment).Name} {id}"));
+            });
         }
 
         [Test]
@@ -101,8 +107,11 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("WorkEnvironment not found"));
-            Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.Multiple(() =>
+            {
+                Assert.That(errorResponse.Message, Is.EqualTo("WorkEnvironment not found"));
+                Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            });
         }
     }
 }

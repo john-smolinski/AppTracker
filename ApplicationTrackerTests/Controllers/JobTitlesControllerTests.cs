@@ -43,9 +43,13 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(okResult, Is.Not.Null);
 
             var returnedJobTitles = okResult.Value as IEnumerable<JobTitleDto>;
-            Assert.That(returnedJobTitles, Is.Not.Null);
-            Assert.That(returnedJobTitles.Count(), Is.EqualTo(4));
-            Assert.That(returnedJobTitles.First().Name, Does.StartWith($"Test {typeof(JobTitle).Name}")); 
+           
+            Assert.That(returnedJobTitles, Is.Not.Null);            
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedJobTitles.Count(), Is.EqualTo(4));
+                Assert.That(returnedJobTitles.First().Name, Does.StartWith($"Test {typeof(JobTitle).Name}"));
+            });
         }
 
         [Test]
@@ -84,8 +88,11 @@ namespace ApplicationTrackerTests.Controllers
             var returnedJobTitle = okResult.Value as JobTitleDto;
 
             Assert.That(returnedJobTitle, Is.Not.Null);
-            Assert.That(returnedJobTitle.Id, Is.EqualTo(id));
-            Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {typeof(JobTitle).Name} {id}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedJobTitle.Id, Is.EqualTo(id));
+                Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {typeof(JobTitle).Name} {id}"));
+            });
         }
 
         [Test]
@@ -102,8 +109,11 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("JobTitle not found"));
-            Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.Multiple(() => 
+            { 
+                Assert.That(errorResponse.Message, Is.EqualTo("JobTitle not found"));
+                Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            });
         }
     }
 }

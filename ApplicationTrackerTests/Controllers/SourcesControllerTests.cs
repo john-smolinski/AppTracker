@@ -42,8 +42,11 @@ namespace ApplicationTrackerTests.Controllers
 
             var returnedSources = okResult.Value as IEnumerable<SourceDto>;
             Assert.That(returnedSources, Is.Not.Null);
-            Assert.That(returnedSources.Count(), Is.EqualTo(4));
-            Assert.That(returnedSources.First().Name, Does.StartWith($"Test {typeof(Source).Name}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedSources.Count(), Is.EqualTo(4));
+                Assert.That(returnedSources.First().Name, Does.StartWith($"Test {typeof(Source).Name}"));
+            });
         }
 
         [Test]
@@ -82,8 +85,11 @@ namespace ApplicationTrackerTests.Controllers
             var returnedSource = okResult.Value as SourceDto;
 
             Assert.That(returnedSource, Is.Not.Null);
-            Assert.That(returnedSource.Id, Is.EqualTo(id));
-            Assert.That(returnedSource.Name, Is.EqualTo($"Test {typeof(Source).Name} {id}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedSource.Id, Is.EqualTo(id));
+                Assert.That(returnedSource.Name, Is.EqualTo($"Test {typeof(Source).Name} {id}"));
+            });
         }
 
         [Test]
@@ -100,8 +106,11 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("Source not found"));
-            Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.Multiple(() =>
+            {
+                Assert.That(errorResponse.Message, Is.EqualTo("Source not found"));
+                Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            });
         }
     }
 }

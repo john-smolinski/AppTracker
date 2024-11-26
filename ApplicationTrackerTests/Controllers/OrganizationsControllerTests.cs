@@ -43,8 +43,11 @@ namespace ApplicationTrackerTests.Controllers
 
             var returnedEnvironments = okResult.Value as IEnumerable<OrganizationDto>;
             Assert.That(returnedEnvironments, Is.Not.Null);
-            Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
-            Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(Organization).Name}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
+                Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(Organization).Name}"));
+            });
         }
 
         [Test]
@@ -83,8 +86,11 @@ namespace ApplicationTrackerTests.Controllers
             var returnedOrganization = okResult.Value as OrganizationDto;
 
             Assert.That(returnedOrganization, Is.Not.Null);
-            Assert.That(returnedOrganization.Id, Is.EqualTo(id));
-            Assert.That(returnedOrganization.Name, Is.EqualTo($"Test {typeof(Organization).Name} {id}"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(returnedOrganization.Id, Is.EqualTo(id));
+                Assert.That(returnedOrganization.Name, Is.EqualTo($"Test {typeof(Organization).Name} {id}"));
+            });
         }
 
         [Test]
@@ -101,8 +107,11 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("Organization not found"));
-            Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            Assert.Multiple(() =>
+            {
+                Assert.That(errorResponse.Message, Is.EqualTo("Organization not found"));
+                Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+            });
         }
     }
 }
