@@ -28,13 +28,13 @@ namespace ApplicationTrackerTests.Controllers
             _mockService = new Mock<IService<LocationDto>>();
             _mockLogger = new Mock<ILogger<LocationsController>>();
 
-            _locations = new List<LocationDto>            
-            {
+            _locations =
+            [
                 new() { Id = 1, Name = "Test 1" },
                 new() { Id = 2, Name = "Test 2" },
                 new() { Id = 3, Name = "Test 3" },
                 new() { Id = 4, Name = "Test 4" }
-            };
+            ];
 
             var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider
@@ -77,7 +77,7 @@ namespace ApplicationTrackerTests.Controllers
             // Setup
             _mockService
                 .Setup(service => service.GetAllAsync())
-                .ReturnsAsync(new List<LocationDto>());
+                .ReturnsAsync([]);
 
             // Act 
             var result = await _controller.GetLocations();
