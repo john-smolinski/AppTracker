@@ -37,7 +37,7 @@ namespace ApplicationTracker.Services
             return await _context.Sources.AnyAsync(x => x.Id == id);
         }
 
-        public async Task<IEnumerable<ApplicationDto>?> GetReleatedApplicationsAsync(int id)
+        public async Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
         {
             throw new NotImplementedException();
         }
