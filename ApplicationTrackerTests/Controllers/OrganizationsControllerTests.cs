@@ -1,12 +1,10 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Controllers;
-using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Data.Entities;
-using ApplicationTrackerTests.Helpers;
+using ApplicationTracker.Services;
+using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
@@ -16,22 +14,44 @@ namespace ApplicationTrackerTests.Controllers
     [TestFixture]
     public class OrganizationsControllerTests
     {
+        private Mock<IService<OrganizationDto>> _mockService;
         private Mock<ILogger<OrganizationsController>> _mockLogger;
         private OrganizationsController _controller;
+
+        private List<OrganizationDto> _organizations;
+        private ServiceFactory _serviceFactory;
 
         [SetUp]
         public void Setup()
         {
-            // create an in memory context with 4 rows of test data 
-            var context = ContextHelper.GetInMemoryContext<Organization>(4);
-
+            _mockService = new Mock<IService<OrganizationDto>>();
             _mockLogger = new Mock<ILogger<OrganizationsController>>();
-            _controller = new OrganizationsController(context, _mockLogger.Object);
+
+            _organizations = new List<OrganizationDto>
+            {
+                new() { Id = 1, Name = "Test 1" },
+                new() { Id = 2, Name = "Test 2" },
+                new() { Id = 3, Name = "Test 3" },
+                new() { Id = 4, Name = "Test 4" }
+            };
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider
+                .Setup(sp => sp.GetService(typeof(OrganizationService)))
+                .Returns(_mockService.Object); 
+
+            _serviceFactory = new ServiceFactory(mockServiceProvider.Object);
+            _controller = new OrganizationsController(_serviceFactory, _mockLogger.Object);
         }
 
         [Test]
         public async Task GetOrganizations_ReturnsOk_WhenOrganizationsExists()
         {
+            // Setup 
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(_organizations);
+
             // Act
             var result = await _controller.GetOrganizations();
 
@@ -46,7 +66,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(returnedEnvironments.Count(), Is.EqualTo(4));
-                Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test {typeof(Organization).Name}"));
+                Assert.That(returnedEnvironments.First().Name, Does.StartWith($"Test"));
             });
         }
 
@@ -54,11 +74,12 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetOrganizations_ReturnsNotFound_WhenNoOrganizationsExists()
         {
             // Setup
-            var emptyContext = ContextHelper.GetInMemoryContext<Organization>();
-            var controller = new OrganizationsController(emptyContext, _mockLogger.Object);
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(new List<OrganizationDto>());
 
             // Act
-            var result = await controller.GetOrganizations();
+            var result = await _controller.GetOrganizations();
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
@@ -74,9 +95,19 @@ namespace ApplicationTrackerTests.Controllers
         [Test]
         public async Task GetOrganization_ReturnsOk_WhenOrganizationExists()
         {
+            // Setup 
+            var testId = 1;
+
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(true);
+
+            _mockService
+                .Setup(service => service.GetByIdAsync(testId))
+                .ReturnsAsync(_organizations.First(x => x.Id == testId));
+
             // Act 
-            var id = 1;
-            var result = await _controller.GetOrganization(id);
+            var result = await _controller.GetOrganization(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -88,16 +119,22 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(returnedOrganization, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedOrganization.Id, Is.EqualTo(id));
-                Assert.That(returnedOrganization.Name, Is.EqualTo($"Test {typeof(Organization).Name} {id}"));
+                Assert.That(returnedOrganization.Id, Is.EqualTo(testId));
+                Assert.That(returnedOrganization.Name, Is.EqualTo($"Test {testId}"));
             });
         }
 
         [Test]
-        public async Task GetOrganization_ReturnsNotFound_WhenOrganizationDoesNotExist()
+        public async Task GetOrganization_ReturnsNotFound_WhenNoOrganizationExist()
         {
+            // Setup 
+            var testId = 99;
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(false);
+
             // Act 
-            var result = await _controller.GetOrganization(999); 
+            var result = await _controller.GetOrganization(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());

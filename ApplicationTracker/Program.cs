@@ -1,5 +1,8 @@
 
 using ApplicationTracker.Data;
+using ApplicationTracker.Data.Dtos;
+using ApplicationTracker.Services;
+using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -14,6 +17,16 @@ namespace ApplicationTracker
             var connectionString = builder.Configuration.GetConnectionString("Tracker");
             builder.Services.AddDbContext<TrackerDbContext>(options => 
                 options.UseSqlServer(connectionString));
+
+            // factory for creating service instances
+            builder.Services.AddScoped<ServiceFactory>();
+
+            builder.Services.AddScoped<WorkEnvironmentService>();
+            builder.Services.AddScoped<IService<WorkEnvironmentDto>, WorkEnvironmentService>();
+            
+            builder.Services.AddScoped<SourceService>();
+            builder.Services.AddScoped<IService<SourceDto>, SourceService>();
+
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();

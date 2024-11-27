@@ -1,35 +1,58 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Controllers;
-using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Data.Entities;
-using ApplicationTrackerTests.Helpers;
+using ApplicationTracker.Services;
+using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
 
 namespace ApplicationTrackerTests.Controllers
 {
+    [TestFixture]
     public class LocationsControllerTests
     {
+        private Mock<IService<LocationDto>> _mockService;
         private Mock<ILogger<LocationsController>> _mockLogger;
         private LocationsController _controller;
+
+        private List<LocationDto> _locations;
+        private ServiceFactory _serviceFactory;
+
 
         [SetUp]
         public void Setup()
         {
-            var context = ContextHelper.GetInMemoryContext<Location>(4);
-
+            _mockService = new Mock<IService<LocationDto>>();
             _mockLogger = new Mock<ILogger<LocationsController>>();
-            _controller = new LocationsController(context, _mockLogger.Object);
+
+            _locations = new List<LocationDto>            
+            {
+                new() { Id = 1, Name = "Test 1" },
+                new() { Id = 2, Name = "Test 2" },
+                new() { Id = 3, Name = "Test 3" },
+                new() { Id = 4, Name = "Test 4" }
+            };
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider
+                .Setup(sp =>  sp.GetService(typeof(LocationService)))
+                .Returns(_mockService.Object);
+
+            _serviceFactory = new ServiceFactory(mockServiceProvider.Object);
+            _controller = new LocationsController(_serviceFactory, _mockLogger.Object);
         }
 
         [Test]
         public async Task GetLocations_ReturnsOk_WhenLocationsExists()
         {
+            // Setup
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(_locations);
+
             // Act
             var result = await _controller.GetLocations();
 
@@ -44,7 +67,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(returnedLocations.Count(), Is.EqualTo(4));
-                Assert.That(returnedLocations.First().Name, Does.StartWith($"Test {typeof(Location).Name}"));
+                Assert.That(returnedLocations.First().Name, Does.StartWith($"Test"));
             });
         }
 
@@ -52,11 +75,12 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetLocations_ReturnsNotFound_WhenNoLocationsExists()
         {
             // Setup
-            var emptyContext = ContextHelper.GetInMemoryContext<Location>();
-            var controller = new LocationsController(emptyContext, _mockLogger.Object);
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(new List<LocationDto>());
 
             // Act 
-            var result = await controller.GetLocations();
+            var result = await _controller.GetLocations();
 
             // Asert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
@@ -72,9 +96,19 @@ namespace ApplicationTrackerTests.Controllers
         [Test]
         public async Task GetLocation_ReturnsOk_WhenLocationExists()
         {
+            // Setup 
+            var testId = 1;
+
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(true);
+
+            _mockService
+                .Setup(service => service.GetByIdAsync(testId))
+                .ReturnsAsync(_locations.First(x => x.Id == testId));
+
             // Act 
-            var id = 1;
-            var result = await _controller.GetLocation(id);
+            var result = await _controller.GetLocation(testId);
 
             // Asert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -86,16 +120,22 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(returnedLocation, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedLocation.Id, Is.EqualTo(id));
-                Assert.That(returnedLocation.Name, Is.EqualTo($"Test {typeof(Location).Name} {id}"));
+                Assert.That(returnedLocation.Id, Is.EqualTo(testId));
+                Assert.That(returnedLocation.Name, Is.EqualTo($"Test {testId}"));
             });
         }
 
         [Test]
         public async Task GetLocation_ReturnsNotFound_WhenLocationDoesNotExist()
         {
+            // Setup 
+            var testId = 99;
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(false);
+
             // Act 
-            var result = await _controller.GetLocation(999); 
+            var result = await _controller.GetLocation(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());

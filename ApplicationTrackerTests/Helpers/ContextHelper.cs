@@ -1,9 +1,11 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ApplicationTrackerTests.Helpers
 {
+    [ExcludeFromCodeCoverage]
     public static class ContextHelper
     {
         public static TrackerDbContext GetInMemoryContext<T>(int rows = 0)
@@ -30,7 +32,7 @@ namespace ApplicationTrackerTests.Helpers
             context.SaveChanges();
         }
 
-        private static IEnumerable<T> GenerateTestEntities<T>(int count) 
+        public static IEnumerable<T> GenerateTestEntities<T>(int count) 
             where T : BaseEntity, new()
         {
             return Enumerable.Range(1, count).Select(i => new T

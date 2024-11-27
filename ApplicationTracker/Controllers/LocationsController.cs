@@ -2,6 +2,7 @@
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -10,26 +11,18 @@ namespace ApplicationTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LocationsController : ControllerBase
+    public class LocationsController(ServiceFactory serviceFactory, ILogger<LocationsController> logger) : ControllerBase
     {
-        private readonly TrackerDbContext _context;
-        private readonly ILogger<LocationsController> _logger;
-
-        public LocationsController(TrackerDbContext context, ILogger<LocationsController> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
+        private readonly ServiceFactory _serviceFactory = serviceFactory;
+        private readonly ILogger<LocationsController> _logger = logger;
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LocationDto>>> GetLocations()
         {
-            var result = await _context.Locations
-                .Select(x => new LocationDto 
-                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
-                .ToListAsync();
+            var service = _serviceFactory.GetService<LocationDto>();
+            var result = await service.GetAllAsync();
 
             if (!result.Any())
             {
@@ -49,11 +42,11 @@ namespace ApplicationTracker.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LocationDto>> GetLocation(int id)
         {
-            var exists = await _context.Locations.AnyAsync(x => x.Id == id);
+            var service = _serviceFactory.GetService<LocationDto>();
 
-            if (!exists)
+            if (!await service.ExistsAsync(id))
             {
-                _logger.LogInformation(message: $"No Location with id {id} found");
+                _logger.LogInformation(message: "No Location with id {id} found", id);
                 return NotFound(new ErrorResponse
                 {
                     Message = "Location not found",
@@ -61,12 +54,7 @@ namespace ApplicationTracker.Controllers
                     Detail =$"No Location with id {id} found"
                 });
             }
-
-            var result = await _context.Locations
-                .Where(x => x.Id == id)
-                .Select(x => new LocationDto
-                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
-                .FirstOrDefaultAsync();
+            var result = await service.GetByIdAsync(id);
 
             return Ok(result);
         }

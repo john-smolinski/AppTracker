@@ -3,7 +3,7 @@
 #pragma warning disable CS8618
     public class ApplicationDto
     {
-        public DateTime ApplicaitionDate { get; set; } = DateTime.Now;
+        public DateOnly ApplicaitionDate { get; set; }
         public SourceDto Source { get; set; }
         public OrganizationDto Organization { get; set; }
         public JobTitleDto JobTitle { get; set; }

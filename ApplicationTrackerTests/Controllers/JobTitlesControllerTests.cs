@@ -1,38 +1,58 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Controllers;
-using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Services;
+using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
-using ApplicationTrackerTests.Helpers;
 
 namespace ApplicationTrackerTests.Controllers
 {
-    
+
     [TestFixture]
     public class JobTitlesControllerTests
     {
+        private Mock<IService<JobTitleDto>> _mockService;
         private Mock<ILogger<JobTitlesController>> _mockLogger;
         private JobTitlesController _controller;
+
+        private List<JobTitleDto> _jobTitles;
+        private ServiceFactory _serviceFactory;
 
         [SetUp]
         public void Setup()
         {
-            // create an in memory context with 4 rows of test data 
-            var context = ContextHelper.GetInMemoryContext<JobTitle>(4);
-           
+            _mockService = new Mock<IService<JobTitleDto>>();
             _mockLogger = new Mock<ILogger<JobTitlesController>>();
-            _controller = new JobTitlesController(context, _mockLogger.Object);
+
+            _jobTitles = new List<JobTitleDto>
+            {
+                new() { Id = 1, Name = "Test 1" },
+                new() { Id = 2, Name = "Test 2" },
+                new() { Id = 3, Name = "Test 3" },
+                new() { Id = 4, Name = "Test 4" }
+            };
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider
+                .Setup(sp => sp.GetService(typeof(JobTitleService)))
+                .Returns(_mockService.Object);
+
+            _serviceFactory = new ServiceFactory(mockServiceProvider.Object);
+            _controller = new JobTitlesController(_serviceFactory, _mockLogger.Object);
         }
 
         [Test]
         public async Task GetJobTitles_ReturnsOk_WhenJobTitlesExists()
         {
+            // Setup
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(_jobTitles);
+
             // Act
             var result = await _controller.GetJobTitles();
 
@@ -48,7 +68,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(returnedJobTitles.Count(), Is.EqualTo(4));
-                Assert.That(returnedJobTitles.First().Name, Does.StartWith($"Test {typeof(JobTitle).Name}"));
+                Assert.That(returnedJobTitles.First().Name, Does.StartWith("Test"));
             });
         }
 
@@ -56,11 +76,12 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetJobTitles_ReturnsNotFound_WhenNoJobTitlesExists()
         {
             // Setup
-            var emptyContext = ContextHelper.GetInMemoryContext<JobTitle>();
-            var controller = new JobTitlesController(emptyContext, _mockLogger.Object);
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(new List<JobTitleDto>());
 
             // Act
-            var result = await controller.GetJobTitles();
+            var result = await _controller.GetJobTitles();
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
@@ -76,9 +97,19 @@ namespace ApplicationTrackerTests.Controllers
         [Test]
         public async Task GetJobTitle_ReturnsOk_WhenJobTitleExists()
         {
-            // Act 
-            var id = 1;
-            var result = await _controller.GetJobTitle(id);
+            // Setup
+            var testId = 1;
+            
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(true);
+            
+            _mockService
+                .Setup(service => service.GetByIdAsync(testId))
+                 .ReturnsAsync(_jobTitles.First(x => x.Id == testId));
+
+            // Act
+            var result = await _controller.GetJobTitle(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -90,16 +121,22 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(returnedJobTitle, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedJobTitle.Id, Is.EqualTo(id));
-                Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {typeof(JobTitle).Name} {id}"));
+                Assert.That(returnedJobTitle.Id, Is.EqualTo(testId));
+                Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {testId}"));
             });
         }
 
         [Test]
         public async Task GetJobTitle_ReturnsNotFound_WhenJobTitleDoesNotExist()
         {
+            // Setup
+            var testId = 99;
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(false);
+
             // Act 
-            var result = await _controller.GetJobTitle(999); 
+            var result = await _controller.GetJobTitle(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
@@ -109,8 +146,8 @@ namespace ApplicationTrackerTests.Controllers
             var errorResponse = notFoundResult.Value as ErrorResponse;
 
             Assert.That(errorResponse, Is.Not.Null);
-            Assert.Multiple(() => 
-            { 
+            Assert.Multiple(() =>
+            {
                 Assert.That(errorResponse.Message, Is.EqualTo("JobTitle not found"));
                 Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
             });

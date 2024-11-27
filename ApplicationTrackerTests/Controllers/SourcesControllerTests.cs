@@ -1,12 +1,10 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Controllers;
-using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Data.Entities;
-using ApplicationTrackerTests.Helpers;
+using ApplicationTracker.Services;
+using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
@@ -16,22 +14,44 @@ namespace ApplicationTrackerTests.Controllers
     [TestFixture]
     public class SourcesControllerTests
     {
+        private Mock<IService<SourceDto>> _mockService;
         private Mock<ILogger<SourcesController>> _mockLogger;
         private SourcesController _controller;
+
+        private List<SourceDto> _sources;
+        private ServiceFactory _serviceFactory;
 
         [SetUp]
         public void Setup()
         {
-            // create an in memory context with 4 rows of test data 
-            var context = ContextHelper.GetInMemoryContext<Source>(4);
-
+            _mockService = new Mock<IService<SourceDto>>();
             _mockLogger = new Mock<ILogger<SourcesController>>();
-            _controller = new SourcesController(context, _mockLogger.Object);
+
+            _sources = new List<SourceDto>
+            {
+                new() { Id = 1, Name = "Test 1" },
+                new() { Id = 2, Name = "Test 2" },
+                new() { Id = 3, Name = "Test 3" },
+                new() { Id = 4, Name = "Test 4" }
+            };
+
+            var mockServiceProvider = new Mock<IServiceProvider>();
+            mockServiceProvider
+                .Setup(sp => sp.GetService(typeof(SourceService)))
+                .Returns(_mockService.Object);  
+
+            _serviceFactory = new ServiceFactory(mockServiceProvider.Object);
+            _controller = new SourcesController(_serviceFactory, _mockLogger.Object);
         }
 
         [Test]
         public async Task GetSources_ReturnsOk_WhenSourcesExists()
         {
+            // Setup 
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(_sources);
+
             // Act
             var result = await _controller.GetSources();
 
@@ -45,7 +65,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(returnedSources.Count(), Is.EqualTo(4));
-                Assert.That(returnedSources.First().Name, Does.StartWith($"Test {typeof(Source).Name}"));
+                Assert.That(returnedSources.First().Name, Does.StartWith($"Test"));
             });
         }
 
@@ -53,11 +73,12 @@ namespace ApplicationTrackerTests.Controllers
         public async Task GetSources_ReturnsNotFound_WhenNoSourcesExists()
         {
             // Setup
-            var emptyContext = ContextHelper.GetInMemoryContext<Source>();
-            var controller = new SourcesController(emptyContext, _mockLogger.Object);
+            _mockService
+                .Setup(service => service.GetAllAsync())
+                .ReturnsAsync(new List<SourceDto>());
 
             // Act
-            var result = await controller.GetSources();
+            var result = await _controller.GetSources();
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
@@ -73,9 +94,20 @@ namespace ApplicationTrackerTests.Controllers
         [Test]
         public async Task GetSource_ReturnsOk_WhenEnvironmentExists()
         {
+            // Setup 
+            var testId = 1;
+
+            _mockService
+                .Setup(service => service.ExistsAsync(testId))
+                .ReturnsAsync(true);
+
+            _mockService
+                .Setup(service => service.GetByIdAsync(testId))
+                .ReturnsAsync(_sources.First(x => x.Id == testId));
+
+
             // Act
-            var id = 1;
-            var result = await _controller.GetSource(id);
+            var result = await _controller.GetSource(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
@@ -87,16 +119,22 @@ namespace ApplicationTrackerTests.Controllers
             Assert.That(returnedSource, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedSource.Id, Is.EqualTo(id));
-                Assert.That(returnedSource.Name, Is.EqualTo($"Test {typeof(Source).Name} {id}"));
+                Assert.That(returnedSource.Id, Is.EqualTo(testId));
+                Assert.That(returnedSource.Name, Is.EqualTo($"Test {testId}"));
             });
         }
 
         [Test]
         public async Task GetSource_ReturnsNotFound_WhenNoSourceExist()
         {
+            // Setup 
+            var testId = 99;
+            _mockService
+                .Setup(service => service.ExistsAsync (testId))
+                .ReturnsAsync(false);
+
             // Act
-            var result = await _controller.GetSource(999);
+            var result = await _controller.GetSource(testId);
 
             // Assert
             Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());

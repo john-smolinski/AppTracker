@@ -2,6 +2,7 @@
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -10,26 +11,18 @@ namespace ApplicationTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SourcesController : ControllerBase
+    public class SourcesController(ServiceFactory serviceFactory, ILogger<SourcesController> logger) : ControllerBase
     {
-        private readonly TrackerDbContext _context;
-        private readonly ILogger<SourcesController> _logger;
-
-        public SourcesController(TrackerDbContext context, ILogger<SourcesController> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
+        private readonly ServiceFactory _serviceFactory = serviceFactory;
+        private readonly ILogger<SourcesController> _logger = logger;
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SourceDto>>> GetSources()
         {
-            var result = await _context.Sources
-                .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
-                .OrderBy(x => x.Id)
-                .ToListAsync();
+            var service = _serviceFactory.GetService<SourceDto>();
+            var result = await service.GetAllAsync();
 
             if (!result.Any())
             {
@@ -47,13 +40,13 @@ namespace ApplicationTracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Source>> GetSource(int id)
+        public async Task<ActionResult<SourceDto>> GetSource(int id)
         {
-            var exists = await _context.Sources.AnyAsync(x => x.Id == id);
+            var service = _serviceFactory.GetService<SourceDto>();
 
-            if (!exists)
+            if (!await service.ExistsAsync(id))
             {
-                _logger.LogInformation(message: $"No Source with id {id} found");
+                _logger.LogInformation(message: "No Source with id {id} found", id);
                 return NotFound(new ErrorResponse
                 {
                     Message = "Source not found",
@@ -61,11 +54,7 @@ namespace ApplicationTracker.Controllers
                     Detail = $"No Source with id {id} found"
                 });
             }
-
-            var result = await _context.Sources
-                .Where(x => x.Id == id)
-                .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
-                .FirstOrDefaultAsync();
+            var result = await service.GetByIdAsync(id);
 
             return Ok(result);
         }

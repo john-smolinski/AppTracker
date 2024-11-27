@@ -2,6 +2,7 @@
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -10,24 +11,18 @@ namespace ApplicationTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationsController : ControllerBase
+    public class OrganizationsController(ServiceFactory serviceFactory, ILogger<OrganizationsController> logger) : ControllerBase
     {
-        private readonly TrackerDbContext _context;
-        private readonly ILogger<OrganizationsController> _logger;
-        public OrganizationsController(TrackerDbContext context, ILogger<OrganizationsController> logger)
-        {
-            _context = context;
-            _logger = logger;
-        }
+        private readonly ServiceFactory _serviceFactory = serviceFactory;
+        private readonly ILogger<OrganizationsController> _logger = logger;
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrganizationDto>>> GetOrganizations()
         {
-            var result = await _context.Organizations
-                .Select(x => new OrganizationDto { Id = x.Id, Name = x.Name })
-                .ToListAsync();
+            var service = _serviceFactory.GetService<OrganizationDto>();
+            var result = await service.GetAllAsync();
 
             if (!result.Any())
             {
@@ -45,12 +40,12 @@ namespace ApplicationTracker.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<Organization>> GetOrganization(int id)
+        public async Task<ActionResult<OrganizationDto>> GetOrganization(int id)
         {
-            var exists = await _context.Organizations.AnyAsync(x => x.Id == id);
-            if (!exists)
+            var service = _serviceFactory.GetService<OrganizationDto>();
+            if (!await service.ExistsAsync(id))
             {
-                _logger.LogInformation(message: $"Organization with id {id} not found");
+                _logger.LogInformation(message: "Organization with id {id} not found", id);
                 return NotFound(new ErrorResponse
                 {
                     Message = "Organization not found",
@@ -58,11 +53,7 @@ namespace ApplicationTracker.Controllers
                     Detail = $"No Organization with id {id} found"
                 });
             }
-
-            var result = await _context.Organizations
-                .Where(x => x.Id == id)
-                .Select(x => new OrganizationDto { Id = x.Id, Name = x.Name })
-                .FirstOrDefaultAsync();
+            var result = await service.GetByIdAsync(id);
 
             return Ok(result);
         }
