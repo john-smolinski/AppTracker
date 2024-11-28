@@ -37,9 +37,20 @@ namespace ApplicationTracker.Services
             return await _context.JobTitles.AnyAsync(x => x.Id == id);
         }
 
-        public Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
+        public async Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Applications
+                .Where(x => x.JobTitleId == id)
+                .Select(x => new ApplicationDto 
+                { 
+                    ApplicaitionDate = x.ApplicationDate, 
+                    Source = new SourceDto { Id = x.SourceId, Name = x.Source.Name },
+                    Organization = new OrganizationDto { Id = x.OrganizationId, Name = x.Organization.Name },
+                    JobTitle = new JobTitleDto { Id = x.JobTitleId, Name = x.JobTitle.Name },
+                    WorkEnvironment = new WorkEnvironmentDto { Id = x.WorkEnvironmentId, Name = x.WorkEnvironment.Name },
+                    Location = new LocationDto { Id = x.LocationId, Name = x.Location.Name }
+                })
+                .ToListAsync();
         }
     }
 }

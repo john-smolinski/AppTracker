@@ -12,9 +12,9 @@ namespace ApplicationTracker.Data.Configurations
             builder.HasKey(a => a.Id);
 
             // relationships
-            builder.HasOne(a => a.Environment)
+            builder.HasOne(a => a.WorkEnvironment)
                    .WithMany(e => e.Applications)
-                   .HasForeignKey(a => a.EnvironmentId)
+                   .HasForeignKey(a => a.WorkEnvironmentId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(a => a.JobTitle)

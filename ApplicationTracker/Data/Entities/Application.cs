@@ -11,8 +11,8 @@
         public Organization Organization { get; set; }
         public int JobTitleId { get; set; }
         public JobTitle JobTitle { get; set; }
-        public int EnvironmentId { get; set; }
-        public WorkEnvironment Environment { get; set; }
+        public int WorkEnvironmentId { get; set; }
+        public WorkEnvironment WorkEnvironment { get; set; }
         public int LocationId { get; set; }
         public Location Location { get; set; }
     }
