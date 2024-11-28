@@ -22,12 +22,21 @@ namespace ApplicationTracker
             // factory for creating service instances
             builder.Services.AddScoped<ServiceFactory>();
 
-            builder.Services.AddScoped<WorkEnvironmentService>();
-            builder.Services.AddScoped<IService<WorkEnvironmentDto>, WorkEnvironmentService>();
-            
+            // add services 
+            builder.Services.AddScoped<JobTitleService>();
+            builder.Services.AddScoped<IService<JobTitleDto>, JobTitleService>();
+
+            builder.Services.AddScoped<LocationService>();
+            builder.Services.AddScoped<IService<LocationDto>, LocationService>();
+
+            builder.Services.AddScoped<OrganizationService>();
+            builder.Services.AddScoped<IService<OrganizationDto>, OrganizationService>();
+
             builder.Services.AddScoped<SourceService>();
             builder.Services.AddScoped<IService<SourceDto>, SourceService>();
 
+            builder.Services.AddScoped<WorkEnvironmentService>();
+            builder.Services.AddScoped<IService<WorkEnvironmentDto>, WorkEnvironmentService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
