@@ -3,24 +3,23 @@ using ApplicationTracker.Services;
 using ApplicationTrackerTests.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework.Internal;
 
 namespace ApplicationTrackerTests.Services
 {
     [TestFixture]
-    public class JobTitlesServiceTests
+    public class WorkEnvironmentServiceTests
     {
-        private Mock<ILogger<JobTitleService>> _mockLogger;
-        private JobTitleService _service;
+        private Mock<ILogger<WorkEnvironmentService>> _mockLogger;
+        private WorkEnvironmentService _service;
 
         [SetUp]
         public void Setup()
         {
             // create a in memery context with 4 rows.
-            var context = ContextHelper.GetInMemoryContext<JobTitle>(4);
-            
-            _mockLogger = new Mock<ILogger<JobTitleService>>();
-            _service = new JobTitleService(context, _mockLogger.Object);
+            var context = ContextHelper.GetInMemoryContext<WorkEnvironment>(4);
+
+            _mockLogger = new Mock<ILogger<WorkEnvironmentService>>();
+            _service = new WorkEnvironmentService(context, _mockLogger.Object);
         }
 
         [Test]
@@ -28,7 +27,7 @@ namespace ApplicationTrackerTests.Services
         {
             // Setup
             var testId = 1;
-            var expected = $"Test {typeof(JobTitle).Name} {testId}";
+            var expected = $"Test {typeof(WorkEnvironment).Name} {testId}";
 
             // Act
             var result = await _service.GetAllAsync();
