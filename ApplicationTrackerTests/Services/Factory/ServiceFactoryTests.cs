@@ -1,10 +1,11 @@
 ﻿using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Services;
+using ApplicationTracker.Services.Factory;
 using ApplicationTracker.Services.Interfaces;
 using ApplicationTrackerTests.Helpers;
 using Moq;
 
-namespace ApplicationTrackerTests.Services
+namespace ApplicationTrackerTests.Services.Factory
 {
     [TestFixture]
     public class ServiceFactoryTests
@@ -46,7 +47,7 @@ namespace ApplicationTrackerTests.Services
             // Setup
             _mockServiceProvider
                 .Setup(sp => sp.GetService(typeof(JobTitleService)))
-                .Returns(default(IService<JobTitleDto>)); 
+                .Returns(default(IService<JobTitleDto>));
 
             // Act & Assert
             var exception = Assert.Throws<InvalidOperationException>(() => _serviceFactory.GetService<JobTitleDto>());

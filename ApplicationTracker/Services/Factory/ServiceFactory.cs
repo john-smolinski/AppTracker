@@ -2,7 +2,7 @@
 using ApplicationTracker.Data.Entities;
 using ApplicationTracker.Services.Interfaces;
 
-namespace ApplicationTracker.Services
+namespace ApplicationTracker.Services.Factory
 {
     public class ServiceFactory
     {
@@ -26,7 +26,7 @@ namespace ApplicationTracker.Services
                 { typeof(WorkEnvironmentDto), typeof(WorkEnvironmentService) }
             };
         }
-        
+
         /// <summary>
         /// Get the service related to Dto passed
         /// </summary>
@@ -34,14 +34,14 @@ namespace ApplicationTracker.Services
         /// <returns>IService<T></returns>
         /// <exception cref="InvalidOperationException">Thrown when no service for type is found</exception>
         /// <exception cref="ArgumentException">Thrown when no matching service found in map</exception>
-        public IService<T> GetService<T>() 
+        public IService<T> GetService<T>()
             where T : class
         {
             if (_serviceMap.TryGetValue(typeof(T), out var serviceType))
             {
                 if (_serviceProvider.GetService(serviceType) is not IService<T> service)
                 {
-                    throw new InvalidOperationException($"No service found for type { serviceType.Name}.");
+                    throw new InvalidOperationException($"No service found for type {serviceType.Name}.");
                 }
                 return service;
             }
