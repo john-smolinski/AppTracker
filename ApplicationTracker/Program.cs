@@ -1,4 +1,3 @@
-
 using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Services;
