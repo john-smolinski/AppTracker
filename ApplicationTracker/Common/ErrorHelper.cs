@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ApplicationTracker.Common
 {
@@ -6,30 +7,35 @@ namespace ApplicationTracker.Common
     {
         public static ObjectResult InternalServerError(string message, string detail)
         {
-            return GetObjectResult(message, detail, StatusCodes.Status500InternalServerError);
+            return new ObjectResult(new ErrorResponse
+            {
+                Message = message,
+                StatusCode = StatusCodes.Status500InternalServerError,
+                Detail = detail
+            })
+            {
+                StatusCode = StatusCodes.Status500InternalServerError
+            };
         }
 
         public static ObjectResult NotFound(string message, string detail)
         {
-            return GetObjectResult(message, detail, StatusCodes.Status404NotFound);
+            return new NotFoundObjectResult(new ErrorResponse
+            {
+                Message = message,
+                StatusCode = StatusCodes.Status404NotFound,
+                Detail = detail
+            });
         }
 
         public static ObjectResult BadRequest(string message, string detail)
         {
-            return GetObjectResult(message, detail, StatusCodes.Status400BadRequest);
-        }
-
-        private static ObjectResult GetObjectResult(string message, string detail, int statusCode)
-        {
-            return new ObjectResult(new ErrorResponse
+            return new BadRequestObjectResult(new ErrorResponse
             {
                 Message = message,
-                StatusCode = statusCode,
+                StatusCode = StatusCodes.Status400BadRequest,
                 Detail = detail
-            })
-            {
-                StatusCode = statusCode
-            };
+            });
         }
     }
 }
