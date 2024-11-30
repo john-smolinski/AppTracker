@@ -79,7 +79,7 @@ namespace ApplicationTrackerTests.Controllers
             // Setup
             _mockService
                 .Setup(service => service.GetAllAsync())
-                .ReturnsAsync([]);
+                .ReturnsAsync(new List<JobTitleDto>());
 
             // Act
             var result = await _controller.GetJobTitles();

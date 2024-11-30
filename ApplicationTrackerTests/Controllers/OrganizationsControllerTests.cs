@@ -77,7 +77,7 @@ namespace ApplicationTrackerTests.Controllers
             // Setup
             _mockService
                 .Setup(service => service.GetAllAsync())
-                .ReturnsAsync([]);
+                .ReturnsAsync(new List<OrganizationDto>());
 
             // Act
             var result = await _controller.GetOrganizations();

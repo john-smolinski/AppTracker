@@ -34,7 +34,12 @@ namespace ApplicationTracker.Controllers
                         if (!result.Any())
                         {
                             _logger.LogWarning("No JobTitles returned");
-                            return NotFound(ErrorHelper.NotFound("JobTitles not found", "No JobTitles have been added yet"));
+                            return NotFound(new ErrorResponse
+                            {
+                                Message = "JobTitles not found",
+                                StatusCode = StatusCodes.Status404NotFound,
+                                Detail = "No JobTitles have been added yet"
+                            });
                         }
                         return Ok(result);
                     });

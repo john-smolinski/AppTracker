@@ -12,10 +12,24 @@ namespace ApplicationTracker.Common
                 Func<IService<TService>, Task<ActionResult>> action)
             where TService : class
         {
+            if(action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             try
             {
                 var service = serviceFactory.GetService<TService>();
-                return await action(service);
+                var result = await action(service);
+
+                if(result == null)
+                {
+                    logger.LogError("The service call returned a null ActionResult for type {TypeName}", typeof(TService).Name);
+                    return ErrorHelper.InternalServerError("Unexpected error", "The service call returned a null result.");
+                }
+
+                logger.LogDebug("Service call result: {ResultType}", result.GetType().Name);
+                return result;
             }
             catch (InvalidOperationException ioe)
             {

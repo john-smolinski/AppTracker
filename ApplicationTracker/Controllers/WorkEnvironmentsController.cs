@@ -32,7 +32,12 @@ namespace ApplicationTracker.Controllers
                         if (!result.Any())
                         {
                             _logger.LogWarning("No WorkEnvironments returned. WorkEnvironments are required for the application");
-                            return NotFound(ErrorHelper.NotFound("No WorkEnvironments returned", "No WorkEnvironments returned. WorkEnviroments missing or misconfigured"));
+                            return NotFound(new ErrorResponse
+                            {
+                                Message = "WorkEnvironments missing",
+                                StatusCode = StatusCodes.Status404NotFound,
+                                Detail = "No WorkEnvironments returned. WorkEnviroments missing or misconfigured"
+                            });
                         }
                         return Ok(result);
                     });

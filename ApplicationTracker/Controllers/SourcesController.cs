@@ -33,7 +33,12 @@ namespace ApplicationTracker.Controllers
                         if (!result.Any())
                         {
                             _logger.LogWarning("No Sources returned");
-                            return NotFound(ErrorHelper.NotFound("Sources missing", "No Sources returned. Sources missing or misconfigured"));
+                            return NotFound(new ErrorResponse
+                            {
+                                Message = "Sources missing",
+                                StatusCode = StatusCodes.Status404NotFound,
+                                Detail = "No Sources returned. Sources missing or misconfigured"
+                            });
                         }
                         return Ok(result);
                     });

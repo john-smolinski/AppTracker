@@ -32,7 +32,12 @@ namespace ApplicationTracker.Controllers
                     if (!result.Any())
                     {
                         _logger.LogWarning("No Locations returned");
-                        return NotFound(ErrorHelper.NotFound("Locations not found", "No Locations have been added yet"));
+                        return NotFound(new ErrorResponse
+                        {
+                            Message = "Locations not found",
+                            StatusCode = StatusCodes.Status404NotFound,
+                            Detail = "No Locations have been added yett"
+                        });
                     }
                     return Ok(result);
                 });

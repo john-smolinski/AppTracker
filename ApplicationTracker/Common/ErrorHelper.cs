@@ -7,15 +7,15 @@ namespace ApplicationTracker.Common
     {
         public static ObjectResult InternalServerError(string message, string detail)
         {
-            return new ObjectResult(new ErrorResponse
-            {
-                Message = message,
-                StatusCode = StatusCodes.Status500InternalServerError,
-                Detail = detail
-            })
-            {
-                StatusCode = StatusCodes.Status500InternalServerError
-            };
+        return new ObjectResult(new ErrorResponse
+        {
+            Message = message,
+            StatusCode = StatusCodes.Status500InternalServerError,
+            Detail = detail
+        })
+        {
+            StatusCode = StatusCodes.Status500InternalServerError
+        };
         }
 
         public static ObjectResult NotFound(string message, string detail)

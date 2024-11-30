@@ -33,7 +33,12 @@ namespace ApplicationTracker.Controllers
                         if (!result.Any())
                         {
                             _logger.LogWarning("No Organizations returned");
-                            return NotFound(ErrorHelper.NotFound("Organizations not found", "No Organizations have been added yet"));
+                            return NotFound(new ErrorResponse
+                            {
+                                Message = "Organizations not found",
+                                StatusCode = StatusCodes.Status404NotFound,
+                                Detail = "No Organizations have been added yet"
+                            });
                         }
                         return Ok(result);
                     });
