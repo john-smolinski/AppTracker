@@ -18,45 +18,88 @@ namespace ApplicationTracker.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SourceDto>>> GetSources()
         {
-            var service = _serviceFactory.GetService<SourceDto>();
-            var result = await service.GetAllAsync();
-
-            if (!result.Any())
+            try
             {
-                _logger.LogWarning(message: "No Sources returned. Sources are required for the application");
-                return NotFound(new ErrorResponse
-                {
-                    Message = "Sources missing",
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Detail = "No Sources returned. Sources missing or misconfigured"
-                });
+                return await ServiceCallHandler.HandleServiceCall<SourceDto>(
+                    _serviceFactory,
+                    _logger,
+                    async service =>
+                    {
+                        var result = await service.GetAllAsync();
+                        if (!result.Any())
+                        {
+                            _logger.LogWarning("No Sources returned");
+                            return NotFound(new ErrorResponse
+                            {
+                                Message = "Sources missing",
+                                StatusCode = StatusCodes.Status404NotFound,
+                                Detail = "No Sources returned. Sources missing or misconfigured"
+                            });
+                        }
+                        return Ok(result);
+                    });
             }
-            return Ok(result);
+            catch (InvalidOperationException ioe)
+            {
+                _logger.LogError(ioe, "Service not found");
+                return ErrorHelper.InternalServerError("Service not found", ioe.Message);
+            }
+            catch (ArgumentException ae)
+            {
+                _logger.LogError(ae, "Service not registered in ServiceFactory");
+                return ErrorHelper.InternalServerError("Service not registered in ServiceFactory", ae.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception has occured");
+                return ErrorHelper.InternalServerError("Unhandled exception has occured", ex.Message);
+            }
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("{id}")]
         public async Task<ActionResult<SourceDto>> GetSource(int id)
         {
-            var service = _serviceFactory.GetService<SourceDto>();
-
-            if (!await service.ExistsAsync(id))
+            if (id <= 0)
             {
-                _logger.LogInformation(message: "No Source with id {id} found", id);
-                return NotFound(new ErrorResponse
-                {
-                    Message = "Source not found",
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Detail = $"No Source with id {id} found"
-                });
+                _logger.LogInformation("Invalid Id provided; {id}", id);
+                return ErrorHelper.BadRequest("Invalid Id", "The provided ID must be greater than zero.");
             }
-            var result = await service.GetByIdAsync(id);
+            try
+            {
+                var service = _serviceFactory.GetService<SourceDto>();
 
-            return Ok(result);
+                if (!await service.ExistsAsync(id))
+                {
+                    _logger.LogInformation(message: "Source with id {id} not found", id);
+                    return ErrorHelper.NotFound("Source not found", $"No Source with id {id} found");
+                }
+                var result = await service.GetByIdAsync(id);
+
+                return Ok(result);
+            }
+            catch (InvalidOperationException ioe)
+            {
+                _logger.LogError(ioe, "Service not found");
+                return ErrorHelper.InternalServerError("Service not found", ioe.Message);
+            }
+            catch (ArgumentException ae)
+            {
+                _logger.LogError(ae, "Service not registered in ServiceFactory");
+                return ErrorHelper.InternalServerError("Service not registered in ServiceFactory", ae.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception has occured");
+                return ErrorHelper.InternalServerError("Unhandled exception has occured", ex.Message);
+            }
         }
     }
 }
