@@ -34,9 +34,9 @@ namespace ApplicationTrackerTests.Services
             var result = await _service.GetAllAsync();
 
             // Assert
-            Assert.That(result, Is.Not.Null);
             Assert.Multiple(() =>
             {
+                Assert.That(result, Is.Not.Null);
                 Assert.That(result.Count(), Is.EqualTo(4));
                 Assert.That(result.First().Name, Is.EqualTo(expected));
             });

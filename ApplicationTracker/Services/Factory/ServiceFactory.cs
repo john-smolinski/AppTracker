@@ -4,7 +4,7 @@ using ApplicationTracker.Services.Interfaces;
 
 namespace ApplicationTracker.Services.Factory
 {
-    public class ServiceFactory
+    public class ServiceFactory : IServiceFactory
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly Dictionary<Type, Type> _serviceMap;

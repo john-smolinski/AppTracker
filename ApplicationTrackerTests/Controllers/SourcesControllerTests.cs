@@ -56,17 +56,18 @@ namespace ApplicationTrackerTests.Controllers
             // Act
             var result = await _controller.GetSources();
 
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-
-            var returnedSources = okResult.Value as IEnumerable<SourceDto>;
-            Assert.That(returnedSources, Is.Not.Null);
+            // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(returnedSources.Count(), Is.EqualTo(4));
-                Assert.That(returnedSources.First().Name, Does.StartWith($"Test"));
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+            
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedSources = okResult!.Value as IEnumerable<SourceDto>;
+                Assert.That(returnedSources, Is.Not.Null);
+                Assert.That(returnedSources!.Count(), Is.EqualTo(4));
+                Assert.That(returnedSources!.First().Name, Does.StartWith($"Test"));
             });
         }
 
@@ -82,14 +83,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetSources();
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+                
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
 
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("Sources missing"));
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("Sources missing"));
+            });
         }
 
         [Test]
@@ -111,16 +115,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetSource(testId);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-            var returnedSource = okResult.Value as SourceDto;
-
-            Assert.That(returnedSource, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedSource.Id, Is.EqualTo(testId));
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedSource = okResult!.Value as SourceDto;
+                Assert.That(returnedSource, Is.Not.Null);
+
+                Assert.That(returnedSource!.Id, Is.EqualTo(testId));
                 Assert.That(returnedSource.Name, Is.EqualTo($"Test {testId}"));
             });
         }
@@ -138,16 +143,16 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetSource(testId);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
-
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(errorResponse.Message, Is.EqualTo("Source not found"));
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+                
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
+
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("Source not found"));
                 Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
             });
         }

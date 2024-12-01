@@ -58,17 +58,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetLocations();
 
             // Assert
-            Assert.That(result.Result, Is.Not.Null);
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-
-            var returnedLocations = okResult.Value as IEnumerable<LocationDto>;
-            Assert.That(returnedLocations, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedLocations.Count(), Is.EqualTo(4));
-                Assert.That(returnedLocations.First().Name, Does.StartWith($"Test"));
+                Assert.That(result.Result, Is.Not.Null);
+            
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedLocations = okResult!.Value as IEnumerable<LocationDto>;
+                Assert.That(returnedLocations, Is.Not.Null);
+                Assert.That(returnedLocations!.Count(), Is.EqualTo(4));
+                Assert.That(returnedLocations!.First().Name, Does.StartWith($"Test"));
             });
         }
 
@@ -84,14 +84,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetLocations();
 
             // Asert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+                
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
 
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("Locations not found"));
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("Locations not found"));
+            });
         }
 
         [Test]
@@ -112,16 +115,16 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetLocation(testId);
 
             // Asert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-            var returnedLocation = okResult.Value as LocationDto;
-
-            Assert.That(returnedLocation, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedLocation.Id, Is.EqualTo(testId));
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedLocation = okResult!.Value as LocationDto;
+                Assert.That(returnedLocation, Is.Not.Null);
+                Assert.That(returnedLocation!.Id, Is.EqualTo(testId));
                 Assert.That(returnedLocation.Name, Is.EqualTo($"Test {testId}"));
             });
         }
@@ -139,16 +142,16 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetLocation(testId);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
-
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(errorResponse.Message, Is.EqualTo("Location not found"));
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
+                
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("Location not found"));
                 Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
             });
         }
