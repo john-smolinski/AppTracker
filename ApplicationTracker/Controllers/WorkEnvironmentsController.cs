@@ -15,50 +15,42 @@ namespace ApplicationTracker.Controllers
         private readonly ServiceFactory _serviceFactory = serviceFactory;
         private readonly ILogger<WorkEnvironmentsController> _logger = logger;
 
+        /// <summary>
+        /// Get a list of all Sources
+        /// </summary>
+        /// <returns>List of Sources or an error response</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkEnvironmentDto>>> GetEnvironments()
         {
-            try
-            {
-                return await ServiceCallHandler.HandleServiceCall<WorkEnvironmentDto>(
-                    _serviceFactory,
-                    _logger,
-                    async service =>
+
+            return await ServiceCallHandler.HandleServiceCall<WorkEnvironmentDto>(
+                _serviceFactory,
+                _logger,
+                async service =>
+                {
+                    var result = await service.GetAllAsync();
+                    if (!result.Any())
                     {
-                        var result = await service.GetAllAsync();
-                        if (!result.Any())
+                        _logger.LogWarning("No WorkEnvironments returned. WorkEnvironments are required for the application");
+                        return NotFound(new ErrorResponse
                         {
-                            _logger.LogWarning("No WorkEnvironments returned. WorkEnvironments are required for the application");
-                            return NotFound(new ErrorResponse
-                            {
-                                Message = "WorkEnvironments missing",
-                                StatusCode = StatusCodes.Status404NotFound,
-                                Detail = "No WorkEnvironments returned. WorkEnviroments missing or misconfigured"
-                            });
-                        }
-                        return Ok(result);
-                    });
-            }
-            catch (InvalidOperationException ioe)
-            {
-                _logger.LogError(ioe, "Service not found");
-                return ErrorHelper.InternalServerError("Service not found", ioe.Message);
-            }
-            catch (ArgumentException ae)
-            {
-                _logger.LogError(ae, "Service not registered in ServiceFactory");
-                return ErrorHelper.InternalServerError("Service not registered in ServiceFactory", ae.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception has occured");
-                return ErrorHelper.InternalServerError("Unhandled exception has occured", ex.Message);
-            }
+                            Message = "WorkEnvironments missing",
+                            StatusCode = StatusCodes.Status404NotFound,
+                            Detail = "No WorkEnvironments returned. WorkEnviroments missing or misconfigured"
+                        });
+                    }
+                    return Ok(result);
+                });
         }
 
+        /// <summary>
+        /// Retrieves a WorkEnvironment by Id
+        /// </summary>
+        /// <param name="id">The WorkEnvironment Id</param>
+        /// <returns>A WorkEnvironment or an error response</returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -66,39 +58,53 @@ namespace ApplicationTracker.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<WorkEnvironmentDto>> GetWorkEnvironment(int id)
         {
-            if (id <= 0)
+            if (!ValidationHelper.IsValidId(id, out var badRequestResult))
             {
                 _logger.LogInformation("Invalid Id provided; {id}", id);
-                return ErrorHelper.BadRequest("Invalid Id", "The provided ID must be greater than zero.");
+                return badRequestResult;
             }
-            try
-            {
-                var service = _serviceFactory.GetService<WorkEnvironmentDto>();
-
-                if (!await service.ExistsAsync(id))
+            return await ServiceCallHandler.HandleServiceCall<WorkEnvironmentDto>(
+                _serviceFactory,
+                _logger,
+                async service =>
                 {
-                    _logger.LogInformation(message: "WorkEnvironment with id {id} not found", id);
-                    return ErrorHelper.NotFound("WorkEnvironment not found", $"No WorkEnvironment with id {id} found");
-                }
-                var result = await service.GetByIdAsync(id);
+                    if (!await service.ExistsAsync(id))
+                    {
+                        _logger.LogInformation("WorkEnvironment with Id {id} not found", id);
+                        return ErrorHelper.NotFound("WorkEnvironment not found", $"No WorkEnvironment with Id {id} found");
+                    }
 
-                return Ok(result);
-            }
-            catch (InvalidOperationException ioe)
+                    var result = await service.GetByIdAsync(id);
+                    return Ok(result);
+                });
+        }
+
+        /// <summary>
+        /// Retrieves Applications related to a specific WorkEnvironment 
+        /// </summary>
+        /// <param name="id">The WorkEnvironment Id</param>
+        /// <returns>List of applications or an error response.</returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("{id}/applications")]
+        public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetRelatedApplications(int id)
+        {
+            if (!ValidationHelper.IsValidId(id, out var badRequestResult))
             {
-                _logger.LogError(ioe, "Service not found");
-                return ErrorHelper.InternalServerError("Service not found", ioe.Message);
+                _logger.LogInformation("Invalid Id provided; {id}", id);
+                return badRequestResult;
             }
-            catch (ArgumentException ae)
-            {
-                _logger.LogError(ae, "Service not registered in ServiceFactory");
-                return ErrorHelper.InternalServerError("Service not registered in ServiceFactory", ae.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled exception has occured");
-                return ErrorHelper.InternalServerError("Unhandled exception has occured", ex.Message);
-            }
+
+            return await ServiceCallHandler.HandleServiceCall<WorkEnvironmentDto>(
+                _serviceFactory,
+                _logger,
+                async service =>
+                {
+                    var result = await service.GetRelatedApplicationsAsync(id);
+                    return Ok(result);
+                });
         }
     }
 }
