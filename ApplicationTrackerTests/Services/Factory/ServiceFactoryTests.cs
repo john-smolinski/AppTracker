@@ -13,6 +13,8 @@ namespace ApplicationTrackerTests.Services.Factory
         private Mock<IServiceProvider> _mockServiceProvider;
         private ServiceFactory _serviceFactory;
 
+        private class UnmappedDto { }
+
         [SetUp]
         public void Setup()
         {

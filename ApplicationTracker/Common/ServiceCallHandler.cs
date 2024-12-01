@@ -7,7 +7,7 @@ namespace ApplicationTracker.Common
     public static class ServiceCallHandler
     {
         public static async Task<ActionResult> HandleServiceCall<TService>(
-                ServiceFactory serviceFactory,
+                IServiceFactory serviceFactory,
                 ILogger logger,
                 Func<IService<TService>, Task<ActionResult>> action)
             where TService : class
