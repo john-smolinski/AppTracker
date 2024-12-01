@@ -58,18 +58,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetJobTitles();
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-
-            var returnedJobTitles = okResult.Value as IEnumerable<JobTitleDto>;
-           
-            Assert.That(returnedJobTitles, Is.Not.Null);            
             Assert.Multiple(() =>
             {
-                Assert.That(returnedJobTitles.Count(), Is.EqualTo(4));
-                Assert.That(returnedJobTitles.First().Name, Does.StartWith("Test"));
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+                
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedJobTitles = okResult!.Value as IEnumerable<JobTitleDto>;
+                Assert.That(returnedJobTitles, Is.Not.Null);
+                Assert.That(returnedJobTitles!.Count(), Is.EqualTo(4));
+                Assert.That(returnedJobTitles!.First().Name, Does.StartWith("Test"));
             });
         }
 
@@ -85,14 +84,17 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetJobTitles();
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
 
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
-            Assert.That(errorResponse.Message, Is.EqualTo("JobTitles not found"));
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
+                
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("JobTitles not found"));
+            });
         }
 
         [Test]
@@ -113,16 +115,16 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetJobTitle(testId);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-            var okResult = result.Result as OkObjectResult;
-
-            Assert.That(okResult, Is.Not.Null);
-            var returnedJobTitle = okResult.Value as JobTitleDto;
-
-            Assert.That(returnedJobTitle, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(returnedJobTitle.Id, Is.EqualTo(testId));
+                Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
+                
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult, Is.Not.Null);
+
+                var returnedJobTitle = okResult!.Value as JobTitleDto;
+                Assert.That(returnedJobTitle, Is.Not.Null);
+                Assert.That(returnedJobTitle!.Id, Is.EqualTo(testId));
                 Assert.That(returnedJobTitle.Name, Is.EqualTo($"Test {testId}"));
             });
         }
@@ -140,16 +142,16 @@ namespace ApplicationTrackerTests.Controllers
             var result = await _controller.GetJobTitle(testId);
 
             // Assert
-            Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            var notFoundResult = result.Result as NotFoundObjectResult;
-
-            Assert.That(notFoundResult, Is.Not.Null);
-            var errorResponse = notFoundResult.Value as ErrorResponse;
-
-            Assert.That(errorResponse, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(errorResponse.Message, Is.EqualTo("JobTitle not found"));
+                Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
+                
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult, Is.Not.Null);
+
+                var errorResponse = notFoundResult!.Value as ErrorResponse;
+                Assert.That(errorResponse, Is.Not.Null);
+                Assert.That(errorResponse!.Message, Is.EqualTo("JobTitle not found"));
                 Assert.That(errorResponse.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
             });
         }

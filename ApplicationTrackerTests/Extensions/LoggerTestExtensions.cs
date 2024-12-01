@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Moq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ApplicationTrackerTests.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class LoggerTestExtensions
     {
         public static void VerifyLog(

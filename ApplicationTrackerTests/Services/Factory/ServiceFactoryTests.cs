@@ -2,7 +2,6 @@
 using ApplicationTracker.Services;
 using ApplicationTracker.Services.Factory;
 using ApplicationTracker.Services.Interfaces;
-using ApplicationTrackerTests.Helpers;
 using Moq;
 
 namespace ApplicationTrackerTests.Services.Factory
@@ -35,9 +34,9 @@ namespace ApplicationTrackerTests.Services.Factory
             var result = _serviceFactory.GetService<JobTitleDto>();
 
             // Assert
-            Assert.That(result, Is.Not.Null);
             Assert.Multiple(() =>
             {
+                Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.InstanceOf<IService<JobTitleDto>>());
                 Assert.That(result, Is.EqualTo(mockJobTitleService.Object));
             });

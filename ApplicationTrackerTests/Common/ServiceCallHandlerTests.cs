@@ -70,11 +70,8 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-            });
-
-            var errorResponse = objectResult.Value as ErrorResponse;
-            Assert.Multiple(() =>
-            {
+                
+                var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Unexpected error"));
                 Assert.That(errorResponse.Detail, Is.EqualTo("The service call returned a null result."));
@@ -105,11 +102,8 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-            });
-
-            var errorResponse = objectResult.Value as ErrorResponse;
-            Assert.Multiple(() =>
-            {
+                
+                var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Service not found"));
             });
@@ -140,11 +134,8 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-            });
-
-            var errorResponse = objectResult.Value as ErrorResponse;
-            Assert.Multiple(() =>
-            {
+                
+                var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Service not registered in ServiceFactory"));
             });
@@ -174,11 +165,8 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-            });
 
-            var errorResponse = objectResult.Value as ErrorResponse;
-            Assert.Multiple(() =>
-            {
+                var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Unhandled exception occurred"));
             });
