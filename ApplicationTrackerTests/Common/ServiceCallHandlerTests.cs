@@ -59,7 +59,7 @@ namespace ApplicationTrackerTests.Common
             var result = await ServiceCallHandler.HandleServiceCall<TestService>(
                 _mockServiceFactory.Object,
                 _mockLogger.Object,
-                service => Task.FromResult<ActionResult>(null));
+                service => Task.FromResult<ActionResult>(null!));
 
             // Assert
             Assert.That(result, Is.InstanceOf<ObjectResult>());
@@ -176,11 +176,9 @@ namespace ApplicationTrackerTests.Common
         [Test]
         public void HandleServiceCall_ThrowsArgumentNullException_WhenActionIsNull()
         {
-#pragma warning disable CS8625
             // Act & Assert
             Assert.ThrowsAsync<ArgumentNullException>(async () =>
-                await ServiceCallHandler.HandleServiceCall<TestService>(_mockServiceFactory.Object, _mockLogger.Object, null));
-#pragma warning restore CS8625
+                await ServiceCallHandler.HandleServiceCall<TestService>(_mockServiceFactory.Object, _mockLogger.Object, null!));
         }
     }
 }
