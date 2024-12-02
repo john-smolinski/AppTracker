@@ -92,7 +92,7 @@ namespace ApplicationTrackerTests.Common
             var detail = "Detail message";
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(null, detail));
+            Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(null!, detail));
             Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(string.Empty, detail));
         }
 
@@ -103,7 +103,7 @@ namespace ApplicationTrackerTests.Common
             var message = "Error message";
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(message, null));
+            Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(message, null!));
             Assert.Throws<ArgumentException>(() => ErrorHelper.InternalServerError(message, string.Empty));
         }
     }
