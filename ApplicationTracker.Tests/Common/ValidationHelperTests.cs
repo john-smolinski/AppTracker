@@ -10,7 +10,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public void IsValidId_ReturnsTrue_WhenIdIsGreaterThanZero()
         {
-            // Setu
+            // Setup
             int id = 5;
 
             // Act
@@ -27,7 +27,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public void IsValidId_ReturnsFalse_WhenIdIsZeroOrLess()
         {
-            // Arrange
+            // Setup
             int id = 0;
 
             // Act
