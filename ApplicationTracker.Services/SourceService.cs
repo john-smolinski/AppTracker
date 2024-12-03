@@ -3,45 +3,45 @@ using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace ApplicationTracker.Services
 {
-    public class LocationService(TrackerDbContext context, ILogger<LocationService> logger) : IService<LocationDto>
+    public class SourceService(TrackerDbContext context, ILogger<SourceService> logger) : IService<SourceDto>
     {
         private readonly TrackerDbContext _context = context;
-        private readonly ILogger<LocationService> _logger = logger;
+        private readonly ILogger<SourceService> _logger = logger;
 
-        public async Task<IEnumerable<LocationDto>> GetAllAsync()
+        public async Task<IEnumerable<SourceDto>> GetAllAsync()
         {
-            return await _context.Locations
-                .Select(x => new LocationDto { Id = x.Id, Name = x.Name })
+            return await _context.Sources
+                .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
                 .ToListAsync();
         }
 
-        public async Task<LocationDto?> GetByIdAsync(int id)
+        public async Task<SourceDto?> GetByIdAsync(int id)
         {
-            var result = await _context.Locations
+            var result = await _context.Sources
                 .Where(x => x.Id == id)
-                .Select(x => new LocationDto 
-                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
+                .Select(x => new SourceDto { Id = x.Id, Name= x.Name })
                 .FirstOrDefaultAsync();
-
+            
             if(result == null)
             {
-                _logger.LogInformation("No Location with id {id} found", id);
+                _logger.LogInformation("No Sources with id {id} found", id);
             }
             return result;
         }
 
         public async Task<bool> ExistsAsync(int id)
         {
-            return await _context.Locations.AnyAsync(x => x.Id == id);
+            return await _context.Sources.AnyAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
         {
             return await _context.Applications
-                .Where(x => x.LocationId == id)
+                .Where(x => x.SourceId == id)
                 .Select(x => new ApplicationDto
                 {
                     ApplicaitionDate = x.ApplicationDate,

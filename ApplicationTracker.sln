@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.ImportCl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Data", "ApplicationTracker.Data\ApplicationTracker.Data.csproj", "{5D0954D9-A686-47EB-8BDA-6A421B914DDA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services", "ApplicationTracker.Services\ApplicationTracker.Services.csproj", "{06D567F1-A672-4693-9C5D-C5F811CDBEC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{5D0954D9-A686-47EB-8BDA-6A421B914DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D0954D9-A686-47EB-8BDA-6A421B914DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5D0954D9-A686-47EB-8BDA-6A421B914DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ApplicationTracker.Data\ApplicationTracker.Data.csproj" />
+    <ProjectReference Include="..\ApplicationTracker.Services\ApplicationTracker.Services.csproj" />
   </ItemGroup>
 
 </Project>
