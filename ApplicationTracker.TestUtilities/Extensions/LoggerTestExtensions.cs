@@ -2,7 +2,7 @@
 using Moq;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ApplicationTrackerTests.Extensions
+namespace ApplicationTracker.TestUtilities.Extensions
 {
     [ExcludeFromCodeCoverage]
     public static class LoggerTestExtensions
@@ -17,7 +17,7 @@ namespace ApplicationTrackerTests.Extensions
                 x => x.Log(
                     logLevel,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains(expectedMessage)),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString()!.Contains(expectedMessage)),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                 times);

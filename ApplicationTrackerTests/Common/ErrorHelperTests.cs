@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationTrackerTests.Common
+namespace ApplicationTracker.Tests.Common
 {
     [TestFixture]
     public class ErrorHelperTests

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
 
-namespace ApplicationTrackerTests.Controllers
+namespace ApplicationTracker.Tests.Controllers
 {
 
     [TestFixture]
@@ -61,7 +61,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-                
+
                 var okResult = result.Result as OkObjectResult;
                 Assert.That(okResult, Is.Not.Null);
 
@@ -90,7 +90,7 @@ namespace ApplicationTrackerTests.Controllers
 
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
-                
+
                 var errorResponse = notFoundResult!.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null);
                 Assert.That(errorResponse!.Message, Is.EqualTo("JobTitles not found"));
@@ -102,11 +102,11 @@ namespace ApplicationTrackerTests.Controllers
         {
             // Setup
             var testId = 1;
-            
+
             _mockService
                 .Setup(service => service.ExistsAsync(testId))
                 .ReturnsAsync(true);
-            
+
             _mockService
                 .Setup(service => service.GetByIdAsync(testId))
                  .ReturnsAsync(_jobTitles.First(x => x.Id == testId));
@@ -118,7 +118,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-                
+
                 var okResult = result.Result as OkObjectResult;
                 Assert.That(okResult, Is.Not.Null);
 
@@ -145,7 +145,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-                
+
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
 

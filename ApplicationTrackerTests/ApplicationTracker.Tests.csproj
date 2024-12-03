@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApplicationTracker.TestUtilities\ApplicationTracker.TestUtilities.csproj" />
     <ProjectReference Include="..\ApplicationTracker\ApplicationTracker.csproj" />
   </ItemGroup>
 

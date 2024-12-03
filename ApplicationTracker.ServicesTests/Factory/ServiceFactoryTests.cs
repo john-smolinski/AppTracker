@@ -1,10 +1,9 @@
 ﻿using ApplicationTracker.Data.Dtos;
-using ApplicationTracker.Services;
 using ApplicationTracker.Services.Factory;
 using ApplicationTracker.Services.Interfaces;
 using Moq;
 
-namespace ApplicationTrackerTests.Services.Factory
+namespace ApplicationTracker.Services.Tests.Factory
 {
     [TestFixture]
     public class ServiceFactoryTests

@@ -5,13 +5,17 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationTracker", "ApplicationTracker\ApplicationTracker.csproj", "{8D4E3693-E71C-474C-8537-5AADF00C55F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationTrackerTests", "ApplicationTrackerTests\ApplicationTrackerTests.csproj", "{A187CAFD-A621-46E0-B9B0-A59472720F4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ApplicationTracker.Tests", "ApplicationTrackerTests\ApplicationTracker.Tests.csproj", "{A187CAFD-A621-46E0-B9B0-A59472720F4B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.ImportCli", "ApplicationTracker.ImportCli\ApplicationTracker.ImportCli.csproj", "{460B9536-B5FE-4867-96F2-3042772B278A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Data", "ApplicationTracker.Data\ApplicationTracker.Data.csproj", "{5D0954D9-A686-47EB-8BDA-6A421B914DDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services", "ApplicationTracker.Services\ApplicationTracker.Services.csproj", "{06D567F1-A672-4693-9C5D-C5F811CDBEC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services.Tests", "ApplicationTracker.ServicesTests\ApplicationTracker.Services.Tests.csproj", "{384C02CF-EBCB-47B2-BC88-8A2DBE463918}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.TestUtilities", "ApplicationTracker.TestUtilities\ApplicationTracker.TestUtilities.csproj", "{A503BAF8-88BA-405B-94AE-FA21B244B02D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +43,14 @@ Global
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{384C02CF-EBCB-47B2-BC88-8A2DBE463918}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{384C02CF-EBCB-47B2-BC88-8A2DBE463918}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{384C02CF-EBCB-47B2-BC88-8A2DBE463918}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{384C02CF-EBCB-47B2-BC88-8A2DBE463918}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A503BAF8-88BA-405B-94AE-FA21B244B02D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A503BAF8-88BA-405B-94AE-FA21B244B02D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A503BAF8-88BA-405B-94AE-FA21B244B02D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A503BAF8-88BA-405B-94AE-FA21B244B02D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

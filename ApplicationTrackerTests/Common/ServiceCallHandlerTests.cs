@@ -1,12 +1,12 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Services.Interfaces;
-using ApplicationTrackerTests.Extensions;
+using ApplicationTracker.TestUtilities.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ApplicationTrackerTests.Common
+namespace ApplicationTracker.Tests.Common
 {
     [TestFixture]
     public class ServiceCallHandlerTests
@@ -14,7 +14,7 @@ namespace ApplicationTrackerTests.Common
         private Mock<IServiceFactory> _mockServiceFactory;
         private Mock<IService<TestService>> _mockService;
         private Mock<ILogger> _mockLogger;
-        
+
         public class TestService { }
 
         [SetUp]
@@ -70,7 +70,7 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-                
+
                 var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Unexpected error"));
@@ -102,7 +102,7 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-                
+
                 var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Service not found"));
@@ -134,7 +134,7 @@ namespace ApplicationTrackerTests.Common
                 Assert.That(objectResult, Is.Not.Null, "ObjectResult is null");
                 Assert.That(objectResult!.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult.Value, Is.InstanceOf<ErrorResponse>());
-                
+
                 var errorResponse = objectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null, "ErrorResponse is null");
                 Assert.That(errorResponse!.Message, Is.EqualTo("Service not registered in ServiceFactory"));

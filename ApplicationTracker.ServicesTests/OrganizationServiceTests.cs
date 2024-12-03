@@ -1,25 +1,26 @@
 ﻿using ApplicationTracker.Data.Entities;
 using ApplicationTracker.Services;
-using ApplicationTrackerTests.Helpers;
+using ApplicationTracker.TestUtilities.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace ApplicationTrackerTests.Services
+namespace ApplicationTracker.Services.Tests
 {
     [TestFixture]
-    public class SourcesServiceTests
+    public class OrganizationServiceTests
     {
-        private Mock<ILogger<SourceService>> _mockLogger;
-        private SourceService _service;
+        private Mock<ILogger<OrganizationService>> _mockLogger;
+        private OrganizationService _service;
 
         [SetUp]
         public void Setup()
         {
             // create a in memery context with 4 rows.
-            var context = ContextHelper.GetInMemoryContext<Source>(4);
+            var context = ContextHelper.GetInMemoryContext<Organization>(4);
 
-            _mockLogger = new Mock<ILogger<SourceService>>();
-            _service = new SourceService(context, _mockLogger.Object);
+            _mockLogger = new Mock<ILogger<OrganizationService>>();
+            _service = new OrganizationService(context, _mockLogger.Object);
+
         }
 
         [Test]
@@ -27,13 +28,12 @@ namespace ApplicationTrackerTests.Services
         {
             // Setup
             var testId = 1;
-            var expected = $"Test {typeof(Source).Name} {testId}";
+            var expected = $"Test {typeof(Organization).Name} {testId}";
 
             // Act
             var result = await _service.GetAllAsync();
 
             // Assert
-            
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);

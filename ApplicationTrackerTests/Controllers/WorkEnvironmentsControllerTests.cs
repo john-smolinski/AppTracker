@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
 
-namespace ApplicationTrackerTests.Controllers
+namespace ApplicationTracker.Tests.Controllers
 {
     [TestFixture]
     public class WorkEnvironmentsControllerTests
@@ -58,7 +58,7 @@ namespace ApplicationTrackerTests.Controllers
 
             // Assert
             Assert.Multiple(() =>
-            {            
+            {
                 Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
 
                 var okResult = result.Result as OkObjectResult;
@@ -86,10 +86,10 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-                
+
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
-                
+
                 var errorResponse = notFoundResult!.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null);
                 Assert.That(errorResponse!.Message, Is.EqualTo("WorkEnvironments missing"));
@@ -101,7 +101,7 @@ namespace ApplicationTrackerTests.Controllers
         {
             // Setup
             var testId = 1;
-            
+
             _mockService
                 .Setup(service => service.ExistsAsync(testId))
                 .ReturnsAsync(true);
@@ -117,13 +117,13 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<OkObjectResult>());
-                
+
                 var okResult = result.Result as OkObjectResult;
                 Assert.That(okResult, Is.Not.Null);
-                
+
                 var returnedEnvironment = okResult!.Value as WorkEnvironmentDto;
                 Assert.That(returnedEnvironment, Is.Not.Null);
-                Assert.That(returnedEnvironment!.Id, Is.EqualTo(testId)); 
+                Assert.That(returnedEnvironment!.Id, Is.EqualTo(testId));
                 Assert.That(returnedEnvironment.Name, Is.EqualTo($"Test {testId}"));
             });
         }
@@ -144,10 +144,10 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-            
+
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
-            
+
                 var errorResponse = notFoundResult!.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null);
                 Assert.That(errorResponse!.Message, Is.EqualTo("WorkEnvironment not found"));

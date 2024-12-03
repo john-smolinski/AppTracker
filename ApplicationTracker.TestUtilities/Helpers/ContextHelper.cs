@@ -3,7 +3,7 @@ using ApplicationTracker.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ApplicationTrackerTests.Helpers
+namespace ApplicationTracker.TestUtilities.Helpers
 {
     [ExcludeFromCodeCoverage]
     public static class ContextHelper
@@ -32,7 +32,7 @@ namespace ApplicationTrackerTests.Helpers
             context.SaveChanges();
         }
 
-        public static IEnumerable<T> GenerateTestEntities<T>(int count) 
+        public static IEnumerable<T> GenerateTestEntities<T>(int count)
             where T : BaseEntity, new()
         {
             return Enumerable.Range(1, count).Select(i => new T

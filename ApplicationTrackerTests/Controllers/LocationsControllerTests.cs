@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework.Internal;
 
-namespace ApplicationTrackerTests.Controllers
+namespace ApplicationTracker.Tests.Controllers
 {
     [TestFixture]
     public class LocationsControllerTests
@@ -39,7 +39,7 @@ namespace ApplicationTrackerTests.Controllers
 
             var mockServiceProvider = new Mock<IServiceProvider>();
             mockServiceProvider
-                .Setup(sp =>  sp.GetService(typeof(LocationService)))
+                .Setup(sp => sp.GetService(typeof(LocationService)))
                 .Returns(_mockService.Object);
 
             _serviceFactory = new ServiceFactory(mockServiceProvider.Object);
@@ -61,7 +61,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.Not.Null);
-            
+
                 var okResult = result.Result as OkObjectResult;
                 Assert.That(okResult, Is.Not.Null);
 
@@ -87,7 +87,7 @@ namespace ApplicationTrackerTests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.InstanceOf<NotFoundObjectResult>());
-                
+
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
 
@@ -148,7 +148,7 @@ namespace ApplicationTrackerTests.Controllers
 
                 var notFoundResult = result.Result as NotFoundObjectResult;
                 Assert.That(notFoundResult, Is.Not.Null);
-                
+
                 var errorResponse = notFoundResult!.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null);
                 Assert.That(errorResponse!.Message, Is.EqualTo("Location not found"));
