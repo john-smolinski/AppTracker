@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services.Tests", "ApplicationTracker.Services.Tests\ApplicationTracker.Services.Tests.csproj", "{C44582F1-53A1-4500-A101-1A7332DDAB5D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.ImportCli.Test", "ApplicationTracker.ImportCli.Test\ApplicationTracker.ImportCli.Test.csproj", "{FB8BE2EC-3396-4C3E-8D61-3925FB20CDB2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{C44582F1-53A1-4500-A101-1A7332DDAB5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C44582F1-53A1-4500-A101-1A7332DDAB5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C44582F1-53A1-4500-A101-1A7332DDAB5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB8BE2EC-3396-4C3E-8D61-3925FB20CDB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB8BE2EC-3396-4C3E-8D61-3925FB20CDB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB8BE2EC-3396-4C3E-8D61-3925FB20CDB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB8BE2EC-3396-4C3E-8D61-3925FB20CDB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,58 +3,53 @@ using ApplicationTracker.ImportCli.CommandLine;
 
 namespace ApplicationTracker.ImportCli
 {
-
-    internal class Program
+    public class Program
     {
-        internal static void Main(string[] args)
+        public static int ProcessArguments(string[] args)
         {
-            Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(options =>
-                {
-                    // drop out if we're not reporting or executing migrations
-                    if (!options.Report && !options.Execute)
+            return Parser.Default.ParseArguments<Options>(args)
+                .MapResult(
+                    options =>
                     {
-                        Console.WriteLine("Error: Either --report (-r) or --execute (-x) must be provided.");
-                        Environment.Exit(1);
-                    }
-                    if (options.Report && options.Execute) 
-                    {
-                        Console.WriteLine("Error: Only one of --report (-r) or --execute (-x) can be provided at same time");
-                        Environment.Exit(1);
-                    }
-
-                    // drop out if execute was passed without identifying the entities
-                    if (options.Execute)
-                    {
-                        if (!(options.JobTitles || options.Locations || options.Organizations ||
-                              options.Sources || options.WorkEnvironments || options.All))
+                        if (!options.Report && !options.Execute)
+                        {
+                            Console.WriteLine("Error: Either --report (-r) or --execute (-x) must be provided.");
+                            return 1;
+                        }
+                        if (options.Report && options.Execute)
+                        {
+                            Console.WriteLine("Error: Only one of --report (-r) or --execute (-x) can be provided at the same time");
+                            return 1;
+                        }
+                        if (options.Execute && !(options.JobTitles || options.Locations || options.Organizations || options.Sources || options.WorkEnvironments || options.All))
                         {
                             Console.WriteLine("Error: When using --execute (-x), at least one of --titles (-t), --locations (-l), --organizations (-o), --sources (-s), --environments (-e), or --all (-a) must be specified.");
-                            Environment.Exit(1);
+                            return 1;
                         }
-                    }
-                    // report config
-                    if (options.Report)
-                    {
-                        if (!(options.JobTitles || options.Locations || options.Organizations ||
-                              options.Sources || options.WorkEnvironments || options.All))
+
+                        if (options.Report && !(options.JobTitles || options.Locations || options.Organizations || options.Sources || options.WorkEnvironments || options.All))
                         {
-                            // default to 'all' if no specific entity options are provided
-                            options.All = true; 
+                            options.All = true;
                             Console.WriteLine("Info: Defaulting to --all (-a) for the report operation.");
                         }
-                    }
 
-                    ExecuteOptions(options);
-                })
-                .WithNotParsed(errors =>
-                {
-                    Console.WriteLine("Error parsing arguments. Use --help for usage information.");
-                    Environment.Exit(1);
-                });
+                        ExecuteOptions(options);
+                        return 0;
+                    },
+                    errors =>
+                    {
+                        Console.WriteLine("Error parsing arguments. Use --help for usage information.");
+                        return 1;
+                    });
         }
 
-        internal static void ExecuteOptions(Options options)
+        public static void Main(string[] args)
+        {
+            var exitCode = ProcessArguments(args);
+            Environment.Exit(exitCode);
+        }
+    
+        public static void ExecuteOptions(Options options)
         {
             if (options.Report)
             {
@@ -107,7 +102,7 @@ namespace ApplicationTracker.ImportCli
                     // add exectuion 
                 }
                 if (options.Organizations)
-                { 
+                {
                     Console.WriteLine("Executing on Organizations.");
                     // add exectuion 
                 }
