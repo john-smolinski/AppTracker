@@ -11,6 +11,17 @@ namespace ApplicationTracker.ImportCli
                 .MapResult(
                     options =>
                     {
+                        if(!options.ValidateRequired())
+                        {
+                            Console.WriteLine("GGH");
+                            return 1;
+                        }
+
+                        if(!options.ValidateFilePath())
+                        {
+                            Console.WriteLine("Error: File is missing or invalid");
+                            return 1;
+                        }
                         if (!options.Report && !options.Execute)
                         {
                             Console.WriteLine("Error: Either --report (-r) or --execute (-x) must be provided.");
