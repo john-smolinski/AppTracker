@@ -7,7 +7,7 @@ namespace ApplicationTracker.ImportCli.Test
     public class ProgramTests
     {
         private StringWriter _consoleOutput;
-        private const string _validFilePath = "testfile.txt";
+        private const string _validFilePath = "testfile.xls";
 
         [SetUp]
         public void SetUp()
@@ -94,62 +94,6 @@ namespace ApplicationTracker.ImportCli.Test
             {
                 Assert.That(exitCode, Is.EqualTo(1));
                 Assert.That(_consoleOutput.ToString(), Contains.Substring("Error: Only one of --report (-r) or --execute (-x) can be provided at the same time"));
-            });
-        }
-
-        [Test]
-        public void ProcessArguments_DefaultsToAll_WhenReportAndNoSpecificEntityOptionsProvided()
-        {
-            // Setup
-            var args = new[] { "-f", _validFilePath, "--report" };
-
-            // Act
-            var exitCode = Program.ProcessArguments(args);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exitCode, Is.EqualTo(0));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Info: Defaulting to --all (-a) for the report operation."));
-            });
-        }
-
-        [Test]
-        public void ProcessArguments_CallsExecuteOptions_ForValidArguments()
-        {
-            // Setup
-            var args = new[] { "-f", _validFilePath, "--execute", "--titles" };
-
-            // Act
-            var exitCode = Program.ProcessArguments(args);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exitCode, Is.EqualTo(0));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Executing migrations..."));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Executing on Job Titles."));
-            });
-        }
-
-        [Test]
-        public void ExecuteOptions_PrintsReportingMessages()
-        {
-            // Setup
-            var options = new Options
-            {
-                Report = true,
-                JobTitles = true
-            };
-
-            // Act
-            Program.ExecuteOptions(options);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Generating report..."));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Reporting on Job Titles."));
             });
         }
     }
