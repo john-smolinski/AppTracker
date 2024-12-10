@@ -1,5 +1,9 @@
-﻿using CommandLine;
+﻿using ApplicationTracker.Data;
+using ApplicationTracker.Data.Entities;
 using ApplicationTracker.ImportCli.CommandLine;
+using ClosedXML.Excel;
+using CommandLine;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApplicationTracker.ImportCli
 {
@@ -13,7 +17,7 @@ namespace ApplicationTracker.ImportCli
                     {
                         if(!options.ValidateRequired())
                         {
-                            Console.WriteLine("GGH");
+                            Console.WriteLine("Error: File option missing");
                             return 1;
                         }
 
@@ -62,8 +66,17 @@ namespace ApplicationTracker.ImportCli
     
         public static void ExecuteOptions(Options options)
         {
+            // validation passed need to load first sheet of workbook (hard coded)
+            var worksheet = new XLWorkbook(options.FilePath).Worksheet(1);
+
+            // TODO hard coding connection string temporarily 
+            var context = new TrackerDbContext(new DbContextOptionsBuilder<TrackerDbContext>()
+                .UseSqlServer("Server=localhost; Database=Tracker; Integrated Security=True; TrustServerCertificate=True;").Options);
+
             if (options.Report)
             {
+                var reporter = new ReportGenerator(context);
+
                 Console.WriteLine("Generating report...");
                 if (options.All)
                 {
@@ -74,22 +87,31 @@ namespace ApplicationTracker.ImportCli
                     if (options.JobTitles)
                     {
                         Console.WriteLine("Reporting on Job Titles.");
-                    }
-                    if (options.Locations)
-                    {
-                        Console.WriteLine("Reporting on Locations.");
+                        var report = reporter.GenerateReport<JobTitle>(worksheet);
+                        Console.WriteLine(report);
                     }
                     if (options.Organizations)
                     {
                         Console.WriteLine("Reporting on Organizations.");
+                        var report = reporter.GenerateReport<Organization>(worksheet);
+                        Console.WriteLine(report);
                     }
                     if (options.Sources)
                     {
                         Console.WriteLine("Reporting on Sources.");
+                        var report = reporter.GenerateReport<Source>(worksheet);
+                        Console.WriteLine(report);
                     }
                     if (options.WorkEnvironments)
                     {
                         Console.WriteLine("Reporting on Work Environments.");
+                        var report = reporter.GenerateReport<WorkEnvironment>(worksheet);
+                        Console.WriteLine(report);
+                    }
+                    // edge cases
+                    if (options.Locations)
+                    {
+                        Console.WriteLine("Reporting on Locations.");
                     }
                 }
             }
