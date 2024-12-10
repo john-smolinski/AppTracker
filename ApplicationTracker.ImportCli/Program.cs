@@ -16,7 +16,6 @@ namespace ApplicationTracker.ImportCli
             Environment.Exit(exitCode);
         }
 
-
         public static int ProcessArguments(string[] args)
         {
             return Parser.Default.ParseArguments<Options>(args)
@@ -160,7 +159,14 @@ namespace ApplicationTracker.ImportCli
                 Console.WriteLine(report);
             }
 
-            // TODO: Handle edge cases, such as reporting on Locations
+            if(options.Locations)
+            {
+                Console.WriteLine("Reporting on Locations");
+                var report = reporter.GenerateLocationReport(worksheet);
+                Console.WriteLine(report);
+            }
+
+
         }
 
         private static void ProcessEntityMigrations(Options options, ExcelDataImporter importer, IXLWorksheet worksheet)
@@ -193,7 +199,12 @@ namespace ApplicationTracker.ImportCli
                 Console.WriteLine(report);
             }
 
-            // TODO: Handle edge cases, such as executing on Locations
+            if (options.Locations)
+            {
+                Console.WriteLine("Executing on Locations.");
+
+                Console.WriteLine("TODO");
+            }
         }
 
     }
