@@ -4,7 +4,7 @@ using ClosedXML.Excel;
 using System.Text;
 
 
-namespace ApplicationTracker.ImportCli
+namespace ApplicationTracker.ImportCli.Helpers
 {
     /// <summary>
     /// simple helper class for code reuse in reporting and importing
@@ -26,8 +26,6 @@ namespace ApplicationTracker.ImportCli
         {
             var values = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // TODO: add multi column values
-            // single-column entities (common case)
             foreach (var column in columns)
             {
                 var col = workSheet.Column(column);
@@ -41,6 +39,37 @@ namespace ApplicationTracker.ImportCli
                         values.Add(value);
                     }
                 }
+            }
+            return values;
+        }
+
+        public static HashSet<KeyValuePair<string?, string>> ExtractLocations(IXLWorksheet worksheet)
+        {
+            var values = new HashSet<KeyValuePair<string?, string>>();
+
+            var cityCol = worksheet.Column("F");
+            var stateCol = worksheet.Column("G");
+
+            // find last row with a value
+            int lastCity = cityCol.LastCellUsed()?.Address.RowNumber ?? 0;
+            int lastState = stateCol.LastCellUsed()?.Address?.RowNumber ?? 0;
+
+            int lastRow = Math.Max(lastCity, lastState);
+
+            // skip header row
+            for (int row = 2; row <= lastRow; row++)
+            {
+                var city = cityCol.Cell(row).GetValue<string>().Trim();
+                var state = stateCol.Cell(row).GetValue<string>().Trim();
+
+                // skip where both are empty
+                if (string.IsNullOrWhiteSpace(city) && string.IsNullOrWhiteSpace(state))
+                    continue;
+
+                var location = new KeyValuePair<string?, string>(
+                    string.IsNullOrEmpty(city) ? null : city, state);
+
+                values.Add(location);
             }
             return values;
         }

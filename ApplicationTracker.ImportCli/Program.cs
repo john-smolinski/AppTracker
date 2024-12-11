@@ -1,6 +1,7 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
 using ApplicationTracker.ImportCli.CommandLine;
+using ApplicationTracker.ImportCli.Processes;
 using ClosedXML.Excel;
 using CommandLine;
 using Microsoft.EntityFrameworkCore;
@@ -115,7 +116,7 @@ namespace ApplicationTracker.ImportCli
         }
         private static void ExecuteMigrations(Options options, TrackerDbContext context, IXLWorksheet worksheet)
         {
-            var importer = new ExcelDataImporter(context);
+            var importer = new DataImporter(context);
             Console.WriteLine("Executing migrations...");
 
             if (options.All)
@@ -169,7 +170,7 @@ namespace ApplicationTracker.ImportCli
 
         }
 
-        private static void ProcessEntityMigrations(Options options, ExcelDataImporter importer, IXLWorksheet worksheet)
+        private static void ProcessEntityMigrations(Options options, DataImporter importer, IXLWorksheet worksheet)
         {
             if (options.JobTitles)
             {
@@ -202,8 +203,8 @@ namespace ApplicationTracker.ImportCli
             if (options.Locations)
             {
                 Console.WriteLine("Executing on Locations.");
-
-                Console.WriteLine("TODO");
+                var report = importer.ImportLocations(worksheet);
+                Console.WriteLine(report);
             }
         }
 

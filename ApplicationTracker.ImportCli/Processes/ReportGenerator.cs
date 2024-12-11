@@ -1,12 +1,13 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.ImportCli.Helpers;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
-namespace ApplicationTracker.ImportCli
+namespace ApplicationTracker.ImportCli.Processes
 {
     public class ReportGenerator
     {
@@ -30,17 +31,17 @@ namespace ApplicationTracker.ImportCli
             HashSet<string> entities = DataHelper.ExtractColumnValues(workSheet, columns);
 
             // empty column 
-            if(entities.Count == 0)
+            if (entities.Count == 0)
             {
                 return $"No data found in worksheet for {typeof(T).Name}.";
             }
 
             StringBuilder result = new();
 
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
                 var report = ReportOnEntity<T>(entity);
-                if(report != string.Empty)
+                if (report != string.Empty)
                 {
                     result.AppendLine(report);
                 }
@@ -60,7 +61,7 @@ namespace ApplicationTracker.ImportCli
             int lastCity = cityColumn.LastCellUsed()?.Address.RowNumber ?? 0;
             int lastState = stateColumn.LastCellUsed()?.Address?.RowNumber ?? 0;
 
-            int lastRow = Math.Min(lastCity, lastState);
+            int lastRow = Math.Max(lastCity, lastState);
 
             StringBuilder result = new();
 
@@ -69,7 +70,7 @@ namespace ApplicationTracker.ImportCli
             {
                 var city = cityColumn.Cell(row).GetValue<string>().Trim();
                 var state = stateColumn.Cell(row).GetValue<string>().Trim();
-                
+
                 // skip where both are empty
                 if (string.IsNullOrWhiteSpace(city) && string.IsNullOrWhiteSpace(state))
                     continue;
