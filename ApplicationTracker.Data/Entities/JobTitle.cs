@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ApplicationTracker.Data.Entities
+﻿namespace ApplicationTracker.Data.Entities
 {
 #pragma warning disable CS8618
     public class JobTitle : BaseEntity

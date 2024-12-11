@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApplicationTracker.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ApplicationTracker.Data.Entities;
 
 namespace ApplicationTracker.Data.Configurations
 {

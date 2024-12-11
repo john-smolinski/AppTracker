@@ -1,5 +1,4 @@
-﻿using ApplicationTracker.Services.Factory;
-using ApplicationTracker.Services.Interfaces;
+﻿using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApplicationTracker.Common

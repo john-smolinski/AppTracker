@@ -5,7 +5,6 @@ using ApplicationTracker.ImportCli.Processes;
 using ClosedXML.Excel;
 using CommandLine;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace ApplicationTracker.ImportCli
 {

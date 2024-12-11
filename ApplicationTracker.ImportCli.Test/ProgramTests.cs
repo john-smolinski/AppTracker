@@ -1,7 +1,4 @@
-﻿using ApplicationTracker.ImportCli.CommandLine;
-using NUnit.Framework.Constraints;
-
-namespace ApplicationTracker.ImportCli.Test
+﻿namespace ApplicationTracker.ImportCli.Test
 {
     [TestFixture]
     public class ProgramTests

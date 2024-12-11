@@ -2,9 +2,6 @@
 using ApplicationTracker.Data.Entities;
 using ApplicationTracker.ImportCli.Helpers;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace ApplicationTracker.ImportCli.Processes
