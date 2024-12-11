@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace ApplicationTracker.Data.Dtos
+﻿namespace ApplicationTracker.Data.Dtos
 {
 #pragma warning disable CS8618
     public class LocationDto

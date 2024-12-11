@@ -1,10 +1,7 @@
 ﻿using ApplicationTracker.Common;
-using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Services.Factory;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace ApplicationTracker.Controllers
 {

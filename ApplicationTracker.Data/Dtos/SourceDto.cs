@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ApplicationTracker.Data.Dtos
+﻿namespace ApplicationTracker.Data.Dtos
 {
 #pragma warning disable CS8618
     public class SourceDto
