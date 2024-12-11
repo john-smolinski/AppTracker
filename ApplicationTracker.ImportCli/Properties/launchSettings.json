@@ -1,7 +1,8 @@
 {
   "profiles": {
     "ApplicationTracker.ImportCli": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "-f Assets/sample_data.xlsx -x -l "
     }
   }
 }
