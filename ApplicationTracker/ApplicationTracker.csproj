@@ -26,4 +26,8 @@
     <ProjectReference Include="..\ApplicationTracker.Services\ApplicationTracker.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="logs\" />
+  </ItemGroup>
+
 </Project>
