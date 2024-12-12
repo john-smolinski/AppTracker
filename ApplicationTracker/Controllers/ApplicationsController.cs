@@ -55,5 +55,20 @@ namespace ApplicationTracker.Controllers
             var result = await _applicationService.GetByIdAsync(id);
             return Ok(result);
         }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost]
+        public async Task<ActionResult<ApplicationDto>> PostNewApplication(ApplicationDto application)
+        {
+            if(!ValidationHelper.IsValidApplication(application, out var badRequestResult))
+            {
+                _logger.LogInformation("Invalid Application posted");
+                return badRequestResult;
+            }
+            var result = await _applicationService.PostAsync(application);
+            return Ok(result);
+        }
     }
 }

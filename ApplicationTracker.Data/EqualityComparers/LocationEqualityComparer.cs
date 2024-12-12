@@ -1,4 +1,4 @@
-﻿namespace ApplicationTracker.ImportCli.Helpers
+﻿namespace ApplicationTracker.Data.EqualityComparers
 {
     public class LocationEqualityComparer : IEqualityComparer<KeyValuePair<string?, string>>
     {
