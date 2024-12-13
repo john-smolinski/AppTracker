@@ -11,6 +11,9 @@ namespace ApplicationTracker.Data.Configurations
             // primary key
             builder.HasKey(a => a.Id);
 
+            builder.Property(a => a.Id)
+                .ValueGeneratedOnAdd();
+
             // relationships
             builder.HasOne(a => a.WorkEnvironment)
                    .WithMany(e => e.Applications)

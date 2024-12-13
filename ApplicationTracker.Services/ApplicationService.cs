@@ -104,17 +104,28 @@ namespace ApplicationTracker.Services
                         return existing;
                     }
                 }
-                // check by values 
-                var result = await _context.Locations
+                
+                // test to see if we have an existing location we can reuse
+                var existingLocation = await _context.Locations
                     .FirstOrDefaultAsync(x => object.Equals(x.City, location.City) &&
                                               object.Equals(x.State, location.State));
 
-                result ??= new Location
+                if (existingLocation != null) 
                 {
+                    return existingLocation;
+                }
+
+                // add new location if none found
+                var newLocation = new Location 
+                { 
+                    Name = $"{GetLocationName(location.City, location.State!)}|{location.State}",
                     City = location.City,
-                    State = location.State!
+                    State = location.State!,
                 };
-                return result;
+
+                _context.Locations.Add(newLocation);
+                await _context.SaveChangesAsync();
+                return newLocation;
             }
             catch (Exception ex)
             {
@@ -151,8 +162,9 @@ namespace ApplicationTracker.Services
                 {
                     Name = dto.Name
                 };
-                dbset.Add(newEntity);
-
+                
+                _context.Set<T>().Add(newEntity);
+                await _context.SaveChangesAsync();
                 return newEntity;
             }
             catch(Exception ex)
@@ -161,6 +173,14 @@ namespace ApplicationTracker.Services
                 throw;
             }
         }
+
+        private static string GetLocationName(string? city, string state)
+        {
+            var location = string.IsNullOrWhiteSpace(city) ? state : city.Trim();
+            return $"{location}|{state.Trim()}";
+        }
+
+
         private static ApplicationDto MapToDto(Application application)
         {
             return new ApplicationDto
