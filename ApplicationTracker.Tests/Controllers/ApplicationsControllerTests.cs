@@ -173,7 +173,14 @@ namespace ApplicationTracker.Tests.Controllers
         public async Task PostNewApplication_ReturnsInternalServerError_OnException()
         {
             // Setup
-            var application = new ApplicationDto { Id = 1, ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now) };
+            var application = new ApplicationDto 
+            { 
+                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                Source = new SourceDto { Name = "Test Source" },
+                Organization = new OrganizationDto { Name = "Test Organization" },
+                JobTitle = new JobTitleDto { Name = "Test JobTitle" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test WorkEnvironment" }
+            };
             _mockService.Setup(s => s.PostAsync(application)).ThrowsAsync(new Exception("Database error"));
 
             // Act
