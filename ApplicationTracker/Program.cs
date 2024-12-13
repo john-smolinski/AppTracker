@@ -37,6 +37,8 @@ namespace ApplicationTracker
             builder.Services.AddScoped<WorkEnvironmentService>();
             builder.Services.AddScoped<IService<WorkEnvironmentDto>, WorkEnvironmentService>();
 
+            builder.Services.AddScoped<IApplicationService<ApplicationDto>, ApplicationService>();
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
