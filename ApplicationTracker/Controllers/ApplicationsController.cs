@@ -19,18 +19,27 @@ namespace ApplicationTracker.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetAllApplications()
         {
-            var result = await _applicationService.GetAllAsync();
-            if(!result.Any())
+            try
             {
-                _logger.LogInformation("No Applications found");
-                return NotFound(new ErrorResponse
+                var result = await _applicationService.GetAllAsync();
+                if (!result.Any())
                 {
-                    Message = "Applications not found",
-                    StatusCode = StatusCodes.Status404NotFound,
-                    Detail = "No Applications have been added yet"
-                });
+                    _logger.LogInformation("No Applications found");
+                    return NotFound(new ErrorResponse
+                    {
+                        Message = "Applications not found",
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Detail = "No Applications have been added yet"
+                    });
+                }
+                return Ok(result);
             }
-            return Ok(result);
+            catch (Exception ex) 
+            {
+                var message = "An unexpected error occured while fetching all applications";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -40,20 +49,29 @@ namespace ApplicationTracker.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationDto>> GetApplication(int id)
         {
-            if(!ValidationHelper.IsValidId(id, out var badRequestResult))
+            try
             {
-                _logger.LogInformation("Invalid Id provided: {id}", id);
-                return badRequestResult;
-            }
+                if (!ValidationHelper.IsValidId(id, out var badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Id provided: {id}", id);
+                    return badRequestResult;
+                }
 
-            if(!await _applicationService.ExistsAsync(id))
+                if (!await _applicationService.ExistsAsync(id))
+                {
+                    _logger.LogInformation("Application with id {id} not found", id);
+                    return ErrorHelper.NotFound("Application not found", $"No Application with Id {id} found");
+                }
+
+                var result = await _applicationService.GetByIdAsync(id);
+                return Ok(result);
+            }
+            catch (Exception ex)
             {
-                _logger.LogInformation("Application with id {id} not found", id);
-                return ErrorHelper.NotFound("Application not found", $"No Application with Id {id} found");
+                var message = $"An unexpected error occured while fetching Application with Id {id}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
             }
-
-            var result = await _applicationService.GetByIdAsync(id);
-            return Ok(result);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -62,13 +80,27 @@ namespace ApplicationTracker.Controllers
         [HttpPost]
         public async Task<ActionResult<ApplicationDto>> PostNewApplication(ApplicationDto application)
         {
-            if(!ValidationHelper.IsValidApplication(application, out var badRequestResult))
+            try
             {
-                _logger.LogInformation("Invalid Application posted");
-                return badRequestResult;
+                if(application == null)
+                {
+                    _logger.LogInformation("NULL Applicaton DTO recieved");
+                    return ErrorHelper.BadRequest("Invalid application", "The application DTO cannot be null");
+                }
+                if (!ValidationHelper.IsValidApplication(application, out var badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Application posted");
+                    return badRequestResult;
+                }
+                var result = await _applicationService.PostAsync(application);
+                return Ok(result);
             }
-            var result = await _applicationService.PostAsync(application);
-            return Ok(result);
+            catch (Exception ex)
+            {
+                var message = $"An unexpected errror occured while posting new Application";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
         }
     }
 }
