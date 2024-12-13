@@ -21,19 +21,19 @@ namespace ApplicationTracker.Common
         {
             var badRequest = new StringBuilder();
             
-            if(string.IsNullOrEmpty(application.Source.Name))
+            if(application.Source == null || string.IsNullOrEmpty(application.Source.Name))
             {
                 badRequest.AppendLine("Source is a required value for a Application");
             }
-            if(string.IsNullOrEmpty(application.Organization.Name))
+            if(application.Organization == null || string.IsNullOrEmpty(application.Organization.Name))
             {
                 badRequest.AppendLine("Organization is a required value for a Application");
             }
-            if(string.IsNullOrEmpty(application.JobTitle.Name))
+            if(application.JobTitle == null || string.IsNullOrEmpty(application.JobTitle.Name))
             {
                 badRequest.AppendLine("JobTitle is a required value for a Application");
             }
-            if(string.IsNullOrEmpty(application.WorkEnvironment.Name))
+            if(application.WorkEnvironment == null || string.IsNullOrEmpty(application.WorkEnvironment.Name))
             {
                 badRequest.AppendLine("WorkEnvironment is a required value for a Application");
             }
