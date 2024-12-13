@@ -1,5 +1,6 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Data.EqualityComparers;
 using ApplicationTracker.ImportCli.Helpers;
 using ClosedXML.Excel;
 using System.Text;

@@ -13,8 +13,8 @@
         public JobTitle JobTitle { get; set; }
         public int WorkEnvironmentId { get; set; }
         public WorkEnvironment WorkEnvironment { get; set; }
-        public int LocationId { get; set; }
-        public Location Location { get; set; }
+        public int? LocationId { get; set; }
+        public Location? Location { get; set; }
     }
 #pragma warning restore CS8618
 }

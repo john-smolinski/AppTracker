@@ -7,7 +7,7 @@ namespace ApplicationTracker.Data.Entities
     {
         public string? City { get; set; }
         [StringLength (50)]
-        public string? State { get; set; }
+        public string State { get; set; }
         [StringLength(50)]
         public string Country { get; set; } = "United States";
         public List<Application> Applications { get; set; }
