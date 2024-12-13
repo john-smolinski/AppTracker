@@ -5,34 +5,21 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace ApplicationTracker.Migrations
+namespace ApplicationTracker.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Environments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Environments", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "JobTitles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,9 +32,10 @@ namespace ApplicationTracker.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    City = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Country = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -73,11 +61,24 @@ namespace ApplicationTracker.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sources", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "WorkEnvironments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkEnvironments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -89,24 +90,12 @@ namespace ApplicationTracker.Migrations
                     SourceId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
                     JobTitleId = table.Column<int>(type: "int", nullable: false),
-                    EnvironmentId = table.Column<int>(type: "int", nullable: false),
-                    LocationId = table.Column<int>(type: "int", nullable: false)
+                    WorkEnvironmentId = table.Column<int>(type: "int", nullable: false),
+                    LocationId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Applications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Applications_Environments_EnvironmentId",
-                        column: x => x.EnvironmentId,
-                        principalTable: "Environments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Applications_Environments_Id",
-                        column: x => x.Id,
-                        principalTable: "Environments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Applications_JobTitles_Id",
                         column: x => x.Id,
@@ -129,8 +118,7 @@ namespace ApplicationTracker.Migrations
                         name: "FK_Applications_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Applications_Organizations_Id",
                         column: x => x.Id,
@@ -155,17 +143,18 @@ namespace ApplicationTracker.Migrations
                         principalTable: "Sources",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.InsertData(
-                table: "Environments",
-                columns: new[] { "Id", "Name" },
-                values: new object[,]
-                {
-                    { 1, "Unknown" },
-                    { 2, "On-Site" },
-                    { 3, "Hybrid" },
-                    { 4, "Remote" }
+                    table.ForeignKey(
+                        name: "FK_Applications_WorkEnvironments_Id",
+                        column: x => x.Id,
+                        principalTable: "WorkEnvironments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Applications_WorkEnvironments_WorkEnvironmentId",
+                        column: x => x.WorkEnvironmentId,
+                        principalTable: "WorkEnvironments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -180,10 +169,16 @@ namespace ApplicationTracker.Migrations
                     { 5, "Welcome to the Jungle" }
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Applications_EnvironmentId",
-                table: "Applications",
-                column: "EnvironmentId");
+            migrationBuilder.InsertData(
+                table: "WorkEnvironments",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Unknown" },
+                    { 2, "On-Site" },
+                    { 3, "Hybrid" },
+                    { 4, "Remote" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Applications_JobTitleId",
@@ -206,10 +201,9 @@ namespace ApplicationTracker.Migrations
                 column: "SourceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Environments_Name",
-                table: "Environments",
-                column: "Name",
-                unique: true);
+                name: "IX_Applications_WorkEnvironmentId",
+                table: "Applications",
+                column: "WorkEnvironmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobTitles_Name",
@@ -228,6 +222,12 @@ namespace ApplicationTracker.Migrations
                 table: "Sources",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkEnvironments_Name",
+                table: "WorkEnvironments",
+                column: "Name",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -235,9 +235,6 @@ namespace ApplicationTracker.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Applications");
-
-            migrationBuilder.DropTable(
-                name: "Environments");
 
             migrationBuilder.DropTable(
                 name: "JobTitles");
@@ -250,6 +247,9 @@ namespace ApplicationTracker.Migrations
 
             migrationBuilder.DropTable(
                 name: "Sources");
+
+            migrationBuilder.DropTable(
+                name: "WorkEnvironments");
         }
     }
 }

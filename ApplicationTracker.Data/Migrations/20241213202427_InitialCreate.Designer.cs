@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ApplicationTracker.Migrations
+namespace ApplicationTracker.Data.Migrations
 {
     [DbContext(typeof(TrackerDbContext))]
-    [Migration("20241118214744_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20241213202427_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,18 +28,16 @@ namespace ApplicationTracker.Migrations
             modelBuilder.Entity("ApplicationTracker.Data.Entities.Application", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("ApplicationDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("EnvironmentId")
-                        .HasColumnType("int");
-
                     b.Property<int>("JobTitleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrganizationId")
@@ -48,9 +46,10 @@ namespace ApplicationTracker.Migrations
                     b.Property<int>("SourceId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<int>("WorkEnvironmentId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("EnvironmentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("JobTitleId");
 
@@ -59,6 +58,8 @@ namespace ApplicationTracker.Migrations
                     b.HasIndex("OrganizationId");
 
                     b.HasIndex("SourceId");
+
+                    b.HasIndex("WorkEnvironmentId");
 
                     b.ToTable("Applications");
                 });
@@ -73,8 +74,8 @@ namespace ApplicationTracker.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -93,14 +94,17 @@ namespace ApplicationTracker.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Country")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -143,8 +147,8 @@ namespace ApplicationTracker.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -191,15 +195,15 @@ namespace ApplicationTracker.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Environments");
+                    b.ToTable("WorkEnvironments");
 
                     b.HasData(
                         new
@@ -226,12 +230,6 @@ namespace ApplicationTracker.Migrations
 
             modelBuilder.Entity("ApplicationTracker.Data.Entities.Application", b =>
                 {
-                    b.HasOne("ApplicationTracker.Data.Entities.WorkEnvironment", "Environment")
-                        .WithMany()
-                        .HasForeignKey("EnvironmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ApplicationTracker.Data.Entities.JobTitle", null)
                         .WithMany("Applications")
                         .HasForeignKey("Id")
@@ -270,9 +268,7 @@ namespace ApplicationTracker.Migrations
 
                     b.HasOne("ApplicationTracker.Data.Entities.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("ApplicationTracker.Data.Entities.Organization", "Organization")
                         .WithMany()
@@ -286,7 +282,11 @@ namespace ApplicationTracker.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Environment");
+                    b.HasOne("ApplicationTracker.Data.Entities.WorkEnvironment", "WorkEnvironment")
+                        .WithMany()
+                        .HasForeignKey("WorkEnvironmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("JobTitle");
 
@@ -295,6 +295,8 @@ namespace ApplicationTracker.Migrations
                     b.Navigation("Organization");
 
                     b.Navigation("Source");
+
+                    b.Navigation("WorkEnvironment");
                 });
 
             modelBuilder.Entity("ApplicationTracker.Data.Entities.JobTitle", b =>

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ApplicationTracker.Migrations
+namespace ApplicationTracker.Data.Migrations
 {
     [DbContext(typeof(TrackerDbContext))]
     partial class TrackerDbContextModelSnapshot : ModelSnapshot
@@ -25,6 +25,7 @@ namespace ApplicationTracker.Migrations
             modelBuilder.Entity("ApplicationTracker.Data.Entities.Application", b =>
                 {
                     b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("ApplicationDate")
@@ -33,7 +34,7 @@ namespace ApplicationTracker.Migrations
                     b.Property<int>("JobTitleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrganizationId")
@@ -103,6 +104,7 @@ namespace ApplicationTracker.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("State")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -263,9 +265,7 @@ namespace ApplicationTracker.Migrations
 
                     b.HasOne("ApplicationTracker.Data.Entities.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("ApplicationTracker.Data.Entities.Organization", "Organization")
                         .WithMany()
