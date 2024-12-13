@@ -7,8 +7,6 @@ TrustServerCertificate=True by default. Adjust this as required for running in c
 
 
 ## Publishing the database
+Using developer command prompt of your choice. Change to the directory where the ApplicationTracker.Data.csproj file is located and execute the following command:
 
-Add-Migration InitialMigration
-
-Update-Database
-
+dotnet ef database update --startup-project ..\ApplicationTracker
