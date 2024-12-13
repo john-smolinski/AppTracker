@@ -9,7 +9,7 @@ namespace ApplicationTracker.TestUtilities.Helpers
     public static class ContextHelper
     {
         public static TrackerDbContext GetInMemoryContext<T>(int rows = 0)
-            where T : BaseEntity, new()
+            where T : class, new()
         {
             var options = new DbContextOptionsBuilder<TrackerDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -19,16 +19,49 @@ namespace ApplicationTracker.TestUtilities.Helpers
 
             if (rows > 0)
             {
-                if(typeof(T) != typeof(Location))
+                if (typeof(T) == typeof(Application))
                 {
-                    AddTestEntities<T>(context, rows);
+                    AddTestApplications(context, rows);
                 }
-                else
+                else if (typeof(T) == typeof(Location))
                 {
                     AddTestLocations(context, rows);
                 }
+                else if (typeof(BaseEntity).IsAssignableFrom(typeof(T)))
+                {
+                    AddBaseEntityTestEntities(context, typeof(T), rows);
+                }
+
             }
+
             return context;
+        }
+
+        public static void AddTestApplications(TrackerDbContext context, int count)
+        {
+            // Add related entities for foreign keys
+            AddTestEntities<Source>(context, 5);
+            AddTestEntities<Organization>(context, 5);
+            AddTestEntities<JobTitle>(context, 5);
+            AddTestEntities<WorkEnvironment>(context, 5);
+
+            // Add Applications with foreign keys set
+            var applications = Enumerable.Range(1, count).Select(i => new Application
+            {
+                Id = i,
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-i)),
+                SourceId = i, 
+                OrganizationId = i,
+                JobTitleId = i,
+                WorkEnvironmentId = i,
+                Source = context.Sources.Find(i)!, 
+                Organization = context.Organizations.Find(i)!,
+                JobTitle = context.JobTitles.Find(i)!,
+                WorkEnvironment = context.WorkEnvironments.Find(i)!
+            });
+
+            context.Applications.AddRange(applications);
+            context.SaveChanges();
         }
 
         public static void AddTestEntities<T>(TrackerDbContext context, int count)
@@ -47,6 +80,15 @@ namespace ApplicationTracker.TestUtilities.Helpers
                 Id = i,
                 Name = $"Test {typeof(T).Name} {i}"
             });
+        }
+
+        public static void AddBaseEntityTestEntities(TrackerDbContext context, Type entityType, int count)
+        {
+            var method = typeof(ContextHelper)
+                .GetMethod(nameof(AddTestEntities))!
+                .MakeGenericMethod(entityType);
+
+            method.Invoke(null, new object[] { context, count });
         }
 
         public static void AddTestLocations(TrackerDbContext context, int count)

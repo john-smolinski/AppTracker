@@ -3,6 +3,7 @@
 #pragma warning disable CS8618
     public class ApplicationDto
     {
+        public int? Id { get; set; }
         public DateOnly ApplicaitionDate { get; set; }
         public SourceDto Source { get; set; }
         public OrganizationDto Organization { get; set; }
