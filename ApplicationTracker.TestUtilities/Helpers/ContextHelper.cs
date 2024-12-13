@@ -19,7 +19,14 @@ namespace ApplicationTracker.TestUtilities.Helpers
 
             if (rows > 0)
             {
-                AddTestEntities<T>(context, rows);
+                if(typeof(T) != typeof(Location))
+                {
+                    AddTestEntities<T>(context, rows);
+                }
+                else
+                {
+                    AddTestLocations(context, rows);
+                }
             }
             return context;
         }
@@ -40,6 +47,18 @@ namespace ApplicationTracker.TestUtilities.Helpers
                 Id = i,
                 Name = $"Test {typeof(T).Name} {i}"
             });
+        }
+
+        public static void AddTestLocations(TrackerDbContext context, int count)
+        {
+            var entities = Enumerable.Range(1, count).Select(i => new Location
+            {
+                Id = i,
+                Name = $"Test {typeof(Location).Name} {i}",
+                State= $"S{i}"
+            });
+            context.AddRange(entities);
+            context.SaveChanges();
         }
     }
 }

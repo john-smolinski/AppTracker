@@ -22,7 +22,7 @@ namespace ApplicationTracker.Services.Tests
         }
 
         [Test]
-        public async Task GetAllAsync_ReturnsAllJobTitles()
+        public async Task GetAllAsync_ReturnsAllLocations()
         {
             // Setup
             var testId = 1;
