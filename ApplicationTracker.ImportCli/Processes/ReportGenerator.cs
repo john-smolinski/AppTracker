@@ -1,6 +1,4 @@
-﻿using ApplicationTracker.Data;
-using ApplicationTracker.Data.Entities;
-using ApplicationTracker.ImportCli.Helpers;
+﻿using ApplicationTracker.ImportCli.Helpers;
 using ClosedXML.Excel;
 using System.Text;
 

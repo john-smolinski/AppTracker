@@ -1,6 +1,4 @@
-﻿using ApplicationTracker.Data;
-using ApplicationTracker.Data.Entities;
-using ApplicationTracker.ImportCli.CommandLine;
+﻿using ApplicationTracker.ImportCli.CommandLine;
 using ApplicationTracker.ImportCli.Processes;
 using ClosedXML.Excel;
 using CommandLine;
@@ -12,8 +10,8 @@ namespace ApplicationTracker.ImportCli
     {
         public static void Main(string[] args)
         {
-            //var exitCode = ProcessArguments(args);
-            //Environment.Exit(exitCode);
+            var exitCode = ProcessArguments(args);
+            Environment.Exit(exitCode);
         }
 
         public static int ProcessArguments(string[] args)
