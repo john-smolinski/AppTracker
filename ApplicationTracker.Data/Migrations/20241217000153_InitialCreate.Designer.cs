@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApplicationTracker.Data.Migrations
 {
     [DbContext(typeof(TrackerDbContext))]
-    [Migration("20241213202427_InitialCreate")]
+    [Migration("20241217000153_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -30,6 +30,8 @@ namespace ApplicationTracker.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateOnly>("ApplicationDate")
                         .HasColumnType("date");

@@ -85,7 +85,8 @@ namespace ApplicationTracker.Data.Migrations
                 name: "Applications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationDate = table.Column<DateOnly>(type: "date", nullable: false),
                     SourceId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),

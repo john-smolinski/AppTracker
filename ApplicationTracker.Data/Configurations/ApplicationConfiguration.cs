@@ -12,7 +12,8 @@ namespace ApplicationTracker.Data.Configurations
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.Id)
-                .ValueGeneratedOnAdd();
+                   .ValueGeneratedOnAdd()
+                   .UseIdentityColumn();
 
             // relationships
             builder.HasOne(a => a.WorkEnvironment)
