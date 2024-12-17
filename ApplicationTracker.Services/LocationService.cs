@@ -23,7 +23,7 @@ namespace ApplicationTracker.Services
             var result = await _context.Locations
                 .Where(x => x.Id == id)
                 .Select(x => new LocationDto 
-                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State, Country = x.Country })
+                    { Id = x.Id, Name = x.Name, City = x.City, State = x.State })
                 .FirstOrDefaultAsync();
 
             if(result == null)
@@ -45,11 +45,25 @@ namespace ApplicationTracker.Services
                 .Select(x => new ApplicationDto
                 {
                     ApplicaitionDate = x.ApplicationDate,
-                    Source = new SourceDto { Id = x.SourceId, Name = x.Source.Name },
-                    Organization = new OrganizationDto { Id = x.OrganizationId, Name = x.Organization.Name },
-                    JobTitle = new JobTitleDto { Id = x.JobTitleId, Name = x.JobTitle.Name },
-                    WorkEnvironment = new WorkEnvironmentDto { Id = x.WorkEnvironmentId, Name = x.WorkEnvironment.Name },
-                    Location = new LocationDto { Id = x.LocationId, Name = x.Location.Name }
+                    Source = new SourceDto 
+                    { 
+                        Id = x.SourceId, Name = x.Source.Name 
+                    },
+                    Organization = new OrganizationDto 
+                    { 
+                        Id = x.OrganizationId, Name = x.Organization.Name 
+                    },
+                    JobTitle = new JobTitleDto 
+                    { 
+                        Id = x.JobTitleId, Name = x.JobTitle.Name 
+                    },
+                    WorkEnvironment = new WorkEnvironmentDto 
+                    { 
+                        Id = x.WorkEnvironmentId, Name = x.WorkEnvironment.Name 
+                    },
+                    Location = x.Location != null 
+                        ? new LocationDto { Id = x.LocationId, Name = x.Location!.Name }
+                        : null
                 })
                 .ToListAsync();
         }

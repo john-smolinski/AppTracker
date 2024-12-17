@@ -115,16 +115,23 @@ namespace ApplicationTracker.Services
                     return existingLocation;
                 }
 
-                // add new location if none found
+                // location requires at least a state vlue 
+                if (location.State == null)
+                {
+                    return null!;
+                }
+                
                 var newLocation = new Location 
                 { 
-                    Name = $"{GetLocationName(location.City, location.State!)}|{location.State}",
+                    Name = GetLocationName(location.City, location.State!),
                     City = location.City,
                     State = location.State!,
                 };
 
+                // save if we're creating a new location
                 _context.Locations.Add(newLocation);
                 await _context.SaveChangesAsync();
+                
                 return newLocation;
             }
             catch (Exception ex)
