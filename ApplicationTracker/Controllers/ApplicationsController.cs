@@ -92,6 +92,12 @@ namespace ApplicationTracker.Controllers
                     _logger.LogInformation("Invalid Application posted");
                     return badRequestResult;
                 }
+                if(await _applicationService.ExistsAsync(application))
+                {
+                    _logger.LogWarning("Application already exist");
+                    return ErrorHelper.BadRequest("Application Exists", "Cannot post duplicate application");
+                }
+
                 var result = await _applicationService.PostAsync(application);
                 return Ok(result);
             }

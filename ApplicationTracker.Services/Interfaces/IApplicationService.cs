@@ -11,5 +11,6 @@ namespace ApplicationTracker.Services.Interfaces
         // TODO:
         //Task<ApplicationDto> PutAsync(ApplicationDto application);
         Task<bool> ExistsAsync(int id);
+        Task<bool> ExistsAsync(ApplicationDto application);
     }
 }
