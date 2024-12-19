@@ -44,11 +44,33 @@ namespace ApplicationTracker.Services
                 .Select(x => new ApplicationDto
                 {
                     ApplicaitionDate = x.ApplicationDate,
-                    Source = new SourceDto { Id = x.SourceId, Name = x.Source.Name },
-                    Organization = new OrganizationDto { Id = x.OrganizationId, Name = x.Organization.Name },
-                    JobTitle = new JobTitleDto { Id = x.JobTitleId, Name = x.JobTitle.Name },
-                    WorkEnvironment = new WorkEnvironmentDto { Id = x.WorkEnvironmentId, Name = x.WorkEnvironment.Name },
-                    Location = new LocationDto { Id = x.LocationId, Name = x.Location.Name }
+                    Source = new SourceDto 
+                    { 
+                        Id = x.SourceId, 
+                        Name = x.Source.Name 
+                    },
+                    Organization = new OrganizationDto 
+                    { 
+                        Id = x.OrganizationId, 
+                        Name = x.Organization.Name 
+                    },
+                    JobTitle = new JobTitleDto 
+                    { 
+                        Id = x.JobTitleId, 
+                        Name = x.JobTitle.Name 
+                    },
+                    WorkEnvironment = new WorkEnvironmentDto 
+                    { 
+                        Id = x.WorkEnvironmentId, 
+                        Name = x.WorkEnvironment.Name 
+                    },
+                    Location = x.Location == null
+                        ? null
+                        : new LocationDto 
+                        { 
+                            Id = x.LocationId, 
+                            Name = x.Location.Name 
+                        }
                 })
                 .ToListAsync();
         }

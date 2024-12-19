@@ -6,17 +6,23 @@ namespace ApplicationTracker.Data.Configurations
 {
     public class EnvironmentConfiguration : IEntityTypeConfiguration<WorkEnvironment>
     {
-        public void Configure(EntityTypeBuilder<WorkEnvironment> builder) 
+        public void Configure(EntityTypeBuilder<WorkEnvironment> builder)
         {
+            // Primary Key
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
 
+
+            // Index for unique names
             builder.HasIndex(x => x.Name)
-                .IsUnique();
+                   .IsUnique();
 
+            // Relationships
             builder.HasMany(x => x.Applications)
-                .WithOne()
-                .HasForeignKey(x => x.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .WithOne(a => a.WorkEnvironment) // Reference the navigation property in Application
+                   .HasForeignKey(a => a.WorkEnvironmentId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

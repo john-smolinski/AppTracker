@@ -97,6 +97,46 @@ namespace ApplicationTracker.Services.Tests
 
         }
 
+        [Test]
+        public async Task ExistsAsync_ShouldReturnTrue_WhenApplicationWithDtoExists()
+        {
+            // Arrange
+            var applicationDto = new ApplicationDto
+            {
+                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+                Source = new SourceDto { Name = "Test Source 1" },
+                Organization = new OrganizationDto { Name = "Test Organization 1" },
+                JobTitle = new JobTitleDto { Name = "Test JobTitle 1" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test WorkEnvironment 1" }
+            };
+
+            // Act
+            var result = await _service.ExistsAsync(applicationDto);
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        [Test]
+        public async Task ExistsAsync_ShouldReturnFalse_WhenApplicationWithDtoDoesNotExist()
+        {
+            // Arrange
+            var applicationDto = new ApplicationDto
+            {
+                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                Source = new SourceDto { Name = "Nonexistent Source" },
+                Organization = new OrganizationDto { Name = "Nonexistent Organization" },
+                JobTitle = new JobTitleDto { Name = "Nonexistent JobTitle" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Nonexistent WorkEnvironment" }
+            };
+
+            // Act
+            var result = await _service.ExistsAsync(applicationDto);
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
         [TearDown]
         public void TearDown()
         {
