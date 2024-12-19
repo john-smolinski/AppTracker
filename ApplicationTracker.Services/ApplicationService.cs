@@ -7,18 +7,24 @@ using Microsoft.Extensions.Logging;
 
 namespace ApplicationTracker.Services
 {
-    public class ApplicationService(TrackerDbContext context, ILogger<ApplicationService> logger) : IApplicationService<ApplicationDto>
+    public class ApplicationService : IApplicationService<ApplicationDto>
     {
-        private readonly TrackerDbContext _context = context;
-        private readonly ILogger<ApplicationService> _logger = logger;
+        private readonly TrackerDbContext _context;
+        private readonly ILogger<ApplicationService> _logger;
+        
+        public ApplicationService(TrackerDbContext context, ILogger<ApplicationService> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
 
         public async Task<IEnumerable<ApplicationDto>> GetAllAsync()
         {
             try
             {
                 return await _context.Applications
-                    .Select(x => MapToDto(x))
-                    .ToListAsync();
+                                     .Select(x => MapToDto(x))
+                                     .ToListAsync();
             }
             catch (Exception ex)
             {
@@ -32,9 +38,9 @@ namespace ApplicationTracker.Services
             try
             {
                 return await _context.Applications
-                    .Where(x => x.Id == id)
-                    .Select(x => MapToDto(x))
-                    .FirstOrDefaultAsync();
+                                     .Where(x => x.Id == id)
+                                     .Select(x => MapToDto(x))
+                                     .FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -47,11 +53,30 @@ namespace ApplicationTracker.Services
         {
             try
             {
+                // prevent dupicate/double posts
+                if(await ExistsAsync(application))
+                {
+                    throw new InvalidDataException("Application already exists.");
+                }
+
                 Location? location = null;
                 if (application.Location != null)
                 {
                     location = await AddLocation(application.Location);
+                    _context.Attach(location);
                 }
+
+                var source = await AddEntity<Source>(application.Source);
+                _context.Attach(source);
+
+                var organization = await AddEntity<Organization>(application.Organization);
+                _context.Attach(organization);
+
+                var jobTitle = await AddEntity<JobTitle>(application.JobTitle);
+                _context.Attach(jobTitle);
+
+                var workEnvironment = await AddEntity<WorkEnvironment>(application.WorkEnvironment);
+                _context.Attach(workEnvironment);
 
                 var newApplication = new Application
                 {
@@ -60,10 +85,10 @@ namespace ApplicationTracker.Services
                         ? DateOnly.FromDateTime(DateTime.Now)
                         : application.ApplicaitionDate,
                     
-                    Source = await AddEntity<Source>(application.Source),
-                    Organization = await AddEntity<Organization>(application.Organization),
-                    JobTitle = await AddEntity<JobTitle>(application.JobTitle),
-                    WorkEnvironment = await AddEntity<WorkEnvironment>(application.WorkEnvironment),
+                    Source = source,
+                    Organization = organization,
+                    JobTitle = jobTitle,
+                    WorkEnvironment = workEnvironment,
                     Location = location!
                 };
                 _context.Applications.Add(newApplication);
@@ -94,29 +119,25 @@ namespace ApplicationTracker.Services
         public async Task<bool> ExistsAsync(ApplicationDto application)
         {
             // ensure required relationships exist first
-            var sourceTask = _context.Sources
+            var sourceId = await _context.Sources
                 .Where(x => x.Name == application.Source.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
-            var organizationTask = _context.Organizations
+            var organizationId = await _context.Organizations
                 .Where(x => x.Name == application.Organization.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
-            var jobTitleTask = _context.JobTitles
+            var jobTitleId = await _context.JobTitles
                 .Where(x => x.Name == application.JobTitle.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
-            var workEnvironmentTask = _context.WorkEnvironments
+            var workEnvironmentId = await _context.WorkEnvironments
                 .Where(x => x.Name == application.WorkEnvironment.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
-
-            // execute tasks concurrently
-            var (sourceId, organizationId, jobTitleId, workEnvironmentId) =
-                (await sourceTask, await organizationTask, await jobTitleTask, await workEnvironmentTask);
 
             // check if any required relationship is missing
             if (sourceId == 0 || organizationId == 0 || jobTitleId == 0 || workEnvironmentId == 0)
@@ -135,14 +156,13 @@ namespace ApplicationTracker.Services
             return exists;
         }
 
-
-
-        private async Task<Location> AddLocation(LocationDto? location)
+        private async Task<Location> AddLocation(LocationDto location)
         {
             try
             {
+
                 // return exisitng location if we have its id
-                if (location!.Id.HasValue)
+                if (location.Id.HasValue)
                 {
                     var existing = await _context.Locations.FirstOrDefaultAsync(x => x.Id == location.Id.Value);
                     if (existing != null)
@@ -161,7 +181,7 @@ namespace ApplicationTracker.Services
                     return existingLocation;
                 }
 
-                // location requires at least a state vlue 
+                // location requires at least a state value 
                 if (location.State == null)
                 {
                     return null!;
@@ -169,9 +189,9 @@ namespace ApplicationTracker.Services
                 
                 var newLocation = new Location 
                 { 
-                    Name = GetLocationName(location.City, location.State!),
+                    Name = GetLocationName(location.City, location.State),
                     City = location.City,
-                    State = location.State!,
+                    State = location.State,
                 };
 
                 // save if we're creating a new location
@@ -232,7 +252,6 @@ namespace ApplicationTracker.Services
             var location = string.IsNullOrWhiteSpace(city) ? state : city.Trim();
             return $"{location}|{state.Trim()}";
         }
-
 
         private static ApplicationDto MapToDto(Application application)
         {
