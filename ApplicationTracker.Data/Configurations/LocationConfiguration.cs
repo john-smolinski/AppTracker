@@ -6,14 +6,18 @@ namespace ApplicationTracker.Data.Configurations
 {
     public class LocationConfiguration : IEntityTypeConfiguration<Location>
     {
-        public void Configure(EntityTypeBuilder<Location> builder) 
-        { 
+        public void Configure(EntityTypeBuilder<Location> builder)
+        {
+            // Primary Key
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
 
+            // Relationships
             builder.HasMany(x => x.Applications)
-                .WithOne()
-                .HasForeignKey(x => x.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .WithOne(a => a.Location) // Reference the navigation property in Application
+                   .HasForeignKey(a => a.LocationId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -6,17 +6,22 @@ namespace ApplicationTracker.Data.Configurations
 {
     public class JobTitleConfiguration : IEntityTypeConfiguration<JobTitle>
     {
-        public void Configure(EntityTypeBuilder<JobTitle> builder) 
+        public void Configure(EntityTypeBuilder<JobTitle> builder)
         {
+            // Primary Key
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
 
+            // Index for unique names
             builder.HasIndex(x => x.Name)
-                .IsUnique();
+                   .IsUnique();
 
+            // Relationships
             builder.HasMany(x => x.Applications)
-                .WithOne()
-                .HasForeignKey(x => x.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .WithOne(a => a.JobTitle) // Reference the navigation property in Application
+                   .HasForeignKey(a => a.JobTitleId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

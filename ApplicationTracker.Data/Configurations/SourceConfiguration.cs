@@ -6,17 +6,22 @@ namespace ApplicationTracker.Data.Configurations
 {
     public class SourceConfiguration : IEntityTypeConfiguration<Source>
     {
-        public void Configure(EntityTypeBuilder<Source> builder) 
+        public void Configure(EntityTypeBuilder<Source> builder)
         {
+            // Primary Key
             builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                   .ValueGeneratedOnAdd();
 
+            // Index for unique names
             builder.HasIndex(x => x.Name)
-                .IsUnique();
+                   .IsUnique();
 
+            // Relationships
             builder.HasMany(x => x.Applications)
-                .WithOne()
-                .HasForeignKey(x => x.Id)
-                .OnDelete(DeleteBehavior.Restrict);
+                   .WithOne(a => a.Source) // Reference the navigation property in Application
+                   .HasForeignKey(a => a.SourceId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

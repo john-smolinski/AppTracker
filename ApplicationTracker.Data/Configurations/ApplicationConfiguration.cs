@@ -8,14 +8,14 @@ namespace ApplicationTracker.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Application> builder)
         {
-            // primary key
+            // Primary Key
             builder.HasKey(a => a.Id);
 
             builder.Property(a => a.Id)
                    .ValueGeneratedOnAdd()
                    .UseIdentityColumn();
 
-            // relationships
+            // Relationships
             builder.HasOne(a => a.WorkEnvironment)
                    .WithMany(e => e.Applications)
                    .HasForeignKey(a => a.WorkEnvironmentId)
@@ -41,6 +41,7 @@ namespace ApplicationTracker.Data.Configurations
                    .HasForeignKey(a => a.SourceId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            // Other Properties
             builder.Property(a => a.ApplicationDate)
                    .IsRequired();
         }

@@ -229,62 +229,33 @@ namespace ApplicationTracker.Data.Migrations
 
             modelBuilder.Entity("ApplicationTracker.Data.Entities.Application", b =>
                 {
-                    b.HasOne("ApplicationTracker.Data.Entities.JobTitle", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationTracker.Data.Entities.Location", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationTracker.Data.Entities.Organization", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationTracker.Data.Entities.Source", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ApplicationTracker.Data.Entities.WorkEnvironment", null)
-                        .WithMany("Applications")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ApplicationTracker.Data.Entities.JobTitle", "JobTitle")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("JobTitleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ApplicationTracker.Data.Entities.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
+                        .WithMany("Applications")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("ApplicationTracker.Data.Entities.Organization", "Organization")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ApplicationTracker.Data.Entities.Source", "Source")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("SourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ApplicationTracker.Data.Entities.WorkEnvironment", "WorkEnvironment")
-                        .WithMany()
+                        .WithMany("Applications")
                         .HasForeignKey("WorkEnvironmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("JobTitle");
