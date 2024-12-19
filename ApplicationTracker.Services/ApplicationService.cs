@@ -91,6 +91,52 @@ namespace ApplicationTracker.Services
             }
         }
 
+        public async Task<bool> ExistsAsync(ApplicationDto application)
+        {
+            // ensure required relationships exist first
+            var sourceTask = _context.Sources
+                .Where(x => x.Name == application.Source.Name)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            var organizationTask = _context.Organizations
+                .Where(x => x.Name == application.Organization.Name)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            var jobTitleTask = _context.JobTitles
+                .Where(x => x.Name == application.JobTitle.Name)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            var workEnvironmentTask = _context.WorkEnvironments
+                .Where(x => x.Name == application.WorkEnvironment.Name)
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
+
+            // execute tasks concurrently
+            var (sourceId, organizationId, jobTitleId, workEnvironmentId) =
+                (await sourceTask, await organizationTask, await jobTitleTask, await workEnvironmentTask);
+
+            // check if any required relationship is missing
+            if (sourceId == 0 || organizationId == 0 || jobTitleId == 0 || workEnvironmentId == 0)
+            {
+                return false;
+            }
+
+            // check if the application already exists
+            var exists = await _context.Applications
+                .AnyAsync(x => x.SourceId == sourceId &&
+                               x.OrganizationId == organizationId &&
+                               x.JobTitleId == jobTitleId &&
+                               x.WorkEnvironmentId == workEnvironmentId &&
+                               x.ApplicationDate == application.ApplicaitionDate);
+
+            return exists;
+        }
+
+
+
         private async Task<Location> AddLocation(LocationDto? location)
         {
             try
@@ -115,16 +161,23 @@ namespace ApplicationTracker.Services
                     return existingLocation;
                 }
 
-                // add new location if none found
+                // location requires at least a state vlue 
+                if (location.State == null)
+                {
+                    return null!;
+                }
+                
                 var newLocation = new Location 
                 { 
-                    Name = $"{GetLocationName(location.City, location.State!)}|{location.State}",
+                    Name = GetLocationName(location.City, location.State!),
                     City = location.City,
                     State = location.State!,
                 };
 
+                // save if we're creating a new location
                 _context.Locations.Add(newLocation);
                 await _context.SaveChangesAsync();
+                
                 return newLocation;
             }
             catch (Exception ex)
@@ -186,10 +239,22 @@ namespace ApplicationTracker.Services
             return new ApplicationDto
             {
                 ApplicaitionDate = application.ApplicationDate,
-                Source = new SourceDto { Id = application.SourceId, Name = application.Source?.Name! },
-                Organization = new OrganizationDto { Id = application.OrganizationId, Name = application.Organization?.Name! },
-                JobTitle = new JobTitleDto { Id = application.JobTitleId, Name = application.JobTitle?.Name! },
-                WorkEnvironment = new WorkEnvironmentDto { Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name! },
+                Source = new SourceDto 
+                { 
+                    Id = application.SourceId, Name = application.Source?.Name! 
+                },
+                Organization = new OrganizationDto 
+                { 
+                    Id = application.OrganizationId, Name = application.Organization?.Name! 
+                },
+                JobTitle = new JobTitleDto 
+                { 
+                    Id = application.JobTitleId, Name = application.JobTitle?.Name! 
+                },
+                WorkEnvironment = new WorkEnvironmentDto 
+                { 
+                    Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name!
+                },
                 Location = application.Location != null
                     ? new LocationDto { Id = application.LocationId, Name = application.Location?.Name! }
                     : null
