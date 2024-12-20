@@ -1,6 +1,4 @@
-﻿using ApplicationTracker.Data.Entities;
-using ClosedXML.Excel;
-
+﻿using ClosedXML.Excel;
 
 namespace ApplicationTracker.ImportCli.Helpers
 {
@@ -9,16 +7,6 @@ namespace ApplicationTracker.ImportCli.Helpers
     /// </summary>
     public static class DataHelper
     {
-        public static Dictionary<Type, List<string>> GetMappings()
-        {
-            return new Dictionary<Type, List<string>>
-            {
-                { typeof(Source), new List<string>{ "B" } },
-                { typeof(Organization), new List<string>{ "C" } },
-                { typeof(JobTitle), new List<string>{ "D" } },
-                { typeof(WorkEnvironment), new List<string>{ "E" } }
-            };
-        }
 
         public static HashSet<string> ExtractColumnValues(IXLWorksheet workSheet, List<string> columns)
         {
