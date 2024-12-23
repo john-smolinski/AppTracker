@@ -28,27 +28,10 @@
         }
 
         [Test]
-        public void ProcessArguments_ShouldReturnError_WhenFilePathIsMissing()
-        {
-            // Setup 
-            var args = new string[] { "--report" };
-
-            // Act
-            var exitCode = Program.ProcessArguments(args);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exitCode, Is.EqualTo(1));
-                Assert.That(_consoleOutput.ToString().TrimEnd(), Is.EqualTo("Error parsing arguments. Use --help for usage information."));
-            });
-        }
-
-        [Test]
         public void ProcessArguments_ShouldReturnError_WhenFileDoesNotExist()
         {
             // Setup
-            var args = new string[] { "-f", "nonexistent.txt", "--report" };
+            var args = new string[] { "-f", "nonexistent.txt" };
             
             // Act 
             var exitCode = Program.ProcessArguments(args);
@@ -74,23 +57,6 @@
             {
                 Assert.That(exitCode, Is.EqualTo(1));
                 Assert.That(_consoleOutput.ToString(), Contains.Substring("Error parsing arguments. Use --help for usage information"));
-            });
-        }
-
-        [Test]
-        public void ProcessArguments_ReturnsError_WhenBothReportAndExecuteProvided()
-        {
-            // Setup
-            var args = new[] { "-f", _validFilePath,   "--report", "--execute" };
-
-            // Act
-            var exitCode = Program.ProcessArguments(args);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exitCode, Is.EqualTo(1));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Error: Only one of --report (-r) or --execute (-x) can be provided at the same time"));
             });
         }
     }
