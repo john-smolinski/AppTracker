@@ -65,8 +65,7 @@ namespace ApplicationTracker.Services
                         ? null
                         : new LocationDto 
                         { 
-                            Id = x.LocationId, 
-                            Name = x.Location.Name 
+                            Id = x.LocationId,  Name = x.Location.Name 
                         }
                 })
                 .ToListAsync();
