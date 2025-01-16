@@ -4,6 +4,7 @@ using ApplicationTracker.Data.Entities;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApplicationTracker.Services
 {
@@ -22,7 +23,13 @@ namespace ApplicationTracker.Services
         {
             try
             {
+
                 return await _context.Applications
+                                     .Include(a => a.Source)
+                                     .Include(a => a.Organization)
+                                     .Include(a => a.JobTitle)
+                                     .Include(a => a.WorkEnvironment)
+                                     .Include(a => a.Location)
                                      .Select(x => MapToDto(x))
                                      .ToListAsync();
             }
@@ -38,6 +45,11 @@ namespace ApplicationTracker.Services
             try
             {
                 return await _context.Applications
+                                     .Include(a => a.Source)
+                                     .Include(a => a.Organization)
+                                     .Include(a => a.JobTitle)
+                                     .Include(a => a.WorkEnvironment)
+                                     .Include(a => a.Location)
                                      .Where(x => x.Id == id)
                                      .Select(x => MapToDto(x))
                                      .FirstOrDefaultAsync();

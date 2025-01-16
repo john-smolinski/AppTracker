@@ -15,7 +15,7 @@ namespace ApplicationTracker
             var builder = WebApplication.CreateBuilder(args);
 
             var connectionString = builder.Configuration.GetConnectionString("Tracker");
-            builder.Services.AddDbContext<TrackerDbContext>(options => 
+            builder.Services.AddDbContext<TrackerDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
             // factory for creating service instances
@@ -46,7 +46,22 @@ namespace ApplicationTracker
             builder.Host.UseSerilog((context, config) =>
                 config.ReadFrom.Configuration(context.Configuration));
 
+            // setting temporay / development CORS policy
+            builder.Services.AddCors(options =>
+            {
+               options.AddPolicy("AllowReactApp", policy =>
+               {
+                   policy.WithOrigins("http://localhost:3000", "https://my-future-production-site.com")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+               });
+            });
+
+
+
             var app = builder.Build();
+
+            app.UseCors("AllowReactApp");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -61,6 +76,7 @@ namespace ApplicationTracker
             app.UseAuthorization();
             app.MapControllers();
             app.Run();
+
         }
     }
 }
