@@ -23,8 +23,11 @@ export default function Summary() {
     );
   return (
     <div>
-      <h3>Total Applications {items.length}</h3>
-      <div></div>
+      <h3>{items.length} Applications submitted </h3>
+      <div>
+        <p>provide a summary of applications submitted here </p>
+        <p>additional summary information</p>
+      </div>
     </div>
   );
 }

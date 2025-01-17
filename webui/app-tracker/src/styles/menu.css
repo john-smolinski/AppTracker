@@ -7,16 +7,14 @@ body {
     display: flex;
     align-items: center;
     padding: 10px 20px;
-    background-color: #007bff;
-    /* Blue background */
+    background-color: #909397;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .menu-button {
     background-color: white;
     border: none;
-    color: #007bff;
-    /* Text color */
+    color: #011830;
     font-size: 16px;
     font-weight: bold;
     padding: 10px 20px;
