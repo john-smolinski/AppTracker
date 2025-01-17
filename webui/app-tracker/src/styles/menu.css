@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.menu-bar {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    /* Blue background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.menu-button {
+    background-color: white;
+    border: none;
+    color: #007bff;
+    /* Text color */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+    color: white;
+    /* White text on hover */
+}
+
+.menu-button:active {
+    background-color: #003f7f;
+    /* Even darker blue when active */
+    color: white;
+}
