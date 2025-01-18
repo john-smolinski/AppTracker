@@ -1,17 +1,22 @@
 import "../src/styles/app.css";
-import ApplicationsList from "./components/ApplicationsList";
-import Summary from "./components/Summary";
-import Menu from "./components/Menu";
-import ApplicationCalendar from "./components/ApplicationCalendar";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
+import SearchApplications from "./components/SearchApplications";
+import AddApplication from "./components/AddApplication";
+import NotFound from "./components/NotFound";
+import Statistics from "./components/Statistics";
 
 function App() {
   return (
-    <div className="app">
-      <Menu />
-      <Summary />
-      {/*<ApplicationsList />*/}
-      <ApplicationCalendar />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/search" element={<SearchApplications />} />
+        <Route path="/add" element={<AddApplication />} />
+        <Route path="/statistics" element={<Statistics />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 

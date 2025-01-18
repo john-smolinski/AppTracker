@@ -3,6 +3,10 @@ body {
     font-family: Arial, sans-serif;
 }
 
+link {
+    text-decoration: none;
+}
+
 .menu-bar {
     display: flex;
     align-items: center;
