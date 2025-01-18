@@ -63,48 +63,55 @@ export default function ApplicationCalendar() {
   });
 
   return (
-    <div className="calendar">
-      {/* Month Labels */}
-      <div className="calendar-month-labels">
-        {monthLabels.map((month) => (
-          <div
-            key={month.weekIndex}
-            className="calendar-month-label"
-            style={{ gridColumnStart: month.weekIndex + 1 }}
-          >
-            {month.label}
-          </div>
-        ))}
-      </div>
+    <div>
+      <h1>Day View</h1>
+      <div className="calendar">
+        {/* Month Labels */}
+        <div className="calendar-month-labels">
+          {monthLabels.map((month) => (
+            <div
+              key={month.weekIndex}
+              className="calendar-month-label"
+              style={{ gridColumnStart: month.weekIndex + 1 }}
+            >
+              {month.label}
+            </div>
+          ))}
+        </div>
 
-      <h2 className="calendar-title">
-        Total Applications {applications.length} in last 52 weeks
-      </h2>
+        <h2 className="calendar-title">
+          Total of {applications.length} applications submitted in last 52 weeks
+        </h2>
 
-      {/* Weekday Labels */}
-      <div className="calendar-weekday-labels">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
-          <div key={index} className="calendar-weekday-label">
-            {day}
-          </div>
-        ))}
-      </div>
+        {/* Weekday Labels */}
+        <div className="calendar-weekday-labels">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
+            (day, index) => (
+              <div key={index} className="calendar-weekday-label">
+                {day}
+              </div>
+            )
+          )}
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="calendar-grid">
-        {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="calendar-week">
-            {week.map((day) => (
-              <div
-                key={day.date}
-                className={`calendar-day level-${day.level}`}
-                title={`${format(day.date, "MMM d, yyyy")}: ${
-                  day.level
-                } applications`}
-              ></div>
-            ))}
-          </div>
-        ))}
+        {/* Calendar Grid */}
+        <div className="calendar-grid">
+          {weeks.map((week, weekIndex) => (
+            <div key={weekIndex} className="calendar-week">
+              {week.map((day) => (
+                <div
+                  key={day.date}
+                  className={`calendar-day level-${
+                    day.level < 5 ? day.level : 4
+                  }`}
+                  title={`${format(day.date, "MMM d, yyyy")}: ${
+                    day.level
+                  } applications`}
+                ></div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
