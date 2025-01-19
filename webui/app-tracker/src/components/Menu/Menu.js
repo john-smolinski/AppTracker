@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "../styles/menu.css";
+import "./menu.css";
 
 // hard coded without functionality while I short out the layout.
 export default function Menu() {
