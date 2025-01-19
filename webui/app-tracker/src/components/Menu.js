@@ -9,13 +9,13 @@ export default function Menu() {
       <Link to="/" className="menu-button">
         Home
       </Link>
-      <Link to="search" className="menu-button">
+      <Link to="/search" className="menu-button">
         Search
       </Link>
-      <Link to="add" className="menu-button">
+      <Link to="/add" className="menu-button">
         Add New
       </Link>
-      <Link to="statistics" className="menu-button">
+      <Link to="/statistics" className="menu-button">
         Statistics
       </Link>
     </div>
