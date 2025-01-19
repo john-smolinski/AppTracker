@@ -17,16 +17,16 @@ export default function ApplicationCalendar() {
   const contributions = applications.reduce((acc, app) => {
     const date = app.applicaitionDate;
     if (acc[date]) {
-      acc[date] += 1; // Increment the count for the date
+      acc[date] += 1;
     } else {
-      acc[date] = 1; // Initialize the count for the date
+      acc[date] = 1;
     }
     return acc;
   }, {});
 
   // get the current week and previous 51 weeks
   const today = new Date();
-  const startDate = startOfWeek(addWeeks(today, -51)); // Start of the 52-week range
+  const startDate = startOfWeek(addWeeks(today, -51));
   const endDate = today; // End at the current week
 
   // generate all days in the last 52 weeks
@@ -35,7 +35,7 @@ export default function ApplicationCalendar() {
   // map each day to its contribution level (0 if no data)
   const dayMap = days.map((day) => ({
     date: day,
-    level: contributions[format(day, "yyyy-MM-dd")] || 0, // default to 0 if no data
+    level: contributions[format(day, "yyyy-MM-dd")] || 0,
   }));
 
   // group days by week

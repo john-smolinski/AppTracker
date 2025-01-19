@@ -15,13 +15,13 @@ export default function Summary() {
   }, [dispatch]);
 
   // logging for development
-  useEffect(() => {
-    console.log(items.length);
-    items.forEach((x) => {
-      console.log(x);
-      //console.log(sourceCounts);
-    });
-  });
+  //useEffect(() => {
+  //  console.log(items.length);
+  //  items.forEach((x) => {
+  //    console.log(x);
+  //    //console.log(sourceCounts);
+  //  });
+  //});
 
   const sourceCounts = items.reduce((accur, itm) => {
     const sourceName = itm.source.name;
