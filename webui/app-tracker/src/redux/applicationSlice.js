@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// temporary hard-coded API base URL for development purposes, targets containerized backend
 const API_BASE_URL = "http://localhost:5000/api/applications";
 
-// Thunks for async operations
+// Fetch Applications
 export const fetchApplications = createAsyncThunk(
   "applications/fetchApplications",
   async (_, { rejectWithValue }) => {
@@ -12,13 +11,15 @@ export const fetchApplications = createAsyncThunk(
       const response = await axios.get(API_BASE_URL);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.message?.data || "error fetching applications"
-      );
+      return rejectWithValue({
+        status: error.response?.status,
+        message: error.response?.data || error.message,
+      });
     }
   }
 );
 
+// Post Application
 export const postApplication = createAsyncThunk(
   "applications/postApplication",
   async (newApplication, { rejectWithValue }) => {
@@ -26,28 +27,31 @@ export const postApplication = createAsyncThunk(
       const response = await axios.post(API_BASE_URL, newApplication);
       return response.data;
     } catch (error) {
-      return rejectWithValue(
-        error.message?.data || "error posting application"
-      );
+      return rejectWithValue({
+        status: error.response?.status,
+        message: error.response?.data || error.message,
+      });
     }
   }
 );
 
-// Slice for application state
+// Application Slice
 const applicationSlice = createSlice({
   name: "applications",
   initialState: {
-    itmes: [],
+    items: [], // Corrected typo
     loading: false,
     error: null,
+    isServerError: false,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch applications
+      // Fetch Applications
       .addCase(fetchApplications.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.isServerError = false;
       })
       .addCase(fetchApplications.fulfilled, (state, action) => {
         state.loading = false;
@@ -55,17 +59,14 @@ const applicationSlice = createSlice({
       })
       .addCase(fetchApplications.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
-
-        // check for server error and set flag
-        if (action.payload?.status === 500) {
-          state.isServerError = true;
-        }
+        state.error = action.payload?.message || "An error occurred";
+        state.isServerError = action.payload?.status === 500;
       })
-      // POST application
+      // Post Application
       .addCase(postApplication.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.isServerError = false;
       })
       .addCase(postApplication.fulfilled, (state, action) => {
         state.loading = false;
@@ -73,12 +74,8 @@ const applicationSlice = createSlice({
       })
       .addCase(postApplication.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
-
-        // check for server error and set flag
-        if (action.payload?.status === 500) {
-          state.isServerError = true;
-        }
+        state.error = action.payload?.message || "An error occurred";
+        state.isServerError = action.payload?.status === 500;
       });
   },
 });
