@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchApplications } from "../redux/applicationSlice";
-import "../styles/summary.css";
+import { fetchApplications } from "../../../redux/applicationSlice";
+import "./Summary.css";
 
 export default function Summary() {
   const dispatch = useDispatch();

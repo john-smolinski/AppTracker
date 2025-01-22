@@ -1,6 +1,6 @@
 import React from "react";
 import Menu from "../../Menu/Menu";
-import Summary from "../../Summary";
+import Summary from "../../Features/Summary/Summary";
 import ApplicationsCalendar from "../../ApplicationsCalendar";
 
 export default function Home() {
