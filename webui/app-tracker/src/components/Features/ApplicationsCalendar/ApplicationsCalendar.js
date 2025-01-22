@@ -7,7 +7,7 @@ import {
   format,
   getDay,
 } from "date-fns";
-import "../styles/calendar.css";
+import "./ApplicationsCalendar.css";
 
 export default function ApplicationCalendar() {
   // access applications from Redux store
