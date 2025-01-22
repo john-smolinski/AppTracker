@@ -39,7 +39,7 @@ export const postApplication = createAsyncThunk(
 const applicationSlice = createSlice({
   name: "applications",
   initialState: {
-    items: [], // Corrected typo
+    items: [],
     loading: false,
     error: null,
     isServerError: false,

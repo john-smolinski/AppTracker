@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchApplications } from "../redux/applicationSlice";
-import "../styles/summary.css";
+import { fetchApplications } from "../../../redux/applicationSlice";
+import "./Summary.css";
 
 export default function Summary() {
   const dispatch = useDispatch();
@@ -15,13 +15,13 @@ export default function Summary() {
   }, [dispatch]);
 
   // logging for development
-  useEffect(() => {
-    console.log(items.length);
-    items.forEach((x) => {
-      console.log(x);
-      //console.log(sourceCounts);
-    });
-  });
+  //useEffect(() => {
+  //  console.log(items.length);
+  //  items.forEach((x) => {
+  //    console.log(x);
+  //    //console.log(sourceCounts);
+  //  });
+  //});
 
   const sourceCounts = items.reduce((accur, itm) => {
     const sourceName = itm.source.name;

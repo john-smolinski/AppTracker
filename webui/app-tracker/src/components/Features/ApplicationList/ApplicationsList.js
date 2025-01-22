@@ -1,6 +1,9 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchApplications, postApplication } from "../redux/applicationSlice";
+import {
+  fetchApplications,
+  postApplication,
+} from "../../../redux/applicationSlice";
 
 export default function ApplicationsList() {
   const dispatch = useDispatch();
