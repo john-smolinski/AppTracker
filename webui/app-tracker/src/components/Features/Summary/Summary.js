@@ -60,7 +60,7 @@ export default function Summary() {
     <div>
       <h1>Summary View</h1>
       <div className="summary">
-        <h3>{items.length} Total Applications submitted </h3>
+        <h3>{items.length} Total Applications Submitted </h3>
         <div className="content-container">
           <div className="box">
             <h2>Applications by Source</h2>
