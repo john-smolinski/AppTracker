@@ -34,7 +34,6 @@ export default function Summary() {
   if (topJobTitles.length > 5) {
     topJobTitles = topJobTitles.slice(0, 5);
   }
-  topJobTitles.forEach((itm) => console.log(itm));
 
   if (loading)
     return (
