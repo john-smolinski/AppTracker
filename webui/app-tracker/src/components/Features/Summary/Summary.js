@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import "./Summary.css";
-import { current } from "@reduxjs/toolkit";
 
 export default function Summary() {
   const { items, loading, error, isServerError } = useSelector(
