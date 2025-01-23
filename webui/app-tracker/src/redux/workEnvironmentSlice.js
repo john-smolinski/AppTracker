@@ -3,7 +3,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:5000/api/workenvironments";
 
-// fetch Job Titles
+// fetch Work Environments
 export const fetchWorkEnvironments = createAsyncThunk(
   "workenvironments/fetchWorkEnvironments",
   async (_, { rejectWithValue }) => {
@@ -19,7 +19,7 @@ export const fetchWorkEnvironments = createAsyncThunk(
   }
 );
 
-// Job Title Slice
+// Work Environment Slice
 const workEnvironmentSlice = createSlice({
   name: "workEnvironments",
   initialState: {
@@ -31,7 +31,7 @@ const workEnvironmentSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Fetch JobTitles
+      // Fetch WorkEnvironments
       .addCase(fetchWorkEnvironments.pending, (state) => {
         state.loading = true;
         state.error = null;
