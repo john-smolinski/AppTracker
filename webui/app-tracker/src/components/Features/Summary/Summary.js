@@ -1,28 +1,13 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchApplications } from "../../../redux/applicationSlice";
+import React from "react";
+import { useSelector } from "react-redux";
 import "./Summary.css";
 
 export default function Summary() {
-  const dispatch = useDispatch();
-
   const { items, loading, error, isServerError } = useSelector(
     (state) => state.applications
   );
 
-  useEffect(() => {
-    dispatch(fetchApplications());
-  }, [dispatch]);
-
-  // logging for development
-  //useEffect(() => {
-  //  console.log(items.length);
-  //  items.forEach((x) => {
-  //    console.log(x);
-  //    //console.log(sourceCounts);
-  //  });
-  //});
-
+  // organize application counts by job posting source
   const sourceCounts = items.reduce((accur, itm) => {
     const sourceName = itm.source.name;
     accur[sourceName] = (accur[sourceName] || 0) + 1;
