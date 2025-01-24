@@ -1,3 +1,7 @@
+select {
+    width: 50px;
+}
+
 .applications {
     text-align: left;
     padding-left: 20px;
@@ -8,16 +12,35 @@
 
 .filter-bar {
     display: flex;
-    gap: 10px;
+    gap: 2px;
     margin-bottom: 20px;
+    border: 2px solid #a9a9a9;
+    border-radius: 8px;
+    padding: 10px;
+    align-items: center;
 }
 
 .text-filter {
+    width: 150px;
     padding: 8px;
-    flex: 2;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
 }
 
 .select-filter {
+    width: 120px;
     padding: 8px;
-    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-label {
+    padding-left: 15px;
+    font-size: 14px;
+}
+
+.filter-button {
+    padding-left: 15px;
 }
