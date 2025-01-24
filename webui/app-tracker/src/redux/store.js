@@ -8,7 +8,7 @@ export const store = configureStore({
   reducer: {
     applications: applicationReducer,
     jobTitles: jobTitleReducer,
-    sources: sourceReducer,
+    appSources: sourceReducer,
     workEnvironments: workEnvrionmentReducer,
   },
 });
