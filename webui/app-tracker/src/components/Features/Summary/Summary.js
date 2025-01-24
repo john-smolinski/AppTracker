@@ -3,26 +3,26 @@ import { useSelector } from "react-redux";
 import "./Summary.css";
 
 export default function Summary() {
-  const { items, loading, error, isServerError } = useSelector(
+  const { apps, loading, error, isServerError } = useSelector(
     (state) => state.applications
   );
 
   // organize application counts by job posting source
-  const sourceCounts = items.reduce((accumulator, currentValue) => {
+  const sourceCounts = apps.reduce((accumulator, currentValue) => {
     const sourceName = currentValue.source.name;
     accumulator[sourceName] = (accumulator[sourceName] || 0) + 1;
     return accumulator;
   }, {});
 
   // organize application counts by working environment
-  const environmentCounts = items.reduce((accumulator, currentValue) => {
+  const environmentCounts = apps.reduce((accumulator, currentValue) => {
     const environmentName = currentValue.workEnvironment.name;
     accumulator[environmentName] = (accumulator[environmentName] || 0) + 1;
     return accumulator;
   }, {});
 
   // organzize applicatons counts by job title
-  const jobTitleCounts = items.reduce((accumulator, currentValue) => {
+  const jobTitleCounts = apps.reduce((accumulator, currentValue) => {
     const jobTitle = currentValue.jobTitle.name;
     accumulator[jobTitle] = (accumulator[jobTitle] || 0) + 1;
     return accumulator;
@@ -58,7 +58,7 @@ export default function Summary() {
     <div>
       <h1>Summary View</h1>
       <div className="summary">
-        <h3>{items.length} Total Applications Submitted </h3>
+        <h3>{apps.length} Total Applications Submitted </h3>
         <div className="content-container">
           <div className="box">
             <h2>Applications by Source</h2>

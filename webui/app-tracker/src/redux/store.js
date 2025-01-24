@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import applicationReducer from "./applicationSlice";
+import applicationReducer from "./applicationsSlice";
 import jobTitleReducer from "./jobTitlesSlice";
 import sourceReducer from "./sourcesSlice";
-import workEnvrionmentReducer from "./workEnvironmentSlice";
+import workEnvrionmentReducer from "./workEnvironmentsSlice";
 
 export const store = configureStore({
   reducer: {

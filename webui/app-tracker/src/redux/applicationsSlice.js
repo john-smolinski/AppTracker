@@ -36,10 +36,10 @@ export const postApplication = createAsyncThunk(
 );
 
 // Application Slice
-const applicationSlice = createSlice({
+const applicationsSlice = createSlice({
   name: "applications",
   initialState: {
-    items: [],
+    apps: [],
     loading: false,
     error: null,
     isServerError: false,
@@ -55,7 +55,7 @@ const applicationSlice = createSlice({
       })
       .addCase(fetchApplications.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.apps = action.payload;
       })
       .addCase(fetchApplications.rejected, (state, action) => {
         state.loading = false;
@@ -70,7 +70,7 @@ const applicationSlice = createSlice({
       })
       .addCase(postApplication.fulfilled, (state, action) => {
         state.loading = false;
-        state.items.push(action.payload);
+        state.apps.push(action.payload);
       })
       .addCase(postApplication.rejected, (state, action) => {
         state.loading = false;
@@ -80,4 +80,4 @@ const applicationSlice = createSlice({
   },
 });
 
-export default applicationSlice.reducer;
+export default applicationsSlice.reducer;

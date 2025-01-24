@@ -20,10 +20,10 @@ export const fetchJobTitles = createAsyncThunk(
 );
 
 // Job Title Slice
-const jobTitleSlice = createSlice({
+const jobTitlesSlice = createSlice({
   name: "jobTitles",
   initialState: {
-    items: [],
+    titles: [],
     loading: false,
     error: null,
     isServerError: false,
@@ -39,7 +39,7 @@ const jobTitleSlice = createSlice({
       })
       .addCase(fetchJobTitles.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.titles = action.payload;
       })
       .addCase(fetchJobTitles.rejected, (state, action) => {
         state.loading = false;
@@ -49,4 +49,4 @@ const jobTitleSlice = createSlice({
   },
 });
 
-export default jobTitleSlice.reducer;
+export default jobTitlesSlice.reducer;

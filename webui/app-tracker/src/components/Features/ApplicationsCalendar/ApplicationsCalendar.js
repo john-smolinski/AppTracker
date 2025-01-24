@@ -11,7 +11,7 @@ import "./ApplicationsCalendar.css";
 
 export default function ApplicationCalendar() {
   // access applications from Redux store
-  const applications = useSelector((state) => state.applications.items);
+  const applications = useSelector((state) => state.applications.apps);
 
   // transform applications into a dictionary with dates as keys
   const contributions = applications.reduce((acc, app) => {
