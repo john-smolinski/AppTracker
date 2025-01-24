@@ -22,7 +22,7 @@ export default function ApplicationsView() {
   // map the columns
   const columns = [
     { field: "id", headerName: "Id", width: 50 },
-    { field: "applicaitionDate", headerName: "Date", width: 200 },
+    { field: "applicaitionDate", headerName: "Date", width: 100 },
     { field: "source", headerName: "Source", width: 200 },
     { field: "organization", headerName: "Organization", width: 200 },
     { field: "jobTitle", headerName: "Job Title", width: 200 },
@@ -34,9 +34,7 @@ export default function ApplicationsView() {
       <Menu />
       <h1>Applications Submitted</h1>
       <div className="applications">
-        <div className="filter-bar">
-          <DataGrid rows={formattedAppData} columns={columns} pageSize={50} />
-        </div>
+        <DataGrid rows={formattedAppData} columns={columns} pageSize={50} />
       </div>
     </div>
   );

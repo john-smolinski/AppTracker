@@ -64,7 +64,7 @@ export default function ApplicationCalendar() {
 
   return (
     <div>
-      <h1>Day View</h1>
+      <h2>Calendar</h2>
       <div className="calendar">
         {/* Month Labels */}
         <div className="calendar-month-labels">

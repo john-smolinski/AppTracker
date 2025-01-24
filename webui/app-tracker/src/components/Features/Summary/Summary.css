@@ -6,6 +6,11 @@
     padding: 15px;
 }
 
+.summary h2 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
 .content-container {
     display: flex;
     justify-content: space-between;
@@ -22,10 +27,11 @@
 
 .box h2 {
     margin-bottom: 8px;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .box ul {
     list-style-type: disc;
     padding-left: 20px;
+    font-size: 14px;
 }
