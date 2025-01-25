@@ -2,6 +2,11 @@ select {
     width: 50px;
 }
 
+h2 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
 .applications {
     text-align: left;
     padding-left: 20px;

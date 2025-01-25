@@ -32,7 +32,7 @@ export default function ApplicationsView() {
   return (
     <div className="app">
       <Menu />
-      <h1>Applications Submitted</h1>
+      <h2>Applications Submitted</h2>
       <div className="applications">
         <DataGrid rows={formattedAppData} columns={columns} pageSize={50} />
       </div>
