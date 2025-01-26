@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Menu from "../../Menu/Menu";
 import "../../../App.css";
 import "./ApplicationsView.css";
@@ -26,7 +26,7 @@ export default function ApplicationsView() {
     { field: "source", headerName: "Source", width: 200 },
     { field: "organization", headerName: "Organization", width: 200 },
     { field: "jobTitle", headerName: "Job Title", width: 200 },
-    { field: "workEnvironment", headerName: "Office", width: 200 },
+    { field: "workEnvironment", headerName: "Office", width: 100 },
   ];
 
   return (
@@ -34,7 +34,22 @@ export default function ApplicationsView() {
       <Menu />
       <h2>Applications Submitted</h2>
       <div className="applications">
-        <DataGrid rows={formattedAppData} columns={columns} pageSize={50} />
+        <DataGrid
+          rows={formattedAppData}
+          columns={columns}
+          pageSize={50}
+          disableColumnFilter
+          disableColumnSelector
+          disableDensitySelector
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              printOptions: { disableToolbarButton: true },
+              csvOptions: { disableToolbarButton: true },
+            },
+          }}
+        />
       </div>
     </div>
   );
