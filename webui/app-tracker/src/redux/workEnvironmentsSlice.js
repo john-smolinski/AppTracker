@@ -20,10 +20,10 @@ export const fetchWorkEnvironments = createAsyncThunk(
 );
 
 // Work Environment Slice
-const workEnvironmentSlice = createSlice({
+const workEnvironmentsSlice = createSlice({
   name: "workEnvironments",
   initialState: {
-    items: [],
+    environments: [],
     loading: false,
     error: null,
     isServerError: false,
@@ -39,7 +39,7 @@ const workEnvironmentSlice = createSlice({
       })
       .addCase(fetchWorkEnvironments.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.environments = action.payload;
       })
       .addCase(fetchWorkEnvironments.rejected, (state, action) => {
         state.loading = false;
@@ -49,4 +49,4 @@ const workEnvironmentSlice = createSlice({
   },
 });
 
-export default workEnvironmentSlice.reducer;
+export default workEnvironmentsSlice.reducer;

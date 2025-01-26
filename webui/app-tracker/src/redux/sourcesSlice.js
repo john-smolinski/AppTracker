@@ -20,10 +20,10 @@ export const fetchSources = createAsyncThunk(
 );
 
 // Source Slice
-const sourceSlice = createSlice({
+const sourcesSlice = createSlice({
   name: "sources",
   initialState: {
-    items: [],
+    sources: [],
     loading: false,
     error: null,
     isServerError: false,
@@ -39,7 +39,7 @@ const sourceSlice = createSlice({
       })
       .addCase(fetchSources.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload;
+        state.sources = action.payload;
       })
       .addCase(fetchSources.rejected, (state, action) => {
         state.loading = false;
@@ -49,4 +49,4 @@ const sourceSlice = createSlice({
   },
 });
 
-export default sourceSlice.reducer;
+export default sourcesSlice.reducer;

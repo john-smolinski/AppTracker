@@ -1,0 +1,51 @@
+select {
+    width: 50px;
+}
+
+h2 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.applications {
+    text-align: left;
+    padding-left: 20px;
+    border: 2px solid #a9a9a9;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 20px;
+    border: 2px solid #a9a9a9;
+    border-radius: 8px;
+    padding: 10px;
+    align-items: center;
+}
+
+.text-filter {
+    width: 150px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.select-filter {
+    width: 120px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.filter-label {
+    padding-left: 15px;
+    font-size: 14px;
+}
+
+.filter-button {
+    padding-left: 15px;
+}

@@ -11,7 +11,7 @@ import "./ApplicationsCalendar.css";
 
 export default function ApplicationCalendar() {
   // access applications from Redux store
-  const applications = useSelector((state) => state.applications.items);
+  const applications = useSelector((state) => state.applications.apps);
 
   // transform applications into a dictionary with dates as keys
   const contributions = applications.reduce((acc, app) => {
@@ -64,7 +64,7 @@ export default function ApplicationCalendar() {
 
   return (
     <div>
-      <h1>Day View</h1>
+      <h2>Calendar</h2>
       <div className="calendar">
         {/* Month Labels */}
         <div className="calendar-month-labels">

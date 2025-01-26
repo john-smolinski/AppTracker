@@ -9,8 +9,8 @@ export default function Menu() {
       <Link to="/" className="menu-button">
         Home
       </Link>
-      <Link to="/search" className="menu-button">
-        Search
+      <Link to="/applications" className="menu-button">
+        Applications
       </Link>
       <Link to="/add" className="menu-button">
         Add New
