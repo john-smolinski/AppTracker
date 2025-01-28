@@ -21,10 +21,6 @@ export default function AddApplication() {
   const sources = useSelector((state) => state.appSources.sources);
   const jobTitles = useSelector((state) => state.jobTitles.titles);
 
-  // not necissary map in the control
-  //const sourceOptions = sources.map((x) => x.name);
-  //const jobTitleOptions = jobTitles.map((x) => x.name);
-
   const [selectedSource, setSelectedSource] = useState("");
   const [selectedTitle, setSelectedTitle] = useState("");
 
@@ -39,7 +35,7 @@ export default function AddApplication() {
     }
   };
 
-  const filteredSourceOptions = (options, params) => {
+  const filteredOptions = (options, params) => {
     const filtered = options.filter((option) =>
       option.toLowerCase().includes(params.inputValue.toLowerCase())
     );
@@ -57,55 +53,80 @@ export default function AddApplication() {
     <div className="app">
       <Menu />
       <h2>Add Application</h2>
+      {/* outter boundry */}
       <div className="add-application">
-        <p>selected options</p>
-        <div>Source: {selectedSource}</div>
-        <div>
-          <label>Date:</label> Date Picker
+        {/* development prints */}
+        <div className="add-application">
+          <ul>
+            <li>Source: {selectedSource || "null"} </li>
+            <li>Title: {selectedTitle || "null"}</li>
+          </ul>
         </div>
-        <div>Source:</div>
-        <div>
-          <Autocomplete
-            value={selectedSource}
-            onChange={handleChange(setSelectedSource)}
-            filterOptions={filteredSourceOptions}
-            selectOnFocus
-            clearOnBlur
-            handleHomeEndKeys
-            options={sources.map((x) => x.name)}
-            getOptionLabel={(option) =>
-              typeof option === "string" ? option : option.label
-            }
-            renderOption={(props, option) => (
-              <li {...props}>
-                {typeof option === "string" ? option : option.label}
-              </li>
-            )}
-            freeSolo
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select or Add new"
-                variant="outlined"
-                className="auto-complete"
-              />
-            )}
-          />
-        </div>
-        <div>
-          <lable>Organization: </lable> Organization Text field with auto
-          complete
-        </div>
-        <div>
-          <lable>Job Title: </lable> Job Title Text field with auto complete
-        </div>
-        <div>
-          <label>Environment: </label> Work Environment text field with auto
-          complete
-        </div>
-        <div>
-          <lable>City</lable> <span>city auto complete</span>{" "}
-          <label>state</label> <span>state auto complete</span>
+        <div className="add-application">
+          <div>
+            <label>Date:</label> Date Picker
+          </div>
+          <div className="add-application">
+            Source:
+            <Autocomplete
+              sx={{ width: 300 }}
+              value={selectedSource}
+              onChange={handleChange(setSelectedSource)}
+              filterOptions={filteredOptions}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              options={sources.map((x) => x.name)}
+              getOptionLabel={(option) =>
+                typeof option === "string" ? option : option.label
+              }
+              renderOption={(props, option) => (
+                <li {...props}>
+                  {typeof option === "string" ? option : option.label}
+                </li>
+              )}
+              freeSolo
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select or Add new"
+                  variant="outlined"
+                  className="auto-complete"
+                />
+              )}
+            />
+          </div>
+          {/* insert organization here */}
+          <div className="add-application">
+            Job title:
+            <Autocomplete
+              sx={{ width: 300 }}
+              value={selectedTitle}
+              onChange={handleChange(setSelectedTitle)}
+              filterOptions={filteredOptions}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              options={jobTitles.map((x) => x.name)}
+              getOptionLabel={(option) =>
+                typeof option === "string" ? option : option.label
+              }
+              renderOption={(props, option) => (
+                <li {...props}>
+                  {typeof option === "string" ? option : option.label}
+                </li>
+              )}
+              freeSolo
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select or Add new"
+                  variant="outlined"
+                  className="auto-complete"
+                />
+              )}
+            />
+          </div>
         </div>
       </div>
     </div>
