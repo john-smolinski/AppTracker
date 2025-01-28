@@ -23,7 +23,7 @@ export const fetchOrganizations = createAsyncThunk(
 const organizationsSlice = createSlice({
   name: "organizations",
   initialState: {
-    orgs: [],
+    organizations: [],
     loading: false,
     error: null,
     isServerError: false,
@@ -39,7 +39,7 @@ const organizationsSlice = createSlice({
       })
       .addCase(fetchOrganizations.fulfilled, (state, action) => {
         state.loading = false;
-        state.orgs = action.payload;
+        state.organizations = action.payload;
       })
       .addCase(fetchOrganizations.rejected, (state, action) => {
         state.loading = false;
