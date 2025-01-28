@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSources } from "../../../redux/sourcesSlice";
-import { fetchJobTitles } from "../../../redux/jobTitlesSlice";
-import { fetchWorkEnvironments } from "../../../redux/workEnvironmentsSlice";
 import { Autocomplete, TextField } from "@mui/material";
 import Menu from "../../Menu/Menu";
 import "./AddApplication.css";
 
 export default function AddApplication() {
-  // get filter/auto complete values
-  const dispatch = useDispatch();
-
   useEffect(() => {
-    dispatch(fetchSources());
-    dispatch(fetchJobTitles());
-    dispatch(fetchWorkEnvironments());
+    console.log(orgs.length);
   });
 
   // access autocomplete values from the Redux state
   const sources = useSelector((state) => state.appSources.sources);
+  const orgs = useSelector((state) => state.organizations.orgs);
   const jobTitles = useSelector((state) => state.jobTitles.titles);
 
   const [selectedSource, setSelectedSource] = useState("");
+  const [selectedOrganization, setSelectedOrganization] = useState("");
   const [selectedTitle, setSelectedTitle] = useState("");
 
   // handle change events for different controls
@@ -58,14 +52,22 @@ export default function AddApplication() {
         {/* development prints */}
         <div className="add-application">
           <ul>
-            <li>Source: {selectedSource || "null"} </li>
-            <li>Title: {selectedTitle || "null"}</li>
+            <li>
+              Source: {selectedSource || "null"} | {sources.length}
+            </li>
+            <li>
+              Organization {selectedOrganization || "null"} | {orgs.length}
+            </li>
+            <li>
+              Title: {selectedTitle || "null"} | {jobTitles.length}{" "}
+            </li>
           </ul>
         </div>
         <div className="add-application">
           <div>
             <label>Date:</label> Date Picker
           </div>
+          {/* select/add source control */}
           <div className="add-application">
             Source:
             <Autocomplete
@@ -98,6 +100,37 @@ export default function AddApplication() {
           </div>
           {/* insert organization here */}
           <div className="add-application">
+            Organization:
+            <Autocomplete
+              sx={{ width: 300 }}
+              value={selectedOrganization}
+              onChange={handleChange(setSelectedOrganization)}
+              filterOptions={filteredOptions}
+              selectOnFocus
+              clearOnBlur
+              handleHomeEndKeys
+              options={orgs.map((x) => x.name)}
+              getOptionLabel={(option) =>
+                typeof option === "string" ? option : option.label
+              }
+              renderOption={(props, option) => (
+                <li {...props}>
+                  {typeof option === "string" ? option : option.label}
+                </li>
+              )}
+              freeSolo
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select or Add new"
+                  variant="outlined"
+                  className="auto-complete"
+                />
+              )}
+            />
+          </div>
+          {/* select/add job title control */}
+          <div className="add-application">
             Job title:
             <Autocomplete
               sx={{ width: 300 }}
@@ -127,6 +160,8 @@ export default function AddApplication() {
               )}
             />
           </div>
+
+          {/* insert work environment here */}
         </div>
       </div>
     </div>

@@ -39,7 +39,7 @@ const organizationsSlice = createSlice({
       })
       .addCase(fetchOrganizations.fulfilled, (state, action) => {
         state.loading = false;
-        state.titles = action.payload;
+        state.orgs = action.payload;
       })
       .addCase(fetchOrganizations.rejected, (state, action) => {
         state.loading = false;
