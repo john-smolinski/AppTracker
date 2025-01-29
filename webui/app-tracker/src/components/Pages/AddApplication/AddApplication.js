@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect, useMemo } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import {
   Autocomplete,
@@ -7,12 +7,15 @@ import {
   FormControl,
   FormLabel,
   Box,
+  Stack,
+  Button,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Menu from "../../Menu/Menu";
 import "./AddApplication.css";
+import { postApplication } from "../../../redux/applicationsSlice";
 
 export default function AddApplication() {
   // access autocomplete values from the Redux state
@@ -35,34 +38,8 @@ export default function AddApplication() {
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
 
   // the new application to post
-  const [newApplication, setNewApplication] = useState({
-    applicationDate: null,
-    source: { id: null, name: null },
-    organization: { id: null, name: null },
-    jobTitle: { id: null, name: null },
-    workEnvironment: { id: null, name: null },
-  });
-
-  const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    setIsValid(
-      appDate != null &&
-        selectedSource != null &&
-        selectedOrganization != null &&
-        selectedTitle != null &&
-        selectedEnvironment != null
-    );
-  }, [
-    appDate,
-    selectedSource,
-    selectedOrganization,
-    selectedTitle,
-    selectedEnvironment,
-  ]);
-
-  useEffect(() => {
-    setNewApplication({
+  const newApplication = useMemo(
+    () => ({
       applicationDate: appDate,
       source: {
         id: sources.find((s) => s.name === selectedSource)?.id || null,
@@ -83,17 +60,36 @@ export default function AddApplication() {
           environments.find((w) => w.name === selectedEnvironment)?.id || null,
         name: selectedEnvironment || null,
       },
-    });
+    }),
+    [
+      appDate,
+      selectedSource,
+      selectedOrganization,
+      selectedTitle,
+      selectedEnvironment,
+      sources,
+      organizations,
+      jobTitles,
+      environments,
+    ]
+  );
+
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    setIsValid(
+      appDate != null &&
+        selectedSource != null &&
+        selectedOrganization != null &&
+        selectedTitle != null &&
+        selectedEnvironment != null
+    );
   }, [
     appDate,
     selectedSource,
     selectedOrganization,
     selectedTitle,
     selectedEnvironment,
-    sources,
-    organizations,
-    jobTitles,
-    environments,
   ]);
 
   // generic function to handle change events for autocomplete changes
@@ -115,10 +111,23 @@ export default function AddApplication() {
     if (params.inputValue !== "" && !options.includes(params.inputValue)) {
       filtered.push({
         inputValue: params.inputValue,
-        label: `Add {params.inputValue}`,
+        label: `Add ${params.inputValue}`,
       });
     }
     return filtered;
+  };
+
+  const handleReset = () => {
+    setSelectedSource(null);
+    setSelectedOrganization(null);
+    setSelectedTitle(null);
+    setSelectedEnvironment(null);
+  };
+
+  const dispatch = useDispatch();
+  const handleSubmit = () => {
+    dispatch(postApplication(newApplication));
+    handleReset();
   };
 
   return (
@@ -159,7 +168,6 @@ export default function AddApplication() {
                 onChange={handleChange(setSelectedSource)}
                 filterOptions={filteredOptions}
                 selectOnFocus
-                clearOnBlur
                 handleHomeEndKeys
                 options={sources.map((x) => x.name)}
                 getOptionLabel={(option) =>
@@ -195,7 +203,6 @@ export default function AddApplication() {
               onChange={handleChange(setSelectedOrganization)}
               filterOptions={filteredOptions}
               selectOnFocus
-              clearOnBlur
               handleHomeEndKeys
               options={organizations.map((x) => x.name)}
               getOptionLabel={(option) =>
@@ -232,7 +239,6 @@ export default function AddApplication() {
                 onChange={handleChange(setSelectedTitle)}
                 filterOptions={filteredOptions}
                 selectOnFocus
-                clearOnBlur
                 handleHomeEndKeys
                 options={jobTitles.map((x) => x.name)}
                 getOptionLabel={(option) =>
@@ -269,7 +275,6 @@ export default function AddApplication() {
                 onChange={handleChange(setSelectedEnvironment)}
                 filterOptions={filteredOptions}
                 selectOnFocus
-                clearOnBlur
                 handleHomeEndKeys
                 options={environments.map((x) => x.name)}
                 getOptionLabel={(option) =>
@@ -290,6 +295,23 @@ export default function AddApplication() {
                   />
                 )}
               />
+            </Box>
+          </Box>
+          <Box>
+            <Box Box flex="0 0 150px"></Box>
+            <Box flex="1">
+              <Stack direction="row" spacing={2}>
+                <Button variant="contained" onClick={handleReset}>
+                  Reset
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={!isValid}
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </Button>
+              </Stack>
             </Box>
           </Box>
         </Box>
