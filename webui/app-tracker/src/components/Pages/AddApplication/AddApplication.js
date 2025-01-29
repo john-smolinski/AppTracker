@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 import {
@@ -29,12 +29,74 @@ export default function AddApplication() {
   const [appDate, setAppDate] = useState(dayjs(new Date()));
 
   // application properties
-  const [selectedSource, setSelectedSource] = useState("");
-  const [selectedOrganization, setSelectedOrganization] = useState("");
-  const [selectedTitle, setSelectedTitle] = useState("");
-  const [selectedEnvironment, setSelectedEnvironment] = useState("");
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [selectedEnvironment, setSelectedEnvironment] = useState(null);
 
-  // handle change events for different controls
+  // the new application to post
+  const [newApplication, setNewApplication] = useState({
+    applicationDate: null,
+    source: { id: null, name: null },
+    organization: { id: null, name: null },
+    jobTitle: { id: null, name: null },
+    workEnvironment: { id: null, name: null },
+  });
+
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    setIsValid(
+      appDate != null &&
+        selectedSource != null &&
+        selectedOrganization != null &&
+        selectedTitle != null &&
+        selectedEnvironment != null
+    );
+  }, [
+    appDate,
+    selectedSource,
+    selectedOrganization,
+    selectedTitle,
+    selectedEnvironment,
+  ]);
+
+  useEffect(() => {
+    setNewApplication({
+      applicationDate: appDate,
+      source: {
+        id: sources.find((s) => s.name === selectedSource)?.id || null,
+        name: selectedSource || null,
+      },
+      organization: {
+        id:
+          organizations.find((o) => o.name === selectedOrganization)?.id ||
+          null,
+        name: selectedOrganization || null,
+      },
+      jobTitle: {
+        id: jobTitles.find((j) => j.name === selectedTitle)?.id || null,
+        name: selectedTitle || null,
+      },
+      workEnvironment: {
+        id:
+          environments.find((w) => w.name === selectedEnvironment)?.id || null,
+        name: selectedEnvironment || null,
+      },
+    });
+  }, [
+    appDate,
+    selectedSource,
+    selectedOrganization,
+    selectedTitle,
+    selectedEnvironment,
+    sources,
+    organizations,
+    jobTitles,
+    environments,
+  ]);
+
+  // generic function to handle change events for autocomplete changes
   const handleChange = (setter) => (_, newValue) => {
     if (typeof newValue === "string") {
       setter(newValue); // use the typed value
@@ -57,14 +119,6 @@ export default function AddApplication() {
       });
     }
     return filtered;
-  };
-
-  let newApplication = {
-    applicationDate: null,
-    source: { id: null, name: "" },
-    organization: { id: null, name: "" },
-    jobTitle: { id: null, name: "" },
-    workEnvironment: { id: null, name: "" },
   };
 
   return (
