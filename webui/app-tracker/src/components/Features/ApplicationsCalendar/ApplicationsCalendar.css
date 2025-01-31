@@ -46,7 +46,7 @@ h2 {
     font-size: 16px;
     font-weight: bold;
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
 .calendar-grid {
@@ -64,8 +64,8 @@ h2 {
 }
 
 .calendar-day {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     border-radius: 3px;
     background-color: #ebedf0;
     transition: background-color 0.3s;

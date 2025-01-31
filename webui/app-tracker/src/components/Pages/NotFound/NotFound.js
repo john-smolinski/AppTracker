@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="app">
       <Menu />
-      <h1>Not Found Placeholder</h1>
+      <h1>404 Not Found</h1>
     </div>
   );
 }
