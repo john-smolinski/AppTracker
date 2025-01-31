@@ -36,6 +36,7 @@ export default function AddApplication() {
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+  const [submissionMessage, setSubmissionMessage] = useState("");
 
   // the new application to post
   const newApplication = useMemo(
@@ -127,6 +128,10 @@ export default function AddApplication() {
   const dispatch = useDispatch();
   const handleSubmit = () => {
     dispatch(postApplication(newApplication));
+
+    setSubmissionMessage("Application successfully added!");
+    setTimeout(() => setSubmissionMessage(""), 5000); // only leave message for 5 seconds
+
     handleReset();
   };
 
@@ -323,6 +328,7 @@ export default function AddApplication() {
                 >
                   Submit
                 </Button>
+                {submissionMessage && <span>{submissionMessage}</span>}
               </Stack>
             </Box>
           </Box>
