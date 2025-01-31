@@ -76,14 +76,19 @@ export default function AddApplication() {
   );
 
   const [isValid, setIsValid] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     setIsValid(
       appDate != null &&
-        selectedSource != null &&
-        selectedOrganization != null &&
-        selectedTitle != null &&
-        selectedEnvironment != null
+        selectedSource !== null &&
+        selectedSource.trim() !== "" &&
+        selectedOrganization !== null &&
+        selectedOrganization.trim() !== "" &&
+        selectedTitle !== null &&
+        selectedTitle.trim() !== "" &&
+        selectedEnvironment !== null &&
+        selectedEnvironment.trim() !== ""
     );
   }, [
     appDate,
@@ -101,6 +106,13 @@ export default function AddApplication() {
       setter(newValue.inputValue); // handle the manual input value
     } else {
       setter(newValue); // use the selected dropdown value
+    }
+  };
+
+  // make sure values are updated when the field loses focus
+  const handleBlur = (setter, value) => () => {
+    if (value && value.trim() !== "") {
+      setter(value.trim());
     }
   };
 
@@ -123,6 +135,8 @@ export default function AddApplication() {
     setSelectedOrganization(null);
     setSelectedTitle(null);
     setSelectedEnvironment(null);
+
+    setResetKey((prev) => prev + 1);
   };
 
   const dispatch = useDispatch();
@@ -168,9 +182,11 @@ export default function AddApplication() {
             </Box>
             <Box flex="1">
               <Autocomplete
+                key={resetKey}
                 sx={{ width: 300 }}
                 value={selectedSource}
                 onChange={handleChange(setSelectedSource)}
+                onBlur={handleBlur(setSelectedSource, selectedSource)}
                 filterOptions={filteredOptions}
                 selectOnFocus
                 handleHomeEndKeys
@@ -206,9 +222,11 @@ export default function AddApplication() {
               </FormControl>
             </Box>
             <Autocomplete
+              key={resetKey}
               sx={{ width: 300 }}
               value={selectedOrganization}
               onChange={handleChange(setSelectedOrganization)}
+              onBlur={handleBlur(setSelectedOrganization, selectedOrganization)}
               filterOptions={filteredOptions}
               selectOnFocus
               handleHomeEndKeys
@@ -245,9 +263,11 @@ export default function AddApplication() {
             </Box>
             <Box flex="1">
               <Autocomplete
+                key={resetKey}
                 sx={{ width: 300 }}
                 value={selectedTitle}
                 onChange={handleChange(setSelectedTitle)}
+                onBlur={handleBlur(setSelectedTitle, selectedTitle)}
                 filterOptions={filteredOptions}
                 selectOnFocus
                 handleHomeEndKeys
@@ -284,9 +304,11 @@ export default function AddApplication() {
             </Box>
             <Box flex="1">
               <Autocomplete
+                key={resetKey}
                 sx={{ width: 300 }}
                 value={selectedEnvironment}
                 onChange={handleChange(setSelectedEnvironment)}
+                onBlur={handleBlur(setSelectedEnvironment, selectedEnvironment)}
                 filterOptions={filteredOptions}
                 selectOnFocus
                 handleHomeEndKeys
