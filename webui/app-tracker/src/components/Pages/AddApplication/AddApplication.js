@@ -298,7 +298,7 @@ export default function AddApplication() {
             </Box>
           </Box>
           <Box>
-            <Box Box flex="0 0 150px"></Box>
+            <Box flex="0 0 150px"></Box>
             <Box flex="1">
               <Stack direction="row" spacing={2}>
                 <Button variant="contained" onClick={handleReset}>
