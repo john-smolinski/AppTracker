@@ -173,11 +173,14 @@ export default function AddApplication() {
                 getOptionLabel={(option) =>
                   typeof option === "string" ? option : option.label
                 }
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    {typeof option === "string" ? option : option.label}
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  const { key, ...rest } = props; // Extract key separately
+                  return (
+                    <li key={key} {...rest}>
+                      {typeof option === "string" ? option : option.label}
+                    </li>
+                  );
+                }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
@@ -208,11 +211,14 @@ export default function AddApplication() {
               getOptionLabel={(option) =>
                 typeof option === "string" ? option : option.label
               }
-              renderOption={(props, option) => (
-                <li {...props}>
-                  {typeof option === "string" ? option : option.label}
-                </li>
-              )}
+              renderOption={(props, option) => {
+                const { key, ...rest } = props; // Extract key separately
+                return (
+                  <li key={key} {...rest}>
+                    {typeof option === "string" ? option : option.label}
+                  </li>
+                );
+              }}
               freeSolo
               renderInput={(params) => (
                 <TextField
@@ -244,11 +250,14 @@ export default function AddApplication() {
                 getOptionLabel={(option) =>
                   typeof option === "string" ? option : option.label
                 }
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    {typeof option === "string" ? option : option.label}
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  const { key, ...rest } = props; // Extract key separately
+                  return (
+                    <li key={key} {...rest}>
+                      {typeof option === "string" ? option : option.label}
+                    </li>
+                  );
+                }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
@@ -280,11 +289,14 @@ export default function AddApplication() {
                 getOptionLabel={(option) =>
                   typeof option === "string" ? option : option.label
                 }
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    {typeof option === "string" ? option : option.label}
-                  </li>
-                )}
+                renderOption={(props, option) => {
+                  const { key, ...rest } = props; // Extract key separately
+                  return (
+                    <li key={key} {...rest}>
+                      {typeof option === "string" ? option : option.label}
+                    </li>
+                  );
+                }}
                 freeSolo
                 renderInput={(params) => (
                   <TextField
