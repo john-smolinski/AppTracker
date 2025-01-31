@@ -1,0 +1,18 @@
+h2 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.add-application {
+    text-align: left;
+    padding-left: 20px;
+    border: 2px solid #a9a9a9;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.auto-complete {
+    text-align: left;
+    padding-left: 20px;
+    width: 150px;
+}
