@@ -269,6 +269,7 @@ namespace ApplicationTracker.Services
         {
             return new ApplicationDto
             {
+                Id = application.Id,
                 ApplicaitionDate = application.ApplicationDate,
                 Source = new SourceDto 
                 { 

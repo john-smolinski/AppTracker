@@ -74,7 +74,7 @@ namespace ApplicationTracker.Controllers
             }
         }
 
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
@@ -99,7 +99,7 @@ namespace ApplicationTracker.Controllers
                 }
 
                 var result = await _applicationService.PostAsync(application);
-                return Ok(result);
+                return CreatedAtAction(nameof(GetApplication), new { id = result.Id }, result);
             }
             catch (Exception ex)
             {

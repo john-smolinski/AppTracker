@@ -134,10 +134,10 @@ namespace ApplicationTracker.Tests.Controllers
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+                Assert.That(result.Result, Is.TypeOf<CreatedAtActionResult>());
                 
-                var okResult = result.Result as OkObjectResult;
-                Assert.That(okResult?.Value, Is.EqualTo(application));
+                var createdAtActionResult = result.Result as CreatedAtActionResult;
+                Assert.That(createdAtActionResult?.Value, Is.EqualTo(application));
             });
         }
 
