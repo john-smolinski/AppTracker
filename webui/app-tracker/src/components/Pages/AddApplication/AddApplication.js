@@ -14,6 +14,8 @@ import {
   Box,
   Stack,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -35,12 +37,22 @@ export default function AddApplication() {
   // application date
   const [appDate, setAppDate] = useState(dayjs(new Date()));
 
-  // application properties
+  // application properties states
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-  const [submissionMessage, setSubmissionMessage] = useState("");
+
+  // validation and reset states
+  const [isValid, setIsValid] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  // snackbar states
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const dispatch = useDispatch();
 
   // the new application to post
   const newApplication = useMemo(
@@ -78,9 +90,6 @@ export default function AddApplication() {
       environments,
     ]
   );
-
-  const [isValid, setIsValid] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     setIsValid(
@@ -135,21 +144,23 @@ export default function AddApplication() {
   };
 
   const handleReset = () => {
+    setAppDate(dayjs(new Date()));
     setSelectedSource(null);
     setSelectedOrganization(null);
     setSelectedTitle(null);
     setSelectedEnvironment(null);
-    setSubmissionMessage("");
     setResetKey((prev) => prev + 1);
   };
 
-  const dispatch = useDispatch();
   const handleSubmit = async () => {
     try {
       const response = await dispatch(postApplication(newApplication)).unwrap();
       if (response) {
-        setSubmissionMessage("Application successfully added!");
-        setTimeout(() => setSubmissionMessage(""), 5000); // only leave message for 5 seconds
+        setSnackbarMessage(
+          `Application for ${response.jobTitle.name} at ${response.organization.name} added`
+        );
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
 
         // update the state of any related item that may have been added as part of posting a new application
         if (
@@ -181,6 +192,9 @@ export default function AddApplication() {
       }
     } catch (error) {
       console.log(error);
+      setSnackbarMessage("Error adding application.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
     }
   };
 
@@ -385,12 +399,26 @@ export default function AddApplication() {
                 >
                   Submit
                 </Button>
-                {submissionMessage && <span>{submissionMessage}</span>}
               </Stack>
             </Box>
           </Box>
         </Box>
       </div>
+      {/* Snackbar Notification */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={5000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
