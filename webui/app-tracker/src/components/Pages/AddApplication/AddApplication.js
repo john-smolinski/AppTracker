@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { postApplication } from "../../../redux/applicationsSlice";
+import { fetchSources } from "../../../redux/sourcesSlice";
+import { fetchOrganizations } from "../../../redux/organizataionsSlice";
+import { fetchJobTitles } from "../../../redux/jobTitlesSlice";
+import { fetchWorkEnvironments } from "../../../redux/workEnvironmentsSlice";
 import dayjs from "dayjs";
 import {
   Autocomplete,
@@ -9,13 +14,14 @@ import {
   Box,
   Stack,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Menu from "../../Menu/Menu";
 import "./AddApplication.css";
-import { postApplication } from "../../../redux/applicationsSlice";
 
 export default function AddApplication() {
   // access autocomplete values from the Redux state
@@ -31,12 +37,22 @@ export default function AddApplication() {
   // application date
   const [appDate, setAppDate] = useState(dayjs(new Date()));
 
-  // application properties
+  // application properties states
   const [selectedSource, setSelectedSource] = useState(null);
   const [selectedOrganization, setSelectedOrganization] = useState(null);
   const [selectedTitle, setSelectedTitle] = useState(null);
   const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-  const [submissionMessage, setSubmissionMessage] = useState("");
+
+  // validation and reset states
+  const [isValid, setIsValid] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  // snackbar states
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+
+  const dispatch = useDispatch();
 
   // the new application to post
   const newApplication = useMemo(
@@ -74,9 +90,6 @@ export default function AddApplication() {
       environments,
     ]
   );
-
-  const [isValid, setIsValid] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
     setIsValid(
@@ -131,22 +144,58 @@ export default function AddApplication() {
   };
 
   const handleReset = () => {
+    setAppDate(dayjs(new Date()));
     setSelectedSource(null);
     setSelectedOrganization(null);
     setSelectedTitle(null);
     setSelectedEnvironment(null);
-
     setResetKey((prev) => prev + 1);
   };
 
-  const dispatch = useDispatch();
-  const handleSubmit = () => {
-    dispatch(postApplication(newApplication));
+  const handleSubmit = async () => {
+    try {
+      const response = await dispatch(postApplication(newApplication)).unwrap();
+      if (response) {
+        setSnackbarMessage(
+          `Application for ${response.jobTitle.name} at ${response.organization.name} added`
+        );
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
 
-    setSubmissionMessage("Application successfully added!");
-    setTimeout(() => setSubmissionMessage(""), 5000); // only leave message for 5 seconds
-
-    handleReset();
+        // update the state of any related item that may have been added as part of posting a new application
+        if (
+          response?.source &&
+          !sources.find((s) => s.name === response.source.name)
+        ) {
+          dispatch(fetchSources());
+        }
+        if (
+          response?.organization &&
+          !organizations.find((o) => o.name === response.organization.name)
+        ) {
+          dispatch(fetchOrganizations());
+        }
+        if (
+          response?.jobTitle &&
+          !jobTitles.find((j) => j.name === response.jobTitle.name)
+        ) {
+          dispatch(fetchJobTitles());
+        }
+        if (
+          response?.workEnvironment &&
+          !environments.find((e) => e.name === response.workEnvironment.name)
+        ) {
+          dispatch(fetchWorkEnvironments());
+        }
+        // reset the form
+        handleReset();
+      }
+    } catch (error) {
+      console.log(error);
+      setSnackbarMessage("Error adding application.");
+      setSnackbarSeverity("error");
+      setOpenSnackbar(true);
+    }
   };
 
   return (
@@ -195,7 +244,7 @@ export default function AddApplication() {
                   typeof option === "string" ? option : option.label
                 }
                 renderOption={(props, option) => {
-                  const { key, ...rest } = props; // Extract key separately
+                  const { key, ...rest } = props;
                   return (
                     <li key={key} {...rest}>
                       {typeof option === "string" ? option : option.label}
@@ -276,7 +325,7 @@ export default function AddApplication() {
                   typeof option === "string" ? option : option.label
                 }
                 renderOption={(props, option) => {
-                  const { key, ...rest } = props; // Extract key separately
+                  const { key, ...rest } = props;
                   return (
                     <li key={key} {...rest}>
                       {typeof option === "string" ? option : option.label}
@@ -350,12 +399,26 @@ export default function AddApplication() {
                 >
                   Submit
                 </Button>
-                {submissionMessage && <span>{submissionMessage}</span>}
               </Stack>
             </Box>
           </Box>
         </Box>
       </div>
+      {/* Snackbar Notification */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={5000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -25,7 +25,11 @@ export const postApplication = createAsyncThunk(
   async (newApplication, { rejectWithValue }) => {
     try {
       const response = await axios.post(API_BASE_URL, newApplication);
-      return response.data;
+      if (response.status === 201) {
+        return response.data;
+      } else {
+        return rejectWithValue("Failed to create application");
+      }
     } catch (error) {
       return rejectWithValue({
         status: error.response?.status,
