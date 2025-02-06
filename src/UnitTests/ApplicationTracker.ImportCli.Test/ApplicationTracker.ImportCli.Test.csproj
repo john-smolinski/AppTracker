@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApplicationTracker.ImportCli\ApplicationTracker.ImportCli.csproj" />
+    <ProjectReference Include="..\..\ApplicationTracker.ImportCli\ApplicationTracker.ImportCli.csproj" />
   </ItemGroup>
 
   <ItemGroup>
