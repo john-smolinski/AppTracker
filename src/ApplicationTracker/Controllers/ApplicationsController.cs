@@ -76,6 +76,7 @@ namespace ApplicationTracker.Controllers
 
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpPost]
         public async Task<ActionResult<ApplicationDto>> PostNewApplication(ApplicationDto application)
@@ -95,7 +96,7 @@ namespace ApplicationTracker.Controllers
                 if(await _applicationService.ExistsAsync(application))
                 {
                     _logger.LogWarning("Application already exist");
-                    return ErrorHelper.BadRequest("Application Exists", "Cannot post duplicate application");
+                    return new ConflictResult();
                 }
 
                 var result = await _applicationService.PostAsync(application);
