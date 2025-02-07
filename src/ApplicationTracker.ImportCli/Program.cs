@@ -1,9 +1,8 @@
 ﻿using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.ImportCli.CommandLine;
-using ApplicationTracker.ImportCli.Processes;
 using ClosedXML.Excel;
 using CommandLine;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
 
@@ -11,12 +10,23 @@ namespace ApplicationTracker.ImportCli
 {
     public class Program
     {
-        private static string apiUrl = "http://localhost:5000/api/applications";
+        private static string? apiUrl;
         public static void Main(string[] args)
         {
-            var exitCode = ProcessArguments(args);
+            LoadConfiguration();
+            var exitCode =  ProcessArguments(args);
             Environment.Exit(exitCode);
         }
+
+        private static void LoadConfiguration()
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+            apiUrl = configuration["ApiUrl"] ?? throw new InvalidOperationException("ApiUrl is missing in appsettings.json");
+        }
+
 
         public static int ProcessArguments(string[] args)
         {
@@ -58,10 +68,7 @@ namespace ApplicationTracker.ImportCli
 
         public static void ExecuteOptions(Options options)
         {
-            // intentional hard coding 
             var worksheet = new XLWorkbook(options.FilePath).Worksheet(1);
-
-            // get the data from the worksheet
             var applicationDtos = GetApplicationDtos(worksheet);
 
             foreach (var dto in applicationDtos)
@@ -73,11 +80,12 @@ namespace ApplicationTracker.ImportCli
 
         public static void PostData(ApplicationDto dto)
         {
-            // post the data to the API
             var client = new HttpClient();
             var content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
+            
             Console.WriteLine($"Posting data: {dto.ApplicaitionDate} - {dto.Organization.Name} - {dto.JobTitle.Name}");
             var response = client.PostAsync(apiUrl, content).Result;
+            
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Error posting data: {response.StatusCode}");
@@ -88,12 +96,6 @@ namespace ApplicationTracker.ImportCli
             }
         }
 
-
-        /// <summary>
-        /// Extract the application data from the worksheet
-        /// </summary>
-        /// <param name="worksheet">worksheet containing application log</param>
-        /// <returns>list of applications</returns>
         private static List<ApplicationDto> GetApplicationDtos(IXLWorksheet worksheet)
         {
             var lastRowUsed = worksheet.LastRowUsed();
