@@ -15,7 +15,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public void InternalServerError_ReturnsExpectedObjectResult()
         {
-            // Arrange
+            // Setup
             var message = "Internal server error occurred";
             var detail = "An unexpected error happened.";
 
@@ -40,7 +40,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public void NotFound_ReturnsExpectedNotFoundObjectResult()
         {
-            // Arrange
+            // Setup
             var message = "Resource not found";
             var detail = "The requested resource could not be found.";
 
@@ -64,7 +64,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public void BadRequest_ReturnsExpectedBadRequestObjectResult()
         {
-            // Arrange
+            // Setup
             var message = "Invalid request";
             var detail = "The request parameters were invalid.";
 

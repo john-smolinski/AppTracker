@@ -116,7 +116,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task PostNewApplication_ReturnsOkResult_WhenApplicationIsValid()
         {
-            // Arrange
+            // Setup
             var application = new ApplicationDto
             {
                 ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
@@ -142,9 +142,31 @@ namespace ApplicationTracker.Tests.Controllers
         }
 
         [Test]
+        public async Task PostNewApplication_Returns_Conflict_WhenApplicationAlreadyExists()
+        {
+            // Setup
+            var application = new ApplicationDto
+            {
+                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                Source = new SourceDto { Name = "Test Source" },
+                Organization = new OrganizationDto { Name = "Test Organization" },
+                JobTitle = new JobTitleDto { Name = "Test JobTitle" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test WorkEnvironment" }
+            };
+            
+            _mockService.Setup(s => s.ExistsAsync(application)).ReturnsAsync(true);
+
+            // Act 
+            var result = await _controller.PostNewApplication(application);
+
+            // Assert
+            Assert.That(result.Result, Is.TypeOf<ConflictResult>());
+        }
+
+        [Test]
         public async Task PostNewApplication_ReturnsBadRequest_WhenApplicationIsInvalid()
         {
-            // Arrange
+            // Setup
             _mockService.Setup(s => s.PostAsync(It.IsAny<ApplicationDto>()))
                         .ThrowsAsync(new ArgumentException("Invalid application"));
 
