@@ -26,11 +26,6 @@ namespace ApplicationTracker.Data.Configurations
                    .HasForeignKey(a => a.JobTitleId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(a => a.Location)
-                   .WithMany(l => l.Applications)
-                   .HasForeignKey(a => a.LocationId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasOne(a => a.Organization)
                    .WithMany(o => o.Applications)
                    .HasForeignKey(a => a.OrganizationId)

@@ -20,7 +20,6 @@ namespace ApplicationTracker.Services.Factory
             _serviceMap = new Dictionary<Type, Type>
             {
                 { typeof(JobTitleDto), typeof(JobTitleService) },
-                { typeof(LocationDto), typeof(LocationService) },
                 { typeof(OrganizationDto), typeof(OrganizationService) },
                 { typeof(SourceDto), typeof(SourceService) },
                 { typeof(WorkEnvironmentDto), typeof(WorkEnvironmentService) }

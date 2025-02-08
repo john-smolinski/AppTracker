@@ -16,7 +16,7 @@ export default function Menu() {
         Add New
       </Link>
       <Link to="/statistics" className="menu-button">
-        Statistics
+        Charts
       </Link>
     </div>
   );

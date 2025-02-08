@@ -65,14 +65,8 @@ namespace ApplicationTracker.Services
                         Id = x.WorkEnvironmentId, 
                         Name = x.WorkEnvironment.Name 
                     },
-                    Location = x.Location == null
-                        ? null
-                        :
-                        new LocationDto 
-                        { 
-                            Id = x.LocationId, 
-                            Name = x.Location.Name 
-                        }
+                    City = x.City,
+                    State = x.State
                 })
                 .ToListAsync();
         }

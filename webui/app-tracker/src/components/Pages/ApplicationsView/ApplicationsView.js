@@ -17,6 +17,8 @@ export default function ApplicationsView() {
     organization: item.organization.name,
     jobTitle: item.jobTitle.name,
     workEnvironment: item.workEnvironment.name,
+    city: item.city,
+    state: item.state,
   }));
 
   // map the columns
@@ -27,6 +29,8 @@ export default function ApplicationsView() {
     { field: "organization", headerName: "Organization", width: 200 },
     { field: "jobTitle", headerName: "Job Title", width: 200 },
     { field: "workEnvironment", headerName: "Office", width: 100 },
+    { field: "city", headerName: "City", width: 200 },
+    { field: "state", headerName: "State", width: 100 },
   ];
 
   return (
