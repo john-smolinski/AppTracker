@@ -116,7 +116,14 @@ namespace ApplicationTracker.ImportCli
                 dto.Organization = new OrganizationDto { Name = worksheet.Cell(i, 3).GetString() };
                 dto.JobTitle = new JobTitleDto { Name = worksheet.Cell(i, 4).GetString() };
                 dto.WorkEnvironment = new WorkEnvironmentDto { Name = worksheet.Cell(i, 5).GetString() };
-
+                if (!string.IsNullOrWhiteSpace(worksheet.Cell(i, 6).GetString()))
+                {
+                    dto.City = worksheet.Cell(i, 6).GetString();
+                }
+                if (!string.IsNullOrWhiteSpace(worksheet.Cell(i, 7).GetString()))
+                {
+                    dto.State = worksheet.Cell(i, 7).GetString();
+                }
                 applicationDtos.Add(dto);
             }
             return applicationDtos;
