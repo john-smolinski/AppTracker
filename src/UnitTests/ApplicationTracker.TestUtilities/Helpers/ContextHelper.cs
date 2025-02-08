@@ -23,10 +23,6 @@ namespace ApplicationTracker.TestUtilities.Helpers
                 {
                     AddTestApplications(context, rows);
                 }
-                else if (typeof(T) == typeof(Location))
-                {
-                    AddTestLocations(context, rows);
-                }
                 else if (typeof(BaseEntity).IsAssignableFrom(typeof(T)))
                 {
                     AddBaseEntityTestEntities(context, typeof(T), rows);
@@ -89,18 +85,6 @@ namespace ApplicationTracker.TestUtilities.Helpers
                 .MakeGenericMethod(entityType);
 
             method.Invoke(null, new object[] { context, count });
-        }
-
-        public static void AddTestLocations(TrackerDbContext context, int count)
-        {
-            var entities = Enumerable.Range(1, count).Select(i => new Location
-            {
-                Id = i,
-                Name = $"Test {typeof(Location).Name} {i}",
-                State= $"S{i}"
-            });
-            context.AddRange(entities);
-            context.SaveChanges();
         }
     }
 }

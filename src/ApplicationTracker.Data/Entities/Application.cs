@@ -1,4 +1,6 @@
-﻿namespace ApplicationTracker.Data.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ApplicationTracker.Data.Entities
 {
 #pragma warning disable CS8618
     public class Application
@@ -13,8 +15,10 @@
         public JobTitle JobTitle { get; set; }
         public int WorkEnvironmentId { get; set; }
         public WorkEnvironment WorkEnvironment { get; set; }
-        public int? LocationId { get; set; }
-        public Location? Location { get; set; }
+        [StringLength(50)]
+        public string? City { get; set; }
+        [StringLength(2)]
+        public string? State { get; set; }
     }
 #pragma warning restore CS8618
 }

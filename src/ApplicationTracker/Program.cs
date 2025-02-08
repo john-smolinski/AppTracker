@@ -25,9 +25,6 @@ namespace ApplicationTracker
             builder.Services.AddScoped<JobTitleService>();
             builder.Services.AddScoped<IService<JobTitleDto>, JobTitleService>();
 
-            builder.Services.AddScoped<LocationService>();
-            builder.Services.AddScoped<IService<LocationDto>, LocationService>();
-
             builder.Services.AddScoped<OrganizationService>();
             builder.Services.AddScoped<IService<OrganizationDto>, OrganizationService>();
 

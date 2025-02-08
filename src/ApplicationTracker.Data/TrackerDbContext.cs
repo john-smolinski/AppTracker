@@ -11,7 +11,6 @@ namespace ApplicationTracker.Data
         public DbSet<Application> Applications { get; set; }
         public DbSet<WorkEnvironment> WorkEnvironments { get; set; }
         public DbSet<JobTitle> JobTitles { get; set; }
-        public DbSet<Location> Locations { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Source> Sources { get; set; }
 

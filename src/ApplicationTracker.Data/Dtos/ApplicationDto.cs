@@ -9,7 +9,8 @@
         public OrganizationDto Organization { get; set; }
         public JobTitleDto JobTitle { get; set; }
         public WorkEnvironmentDto WorkEnvironment { get; set; }
-        public LocationDto? Location { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
     }
 #pragma warning restore CS8618
 }

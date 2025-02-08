@@ -29,7 +29,6 @@ namespace ApplicationTracker.Services
                                      .Include(a => a.Organization)
                                      .Include(a => a.JobTitle)
                                      .Include(a => a.WorkEnvironment)
-                                     .Include(a => a.Location)
                                      .Select(x => MapToDto(x))
                                      .ToListAsync();
             }
@@ -49,7 +48,6 @@ namespace ApplicationTracker.Services
                                      .Include(a => a.Organization)
                                      .Include(a => a.JobTitle)
                                      .Include(a => a.WorkEnvironment)
-                                     .Include(a => a.Location)
                                      .Where(x => x.Id == id)
                                      .Select(x => MapToDto(x))
                                      .FirstOrDefaultAsync();
@@ -69,13 +67,6 @@ namespace ApplicationTracker.Services
                 if(await ExistsAsync(application))
                 {
                     throw new InvalidDataException("Application already exists.");
-                }
-
-                Location? location = null;
-                if (application.Location != null)
-                {
-                    location = await AddLocation(application.Location);
-                    _context.Attach(location);
                 }
 
                 var source = await AddEntity<Source>(application.Source);
@@ -101,7 +92,8 @@ namespace ApplicationTracker.Services
                     Organization = organization,
                     JobTitle = jobTitle,
                     WorkEnvironment = workEnvironment,
-                    Location = location!
+                    City = application.City,
+                    State = application.State
                 };
                 _context.Applications.Add(newApplication);
                 await _context.SaveChangesAsync();
@@ -166,57 +158,6 @@ namespace ApplicationTracker.Services
                                x.ApplicationDate == application.ApplicaitionDate);
 
             return exists;
-        }
-
-        private async Task<Location> AddLocation(LocationDto location)
-        {
-            try
-            {
-
-                // return exisitng location if we have its id
-                if (location.Id.HasValue)
-                {
-                    var existing = await _context.Locations.FirstOrDefaultAsync(x => x.Id == location.Id.Value);
-                    if (existing != null)
-                    {
-                        return existing;
-                    }
-                }
-                
-                // test to see if we have an existing location we can reuse
-                var existingLocation = await _context.Locations
-                    .FirstOrDefaultAsync(x => object.Equals(x.City, location.City) &&
-                                              object.Equals(x.State, location.State));
-
-                if (existingLocation != null) 
-                {
-                    return existingLocation;
-                }
-
-                // location requires at least a state value 
-                if (location.State == null)
-                {
-                    return null!;
-                }
-                
-                var newLocation = new Location 
-                { 
-                    Name = GetLocationName(location.City, location.State),
-                    City = location.City,
-                    State = location.State,
-                };
-
-                // save if we're creating a new location
-                _context.Locations.Add(newLocation);
-                await _context.SaveChangesAsync();
-                
-                return newLocation;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while adding a location.");
-                throw;
-            }
         }
 
         private async Task<T> AddEntity<T>(BaseDto dto)
@@ -287,9 +228,8 @@ namespace ApplicationTracker.Services
                 { 
                     Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name!
                 },
-                Location = application.Location != null
-                    ? new LocationDto { Id = application.LocationId, Name = application.Location?.Name! }
-                    : null
+                City = application.City,
+                State = application.State
             };
         }
     }
