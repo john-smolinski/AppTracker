@@ -7,8 +7,6 @@ import { fetchJobTitles } from "../../../redux/jobTitlesSlice";
 import { fetchWorkEnvironments } from "../../../redux/workEnvironmentsSlice";
 import dayjs from "dayjs";
 import {
-  Autocomplete,
-  TextField,
   FormControl,
   FormLabel,
   Box,
@@ -97,8 +95,8 @@ export default function AddApplication() {
           environments.find((w) => w.name === selectedEnvironment)?.id || null,
         name: selectedEnvironment || null,
       },
-      city: city.length > 0 ? city : null,
-      state: state.length === 2 ? state : null,
+      city: city != null && city.length > 0 ? city : null,
+      state: state != null && state.length === 2 ? state : null,
     }),
     [
       appDate,
@@ -173,6 +171,8 @@ export default function AddApplication() {
     setSelectedOrganization(null);
     setSelectedTitle(null);
     setSelectedEnvironment(null);
+    setCity(null);
+    setState(null);
     setResetKey((prev) => prev + 1);
   };
 
@@ -249,251 +249,82 @@ export default function AddApplication() {
             </Box>
           </Box>
           {/* select/add source control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>Source:</FormLabel>
-              </FormControl>
-            </Box>
-            <Box flex="1">
-              <Autocomplete
-                key={resetKey}
-                sx={{ width: 300 }}
-                value={selectedSource}
-                onChange={handleChange(setSelectedSource)}
-                onBlur={handleBlur(setSelectedSource, selectedSource)}
-                filterOptions={filteredOptions}
-                selectOnFocus
-                handleHomeEndKeys
-                options={sources.map((x) => x.name)}
-                getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.label
-                }
-                renderOption={(props, option) => {
-                  const { key, ...rest } = props;
-                  return (
-                    <li key={key} {...rest}>
-                      {typeof option === "string" ? option : option.label}
-                    </li>
-                  );
-                }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select or Add new"
-                    variant="outlined"
-                    className="auto-complete"
-                  />
-                )}
-              />
-            </Box>
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={selectedSource}
+            onChange={handleChange(setSelectedSource)}
+            onBlur={handleBlur(setSelectedSource, selectedSource)}
+            filteredOptions={filteredOptions}
+            options={sources.map((x) => x.name)}
+            freeSolo
+            label="Source"
+          />
           {/* select/add organization control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>Organization:</FormLabel>
-              </FormControl>
-            </Box>
-            <Autocomplete
-              key={resetKey}
-              sx={{ width: 300 }}
-              value={selectedOrganization}
-              onChange={handleChange(setSelectedOrganization)}
-              onBlur={handleBlur(setSelectedOrganization, selectedOrganization)}
-              filterOptions={filteredOptions}
-              selectOnFocus
-              handleHomeEndKeys
-              options={organizations.map((x) => x.name)}
-              getOptionLabel={(option) =>
-                typeof option === "string" ? option : option.label
-              }
-              renderOption={(props, option) => {
-                const { key, ...rest } = props; // Extract key separately
-                return (
-                  <li key={key} {...rest}>
-                    {typeof option === "string" ? option : option.label}
-                  </li>
-                );
-              }}
-              freeSolo
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select or Add new"
-                  variant="outlined"
-                  className="auto-complete"
-                />
-              )}
-            />
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={selectedOrganization}
+            onChange={handleChange(setSelectedOrganization)}
+            onBlur={handleBlur(setSelectedOrganization, selectedOrganization)}
+            filteredOptions={filteredOptions}
+            options={organizations.map((x) => x.name)}
+            freeSolo
+            label="Organization"
+          />
 
           {/* select/add job title control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>Job title:</FormLabel>
-              </FormControl>
-            </Box>
-            <Box flex="1">
-              <Autocomplete
-                key={resetKey}
-                sx={{ width: 300 }}
-                value={selectedTitle}
-                onChange={handleChange(setSelectedTitle)}
-                onBlur={handleBlur(setSelectedTitle, selectedTitle)}
-                filterOptions={filteredOptions}
-                selectOnFocus
-                handleHomeEndKeys
-                options={jobTitles.map((x) => x.name)}
-                getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.label
-                }
-                renderOption={(props, option) => {
-                  const { key, ...rest } = props;
-                  return (
-                    <li key={key} {...rest}>
-                      {typeof option === "string" ? option : option.label}
-                    </li>
-                  );
-                }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select or Add new"
-                    variant="outlined"
-                    className="auto-complete"
-                  />
-                )}
-              />
-            </Box>
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={selectedTitle}
+            onChange={handleChange(setSelectedTitle)}
+            onBlur={handleBlur(setSelectedTitle, selectedTitle)}
+            filteredOptions={filteredOptions}
+            options={jobTitles.map((x) => x.name)}
+            freeSolo
+            label="Job Title"
+          />
+
           {/* select/add environment control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>Environment:</FormLabel>
-              </FormControl>
-            </Box>
-            <Box flex="1">
-              <Autocomplete
-                key={resetKey}
-                sx={{ width: 300 }}
-                value={selectedEnvironment}
-                onChange={handleChange(setSelectedEnvironment)}
-                onBlur={handleBlur(setSelectedEnvironment, selectedEnvironment)}
-                filterOptions={filteredOptions}
-                selectOnFocus
-                handleHomeEndKeys
-                options={environments.map((x) => x.name)}
-                getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.label
-                }
-                renderOption={(props, option) => {
-                  const { key, ...rest } = props; // Extract key separately
-                  return (
-                    <li key={key} {...rest}>
-                      {typeof option === "string" ? option : option.label}
-                    </li>
-                  );
-                }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select or Add new"
-                    variant="outlined"
-                    className="auto-complete"
-                  />
-                )}
-              />
-            </Box>
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={selectedEnvironment}
+            onChange={handleChange(setSelectedEnvironment)}
+            onBlur={handleBlur(setSelectedEnvironment, selectedEnvironment)}
+            filteredOptions={filteredOptions}
+            options={environments.map((x) => x.name)}
+            freeSolo
+            label="Work Environment"
+          />
+
           {/* select/add city control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>City:</FormLabel>
-              </FormControl>
-            </Box>
-            <Box flex="1">
-              <Autocomplete
-                key={resetKey}
-                sx={{ width: 300 }}
-                value={city}
-                onChange={handleChange(setCity)}
-                onBlur={handleBlur(setCity, city)}
-                filterOptions={filteredOptions}
-                selectOnFocus
-                handleHomeEndKeys
-                options={cityOptions}
-                getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.label
-                }
-                renderOption={(props, option) => {
-                  const { key, ...rest } = props;
-                  return (
-                    <li key={key} {...rest}>
-                      {typeof option === "string" ? option : option.label}
-                    </li>
-                  );
-                }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select or Add new City"
-                    variant="outlined"
-                    className="auto-complete"
-                  />
-                )}
-              />
-            </Box>
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={city}
+            onChange={handleChange(setCity)}
+            onBlur={handleBlur(setCity, city)}
+            filteredOptions={filteredOptions}
+            options={cityOptions}
+            freeSolo
+            label="City"
+          />
 
           {/* select/add state control */}
-          <Box display="flex" alignItems="center">
-            <Box flex="0 0 150px">
-              <FormControl>
-                <FormLabel>State:</FormLabel>
-              </FormControl>
-            </Box>
-            <Box flex="1">
-              <Autocomplete
-                key={resetKey}
-                sx={{ width: 300 }}
-                value={state}
-                onChange={handleChange(setState)}
-                onBlur={handleBlur(setState, state)}
-                filterOptions={filteredOptions}
-                selectOnFocus
-                handleHomeEndKeys
-                options={stateOptions}
-                getOptionLabel={(option) =>
-                  typeof option === "string" ? option : option.label
-                }
-                renderOption={(props, option) => {
-                  const { key, ...rest } = props;
-                  return (
-                    <li key={key} {...rest}>
-                      {typeof option === "string" ? option : option.label}
-                    </li>
-                  );
-                }}
-                freeSolo
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Select or Add new State"
-                    variant="outlined"
-                    className="auto-complete"
-                  />
-                )}
-              />
-            </Box>
-          </Box>
+          <AutoCompleteField
+            resetKey={resetKey}
+            sx={{ width: 300 }}
+            value={state}
+            onChange={handleChange(setState)}
+            onBlur={handleBlur(setState, state)}
+            filteredOptions={filteredOptions}
+            options={stateOptions}
+            freeSolo
+            label="State"
+          />
+
           <Box>
             <Box flex="0 0 150px"></Box>
             <Box flex="1">
