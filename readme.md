@@ -51,6 +51,7 @@ A web application built with **C# .NET Core** and **React** to help developers t
    
 5. Install frontend dependencies:
    ```sh
+   # From `src` directory
    cd webui/app-tracker
    npm install
    npm start
