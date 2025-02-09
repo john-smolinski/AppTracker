@@ -26,7 +26,7 @@ A web application built with **C# .NET Core** and **React** to help developers t
 1. Clone the repository:
    ```sh
    git clone https://github.com/john-smolinski/AppTracker.git
-   cd job-tracker
+   cd AppTracker
    ```
 2. Install backend dependencies:
    ```sh
