@@ -34,6 +34,27 @@ export default function AddApplication() {
     (state) => state.workEnvironments.environments
   );
 
+  // gettting city and state options from previously applied applications
+  const applications = useSelector((state) => state.applications.apps);
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [cityOptions, setCityOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
+
+  useEffect(() => {
+    if (applications.length > 0) {
+      const uniqueCities = [
+        ...new Set(applications.map((app) => app.city).filter(Boolean)),
+      ];
+      const uniqueStates = [
+        ...new Set(applications.map((app) => app.state).filter(Boolean)),
+      ];
+
+      setCityOptions(uniqueCities);
+      setStateOptions(uniqueStates);
+    }
+  }, [applications]);
+
   // application date
   const [appDate, setAppDate] = useState(dayjs(new Date()));
 
@@ -77,6 +98,8 @@ export default function AddApplication() {
           environments.find((w) => w.name === selectedEnvironment)?.id || null,
         name: selectedEnvironment || null,
       },
+      city: city.length > 0 ? city : null,
+      state: state.length === 2 ? state : null,
     }),
     [
       appDate,
@@ -84,6 +107,8 @@ export default function AddApplication() {
       selectedOrganization,
       selectedTitle,
       selectedEnvironment,
+      city,
+      state,
       sources,
       organizations,
       jobTitles,
@@ -378,6 +403,89 @@ export default function AddApplication() {
                   <TextField
                     {...params}
                     label="Select or Add new"
+                    variant="outlined"
+                    className="auto-complete"
+                  />
+                )}
+              />
+            </Box>
+          </Box>
+          {/* select/add city control */}
+          <Box display="flex" alignItems="center">
+            <Box flex="0 0 150px">
+              <FormControl>
+                <FormLabel>City:</FormLabel>
+              </FormControl>
+            </Box>
+            <Box flex="1">
+              <Autocomplete
+                key={resetKey}
+                sx={{ width: 300 }}
+                value={city}
+                onChange={handleChange(setCity)}
+                onBlur={handleBlur(setCity, city)}
+                filterOptions={filteredOptions}
+                selectOnFocus
+                handleHomeEndKeys
+                options={cityOptions}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.label
+                }
+                renderOption={(props, option) => {
+                  const { key, ...rest } = props;
+                  return (
+                    <li key={key} {...rest}>
+                      {typeof option === "string" ? option : option.label}
+                    </li>
+                  );
+                }}
+                freeSolo
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select or Add new City"
+                    variant="outlined"
+                    className="auto-complete"
+                  />
+                )}
+              />
+            </Box>
+          </Box>
+
+          {/* select/add state control */}
+          <Box display="flex" alignItems="center">
+            <Box flex="0 0 150px">
+              <FormControl>
+                <FormLabel>State:</FormLabel>
+              </FormControl>
+            </Box>
+            <Box flex="1">
+              <Autocomplete
+                key={resetKey}
+                sx={{ width: 300 }}
+                value={state}
+                onChange={handleChange(setState)}
+                onBlur={handleBlur(setState, state)}
+                filterOptions={filteredOptions}
+                selectOnFocus
+                handleHomeEndKeys
+                options={stateOptions}
+                getOptionLabel={(option) =>
+                  typeof option === "string" ? option : option.label
+                }
+                renderOption={(props, option) => {
+                  const { key, ...rest } = props;
+                  return (
+                    <li key={key} {...rest}>
+                      {typeof option === "string" ? option : option.label}
+                    </li>
+                  );
+                }}
+                freeSolo
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select or Add new State"
                     variant="outlined"
                     className="auto-complete"
                   />
