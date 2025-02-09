@@ -21,6 +21,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Menu from "../../Menu/Menu";
+import AutoCompleteField from "../../Features/AutoCompleteField/AutoCompleteField";
 import "./AddApplication.css";
 
 export default function AddApplication() {
@@ -33,13 +34,31 @@ export default function AddApplication() {
   const environments = useSelector(
     (state) => state.workEnvironments.environments
   );
-
-  // gettting city and state options from previously applied applications
   const applications = useSelector((state) => state.applications.apps);
+
+  // city and state options
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [cityOptions, setCityOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
+
+  // application properties
+  const [selectedSource, setSelectedSource] = useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [selectedTitle, setSelectedTitle] = useState(null);
+  const [selectedEnvironment, setSelectedEnvironment] = useState(null);
+
+  // application date
+  const [appDate, setAppDate] = useState(dayjs(new Date()));
+
+  // validation and reset states
+  const [isValid, setIsValid] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
+
+  // snackbar states
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     if (applications.length > 0) {
@@ -54,26 +73,6 @@ export default function AddApplication() {
       setStateOptions(uniqueStates);
     }
   }, [applications]);
-
-  // application date
-  const [appDate, setAppDate] = useState(dayjs(new Date()));
-
-  // application properties states
-  const [selectedSource, setSelectedSource] = useState(null);
-  const [selectedOrganization, setSelectedOrganization] = useState(null);
-  const [selectedTitle, setSelectedTitle] = useState(null);
-  const [selectedEnvironment, setSelectedEnvironment] = useState(null);
-
-  // validation and reset states
-  const [isValid, setIsValid] = useState(false);
-  const [resetKey, setResetKey] = useState(0);
-
-  // snackbar states
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
-  const dispatch = useDispatch();
 
   // the new application to post
   const newApplication = useMemo(
@@ -176,6 +175,8 @@ export default function AddApplication() {
     setSelectedEnvironment(null);
     setResetKey((prev) => prev + 1);
   };
+
+  const dispatch = useDispatch();
 
   const handleSubmit = async () => {
     try {
