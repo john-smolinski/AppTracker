@@ -2,7 +2,7 @@
   "profiles": {
     "ApplicationTracker.ImportCli": {
       "commandName": "Project",
-      "commandLineArgs": "-f /repos/SubmittedApplicatons.xlsx"
+      "commandLineArgs": "-f /Users/johns/Documents/SubmittedApplicatons.xlsx"
     }
   }
 }
