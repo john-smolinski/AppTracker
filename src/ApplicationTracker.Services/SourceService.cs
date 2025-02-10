@@ -15,6 +15,7 @@ namespace ApplicationTracker.Services
         public async Task<IEnumerable<SourceDto>> GetAllAsync()
         {
             return await _context.Sources
+                .AsNoTracking()
                 .Select(x => new SourceDto { Id = x.Id, Name = x.Name })
                 .ToListAsync();
         }
@@ -22,6 +23,7 @@ namespace ApplicationTracker.Services
         public async Task<SourceDto?> GetByIdAsync(int id)
         {
             var result = await _context.Sources
+                .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => new SourceDto { Id = x.Id, Name= x.Name })
                 .FirstOrDefaultAsync();
@@ -41,6 +43,7 @@ namespace ApplicationTracker.Services
         public async Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
         {
             return await _context.Applications
+                .AsNoTracking()
                 .Where(x => x.SourceId == id)
                 .Select(x => new ApplicationDto
                 {

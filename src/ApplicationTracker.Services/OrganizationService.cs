@@ -14,6 +14,7 @@ namespace ApplicationTracker.Services
         public async Task<IEnumerable<OrganizationDto>> GetAllAsync()
         {
             return await _context.Organizations
+                .AsNoTracking()
                 .Select(x => new OrganizationDto { Id = x.Id, Name = x.Name })
                 .ToListAsync();
         }
@@ -21,6 +22,7 @@ namespace ApplicationTracker.Services
         public async Task<OrganizationDto?> GetByIdAsync(int id)
         {
             var result = await _context.Organizations
+                .AsNoTracking()
                 .Where(x => x.Id == id)
                 .Select(x => new OrganizationDto { Id = x.Id, Name = x.Name})
                 .FirstOrDefaultAsync();
@@ -40,6 +42,7 @@ namespace ApplicationTracker.Services
         public async Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id)
         {
             return await _context.Applications
+                .AsNoTracking()
                 .Where(x => x.OrganizationId == id)
                 .Select(x => new ApplicationDto
                 {

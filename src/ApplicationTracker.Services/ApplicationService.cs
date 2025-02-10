@@ -25,6 +25,7 @@ namespace ApplicationTracker.Services
             {
 
                 return await _context.Applications
+                                     .AsNoTracking()
                                      .Include(a => a.Source)
                                      .Include(a => a.Organization)
                                      .Include(a => a.JobTitle)
@@ -44,6 +45,7 @@ namespace ApplicationTracker.Services
             try
             {
                 return await _context.Applications
+                                      .AsNoTracking()
                                      .Include(a => a.Source)
                                      .Include(a => a.Organization)
                                      .Include(a => a.JobTitle)
@@ -124,21 +126,25 @@ namespace ApplicationTracker.Services
         {
             // ensure required relationships exist first
             var sourceId = await _context.Sources
+                .AsNoTracking()
                 .Where(x => x.Name == application.Source.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
             var organizationId = await _context.Organizations
+                .AsNoTracking()
                 .Where(x => x.Name == application.Organization.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
             var jobTitleId = await _context.JobTitles
+                .AsNoTracking()
                 .Where(x => x.Name == application.JobTitle.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
 
             var workEnvironmentId = await _context.WorkEnvironments
+                .AsNoTracking()
                 .Where(x => x.Name == application.WorkEnvironment.Name)
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
@@ -151,6 +157,7 @@ namespace ApplicationTracker.Services
 
             // check if the application already exists
             var exists = await _context.Applications
+                .AsNoTracking()
                 .AnyAsync(x => x.SourceId == sourceId &&
                                x.OrganizationId == organizationId &&
                                x.JobTitleId == jobTitleId &&
