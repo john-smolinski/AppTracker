@@ -22,41 +22,37 @@ A web application built with **C# .NET Core** and **React** to help developers t
 - Node.js 18+
 - SQL Server 
 
+
 ### Steps
-1. Clone the repository:
+1. Clone the repository and navigate to the project directory:
    ```sh
    git clone https://github.com/john-smolinski/AppTracker.git
    cd AppTracker
    ```
-2. Install backend dependencies:
+
+2. Set up the Database by navigating to the database directory and applying migrations:
    ```sh
-   cd src
-   dotnet restore
-   export ASPNETCORE_URLS=http://localhost:5000
-   dotnet run
-   ```
-3. Set up the Database  
-   ```sh
-   # From `src` directory  
-   cd ApplicationTracker.Data  
+   cd src/ApplicationTracker.Data  
    dotnet ef database update --startup-project ../ApplicationTracker  
+   cd ..  # Return to the `src` directory
    ```
 
-4. Configure and Run the Backend API  
+3. Install backend dependencies and run the API:
    ```sh
-   # From `src` directory  
-   cd ApplicationTracker  
-   dotnet run  
+   cd ApplicationTracker
+   dotnet restore
+   dotnet run --urls="http://localhost:5000"
+   cd ..  # Return to the `src` directory after running
    ```
    
-5. Install frontend dependencies:
+4. Install frontend dependencies by navigating to the UI directory:
    ```sh
-   # From `src` directory
-   cd webui/app-tracker
+   cd ../webui/app-tracker
    npm install
    npm start
    ```
-6. Open `http://localhost:3000` in your browser.
+
+5. Open `http://localhost:3000` in your browser.
 
 ## Usage
 1. Add a new job application with company details.
