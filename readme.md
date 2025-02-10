@@ -59,9 +59,6 @@ A web application built with **C# .NET Core** and **React** to help developers t
 2. View and filter your applications.
 
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Contact
 👤 **John Smolinski**   
 🔗 LinkedIn: [john-r-smolinski](https://linkedin.com/in/john-r-smolinski)  
