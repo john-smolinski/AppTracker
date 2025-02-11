@@ -55,7 +55,7 @@ namespace ApplicationTracker.Services.Tests
             // Setup
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Test Source 1" },
                 Organization = new OrganizationDto { Name = "Test Organization 1" },
                 JobTitle = new JobTitleDto {  Name = "Test JobTitle 1" },
@@ -103,7 +103,7 @@ namespace ApplicationTracker.Services.Tests
             // Arrange
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
                 Source = new SourceDto { Name = "Test Source 1" },
                 Organization = new OrganizationDto { Name = "Test Organization 1" },
                 JobTitle = new JobTitleDto { Name = "Test JobTitle 1" },
@@ -123,7 +123,7 @@ namespace ApplicationTracker.Services.Tests
             // Arrange
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Nonexistent Source" },
                 Organization = new OrganizationDto { Name = "Nonexistent Organization" },
                 JobTitle = new JobTitleDto { Name = "Nonexistent JobTitle" },

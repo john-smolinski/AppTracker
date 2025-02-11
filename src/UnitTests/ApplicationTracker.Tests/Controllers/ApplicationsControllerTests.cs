@@ -29,8 +29,8 @@ namespace ApplicationTracker.Tests.Controllers
             // Setup
             var applications = new List<ApplicationDto>
             {
-                new ApplicationDto { Id = 1, ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now) },
-                new ApplicationDto { Id = 2, ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)) }
+                new ApplicationDto { Id = 1, ApplicationDate = DateOnly.FromDateTime(DateTime.Now) },
+                new ApplicationDto { Id = 2, ApplicationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)) }
             };
 
             _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(applications);
@@ -74,7 +74,7 @@ namespace ApplicationTracker.Tests.Controllers
         public async Task GetApplication_ReturnsOkResult_WhenApplicationExists()
         {
             // Setup
-            var application = new ApplicationDto { Id = 1, ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now) };
+            var application = new ApplicationDto { Id = 1, ApplicationDate = DateOnly.FromDateTime(DateTime.Now) };
             _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(true);
             _mockService.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(application);
 
@@ -119,7 +119,7 @@ namespace ApplicationTracker.Tests.Controllers
             // Setup
             var application = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto{ Name = "Test Source" },
                 Organization = new OrganizationDto{ Name = "Test Organization" },
                 JobTitle = new JobTitleDto{ Name = "Test JobTitle" },
@@ -147,7 +147,7 @@ namespace ApplicationTracker.Tests.Controllers
             // Setup
             var application = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Test Source" },
                 Organization = new OrganizationDto { Name = "Test Organization" },
                 JobTitle = new JobTitleDto { Name = "Test JobTitle" },
@@ -172,7 +172,7 @@ namespace ApplicationTracker.Tests.Controllers
 
             var invalidApplication = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now)
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now)
             };
 
             // Act
@@ -197,7 +197,7 @@ namespace ApplicationTracker.Tests.Controllers
             // Setup
             var application = new ApplicationDto 
             { 
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Test Source" },
                 Organization = new OrganizationDto { Name = "Test Organization" },
                 JobTitle = new JobTitleDto { Name = "Test JobTitle" },

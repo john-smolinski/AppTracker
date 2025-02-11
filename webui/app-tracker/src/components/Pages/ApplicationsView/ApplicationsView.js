@@ -12,7 +12,7 @@ export default function ApplicationsView() {
   // reformat the application data in a way that is easier to bind to the DataGrid
   const formattedAppData = apps.map((item) => ({
     id: item.id,
-    applicaitionDate: item.applicaitionDate,
+    applicationDate: item.applicationDate,
     source: item.source.name,
     organization: item.organization.name,
     jobTitle: item.jobTitle.name,
@@ -24,7 +24,7 @@ export default function ApplicationsView() {
   // map the columns
   const columns = [
     { field: "id", headerName: "Id", width: 50 },
-    { field: "applicaitionDate", headerName: "Date", width: 100 },
+    { field: "applicationDate", headerName: "Date", width: 100 },
     { field: "source", headerName: "Source", width: 200 },
     { field: "organization", headerName: "Organization", width: 200 },
     { field: "jobTitle", headerName: "Job Title", width: 200 },

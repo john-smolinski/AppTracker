@@ -86,9 +86,9 @@ namespace ApplicationTracker.Services
                 var newApplication = new Application
                 {
                     // test to see if date was supplied. if not *assume* the date is today
-                    ApplicationDate = application.ApplicaitionDate == default(DateOnly)
+                    ApplicationDate = application.ApplicationDate == default(DateOnly)
                         ? DateOnly.FromDateTime(DateTime.Now)
-                        : application.ApplicaitionDate,
+                        : application.ApplicationDate,
                     
                     Source = source,
                     Organization = organization,
@@ -162,10 +162,49 @@ namespace ApplicationTracker.Services
                                x.OrganizationId == organizationId &&
                                x.JobTitleId == jobTitleId &&
                                x.WorkEnvironmentId == workEnvironmentId &&
-                               x.ApplicationDate == application.ApplicaitionDate);
+                               x.ApplicationDate == application.ApplicationDate);
 
             return exists;
         }
+
+        public async Task<ApplicationDto?> UpdateAsync(ApplicationDto application)
+        {
+            // validate required fields 
+            if (application.Id == null) throw new InvalidOperationException("Application Id cannot be null.");
+            if (application.Source?.Id == null) throw new InvalidOperationException("Source Id cannot be null.");
+            if (application.Organization?.Id == null) throw new InvalidOperationException("Organization Id cannot be null.");
+            if (application.JobTitle?.Id == null) throw new InvalidOperationException("Job Title Id cannot be null.");
+            if (application.WorkEnvironment?.Id == null) throw new InvalidOperationException("Work Environment Id cannot be null.");
+            
+            var app = await _context.Applications.FirstOrDefaultAsync(x => x.Id == application.Id.Value);
+
+            if (app == null)
+            {
+                _logger.LogWarning("Application with Id {Id} not found", application.Id);
+                throw new KeyNotFoundException($"Application with Id {application.Id} not found.");
+            }
+
+            app.ApplicationDate = application.ApplicationDate;
+            app.SourceId = application.Source.Id.Value;
+            app.OrganizationId = application.Organization.Id.Value;
+            app.JobTitleId = application.JobTitle.Id.Value;
+            app.WorkEnvironmentId = application.WorkEnvironment.Id.Value;
+            app.City = application.City;
+            app.State = application.State;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating application with Id {Id}.", application.Id);
+                throw;
+            }
+            
+            return await GetByIdAsync(application.Id.Value);
+        }
+
 
         private async Task<T> AddEntity<T>(BaseDto dto)
             where T : BaseEntity, new()
@@ -207,18 +246,12 @@ namespace ApplicationTracker.Services
             }
         }
 
-        private static string GetLocationName(string? city, string state)
-        {
-            var location = string.IsNullOrWhiteSpace(city) ? state : city.Trim();
-            return $"{location}|{state.Trim()}";
-        }
-
         private static ApplicationDto MapToDto(Application application)
         {
             return new ApplicationDto
             {
                 Id = application.Id,
-                ApplicaitionDate = application.ApplicationDate,
+                ApplicationDate = application.ApplicationDate,
                 Source = new SourceDto 
                 { 
                     Id = application.SourceId, Name = application.Source?.Name! 

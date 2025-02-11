@@ -83,7 +83,7 @@ namespace ApplicationTracker.ImportCli
             var client = new HttpClient();
             var content = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
             
-            Console.WriteLine($"Posting data: {dto.ApplicaitionDate} - {dto.Organization.Name} - {dto.JobTitle.Name}");
+            Console.WriteLine($"Posting data: {dto.ApplicationDate} - {dto.Organization.Name} - {dto.JobTitle.Name}");
             var response = client.PostAsync(apiUrl, content).Result;
             
             if (!response.IsSuccessStatusCode)
@@ -111,7 +111,7 @@ namespace ApplicationTracker.ImportCli
                 var dto = new ApplicationDto();
                 var appDate = worksheet.Cell(i, 1).Value;
 
-                dto.ApplicaitionDate = DateOnly.FromDateTime(appDate.GetDateTime());
+                dto.ApplicationDate = DateOnly.FromDateTime(appDate.GetDateTime());
                 dto.Source = new SourceDto { Name = worksheet.Cell(i, 2).GetString() };
                 dto.Organization = new OrganizationDto { Name = worksheet.Cell(i, 3).GetString() };
                 dto.JobTitle = new JobTitleDto { Name = worksheet.Cell(i, 4).GetString() };

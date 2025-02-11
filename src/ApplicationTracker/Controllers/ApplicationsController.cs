@@ -109,5 +109,50 @@ namespace ApplicationTracker.Controllers
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }
         }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ApplicationDto>> UpdateApplication(int id, ApplicationDto application)
+        {
+            try
+            {
+                if (application == null)
+                {
+                    _logger.LogInformation("NULL Application DTO received");
+                    return ErrorHelper.BadRequest("Invalid application", "The application DTO cannot be null");
+                }
+
+                if (id != application.Id)
+                {
+                    _logger.LogInformation("Application ID mismatch");
+                    return ErrorHelper.BadRequest("Invalid request", "The ID in the URL does not match the ID in the body");
+                }
+
+                if (!ValidationHelper.IsValidApplication(application, out var badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Application provided");
+                    return badRequestResult;
+                }
+
+                if (!await _applicationService.ExistsAsync(id))
+                {
+                    _logger.LogWarning("Application not found");
+                    return NotFound($"Application with ID {id} not found.");
+                }
+
+                var updatedApplication = await _applicationService.UpdateAsync(application);
+                return Ok(updatedApplication);
+            }
+            catch (Exception ex)
+            {
+                var message = "An unexpected error occurred while updating the application";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
+
     }
 }
