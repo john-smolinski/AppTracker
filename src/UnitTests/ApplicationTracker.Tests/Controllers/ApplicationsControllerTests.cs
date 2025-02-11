@@ -221,5 +221,170 @@ namespace ApplicationTracker.Tests.Controllers
                 Assert.That(errorResponse?.Message, Is.EqualTo("An unexpected errror occured while posting new Application"));
             });
         }
+
+
+        [Test]
+        public async Task UpdateApplication_NullApplication_ReturnsBadRequest()
+        {
+            // Act
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+            var result = await _controller.UpdateApplication(1, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+
+                var badRequestResult = result.Result as BadRequestObjectResult;
+                Assert.That(badRequestResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+                
+                var errorResponse = badRequestResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Detail, Is.EqualTo("The application DTO cannot be null"));
+            });
+        }
+
+        [Test]
+        public async Task UpdateApplication_IdMismatch_ReturnsBadRequest()
+        {
+            // Setup
+            var application = new ApplicationDto { Id = 2 };
+
+            // Act
+            var result = await _controller.UpdateApplication(1, application);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+
+                var badRequestResult = result.Result as BadRequestObjectResult;
+                Assert.That(badRequestResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+
+                var errorResponse = badRequestResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Detail, Is.EqualTo("The ID in the URL does not match the ID in the body"));
+
+            });
+        }
+
+        [Test]
+        public async Task UpdateApplication_InvalidApplication_ReturnsBadRequest()
+        {
+            // Setup
+            var application = new ApplicationDto { Id = 1 };
+
+
+            // Act
+            var result = await _controller.UpdateApplication(1, application);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+
+                var badRequestResult = result?.Result as BadRequestObjectResult;
+                Assert.That(badRequestResult?.StatusCode, Is.EqualTo(StatusCodes.Status400BadRequest));
+
+                var errorResponse = badRequestResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("Invalid Application"));
+            });
+        }
+
+        [Test]
+        public async Task UpdateApplication_ApplicationNotFound_ReturnsNotFound()
+        {
+            // Setup
+            var application = new ApplicationDto 
+            { 
+                Id = 1, 
+                Source = new SourceDto { Name = "Test" },
+                Organization = new OrganizationDto { Name = "Test" },
+                JobTitle = new JobTitleDto { Name = "Test" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test" }
+            };
+            _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(false);
+
+            // Act
+            var result = await _controller.UpdateApplication(1, application);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+                
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult?.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+                Assert.That(notFoundResult?.Value, Is.EqualTo("Application with ID 1 not found."));
+            });
+
+        }
+
+        [Test]
+        public async Task UpdateApplication_ValidRequest_ReturnsOkWithUpdatedApplication()
+        {
+            // Setup
+            var application = new ApplicationDto
+            {
+                Id = 1,
+                Source = new SourceDto { Name = "Test" },
+                Organization = new OrganizationDto { Name = "Test" },
+                JobTitle = new JobTitleDto { Name = "Test" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test" }
+            };
+            var updatedApplication = new ApplicationDto
+            {
+                Id = 1,
+                Source = new SourceDto { Name = "Test" },
+                Organization = new OrganizationDto { Name = "Test" },
+                JobTitle = new JobTitleDto { Name = "Test" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test" }
+            };
+
+            _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(true);
+            _mockService.Setup(s => s.UpdateAsync(application)).ReturnsAsync(updatedApplication);
+
+            // Act
+            var result = await _controller.UpdateApplication(1, application);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult?.StatusCode, Is.EqualTo(StatusCodes.Status200OK));
+                Assert.That(okResult?.Value, Is.EqualTo(updatedApplication));
+            });
+        }
+
+        [Test]
+        public async Task UpdateApplication_ThrowsException_ReturnsInternalServerError()
+        {
+            // Setup
+            var application = new ApplicationDto
+            {
+                Id = 1,
+                Source = new SourceDto { Name = "Test" },
+                Organization = new OrganizationDto { Name = "Test" },
+                JobTitle = new JobTitleDto { Name = "Test" },
+                WorkEnvironment = new WorkEnvironmentDto { Name = "Test" }
+            };
+            _mockService.Setup(s => s.ExistsAsync(1)).ThrowsAsync(new Exception("Database error"));
+
+            // Act
+            var result = await _controller.UpdateApplication(1, application);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<ObjectResult>());
+                
+                var objectResult = result.Result as ObjectResult;
+                Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+                Assert.That(objectResult?.Value, Is.TypeOf<ErrorResponse>());
+               
+                var errorResponse = objectResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("An unexpected error occurred while updating the application"));
+            });
+        }
     }
 }
