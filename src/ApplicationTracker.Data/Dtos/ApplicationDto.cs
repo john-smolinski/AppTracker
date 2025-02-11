@@ -4,7 +4,7 @@
     public class ApplicationDto
     {
         public int? Id { get; set; }
-        public DateOnly ApplicaitionDate { get; set; }
+        public DateOnly ApplicationDate { get; set; }
         public SourceDto Source { get; set; }
         public OrganizationDto Organization { get; set; }
         public JobTitleDto JobTitle { get; set; }

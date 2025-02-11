@@ -15,7 +15,7 @@ export default function ApplicationCalendar() {
 
   // transform applications into a dictionary with dates as keys
   const contributions = applications.reduce((acc, app) => {
-    const date = app.applicaitionDate;
+    const date = app.applicationDate;
     if (acc[date]) {
       acc[date] += 1;
     } else {

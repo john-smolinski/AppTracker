@@ -55,7 +55,7 @@ namespace ApplicationTracker.Services.Tests
             // Setup
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Test Source 1" },
                 Organization = new OrganizationDto { Name = "Test Organization 1" },
                 JobTitle = new JobTitleDto {  Name = "Test JobTitle 1" },
@@ -103,7 +103,7 @@ namespace ApplicationTracker.Services.Tests
             // Arrange
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1)),
                 Source = new SourceDto { Name = "Test Source 1" },
                 Organization = new OrganizationDto { Name = "Test Organization 1" },
                 JobTitle = new JobTitleDto { Name = "Test JobTitle 1" },
@@ -120,10 +120,10 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task ExistsAsync_ShouldReturnFalse_WhenApplicationWithDtoDoesNotExist()
         {
-            // Arrange
+            // Setup
             var applicationDto = new ApplicationDto
             {
-                ApplicaitionDate = DateOnly.FromDateTime(DateTime.Now),
+                ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
                 Source = new SourceDto { Name = "Nonexistent Source" },
                 Organization = new OrganizationDto { Name = "Nonexistent Organization" },
                 JobTitle = new JobTitleDto { Name = "Nonexistent JobTitle" },
@@ -136,6 +136,138 @@ namespace ApplicationTracker.Services.Tests
             // Assert
             Assert.That(result, Is.False);
         }
+
+        [Test]
+        public async Task UpdateAsync_ShouldThrowException_WhenApplicationIdIsNull()
+        {
+            // Setup
+            var applicationDto = new ApplicationDto { Id = null };
+
+            // Act 
+            var exception = await Task.Run(async () => {
+                try
+                {
+                    await _service.UpdateAsync(applicationDto);
+                    return null;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return ex;
+                }
+            });
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<InvalidOperationException>());
+                Assert.That(exception?.Message, Is.EqualTo("Application Id cannot be null."));
+            });
+
+        }
+
+        [Test]
+        public async Task UpdateAsync_ShouldThrowException_WhenSourceIdIsNull()
+        {
+            // Setup
+            var applicationDto = new ApplicationDto
+            {
+                Id = 1,
+                Source = new SourceDto { Id = null }
+            };
+
+            // Act 
+            var exception = await Task.Run(async () => {
+                try
+                {
+                    await _service.UpdateAsync(applicationDto);
+                    return null;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return ex;
+                }
+            });
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<InvalidOperationException>());
+                Assert.That(exception?.Message, Is.EqualTo("Source Id cannot be null."));
+            });
+        }
+
+        [Test]
+        public async Task UpdateAsync_ShouldThrowKeyNotFoundException_WhenApplicationNotFound()
+        {
+            // Setup
+            var applicationDto = new ApplicationDto
+            {
+                Id = 999, // non-existent Id
+                Source = new SourceDto { Id = 1 },
+                Organization = new OrganizationDto { Id = 1 },
+                JobTitle = new JobTitleDto { Id = 1 },
+                WorkEnvironment = new WorkEnvironmentDto { Id = 1 }
+            };
+
+            // Act 
+            var exception = await Task.Run(async () => {
+                try
+                {
+                    await _service.UpdateAsync(applicationDto);
+                    return null;
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    return ex;
+                }
+            });
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<KeyNotFoundException>());
+                Assert.That(exception?.Message, Is.EqualTo("Application with Id 999 not found."));
+            });
+        }
+
+        [Test]
+        public async Task UpdateAsync_ShouldUpdateApplication_WhenValidApplicationExists()
+        {
+            // Setup
+            var existingApplication = _context.Applications.First(); // Get an existing application
+            var applicationDto = new ApplicationDto
+            {
+                Id = existingApplication.Id,
+                ApplicationDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                Source = new SourceDto { Id = 1 },
+                Organization = new OrganizationDto { Id = 1 },
+                JobTitle = new JobTitleDto { Id = 1 },
+                WorkEnvironment = new WorkEnvironmentDto { Id = 1 },
+                City = "UpdatedCity",
+                State = "UpdatedState"
+            };
+
+            // Act
+            var result = await _service.UpdateAsync(applicationDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(applicationDto.Id));
+                Assert.That(result?.Source?.Id, Is.EqualTo(applicationDto.Source.Id));
+                Assert.That(result?.Organization?.Id, Is.EqualTo(applicationDto.Organization.Id));
+                Assert.That(result?.JobTitle?.Id, Is.EqualTo(applicationDto.JobTitle.Id));
+                Assert.That(result?.WorkEnvironment?.Id, Is.EqualTo(applicationDto.WorkEnvironment.Id));
+                Assert.That(result?.City, Is.EqualTo("UpdatedCity"));
+                Assert.That(result?.State, Is.EqualTo("UpdatedState"));
+            });
+        }
+
+
+
 
         [TearDown]
         public void TearDown()

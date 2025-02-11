@@ -47,7 +47,7 @@ namespace ApplicationTracker.Services
                 .Where(x => x.JobTitleId == id)
                 .Select(x => new ApplicationDto 
                 { 
-                    ApplicaitionDate = x.ApplicationDate, 
+                    ApplicationDate = x.ApplicationDate, 
                     Source = new SourceDto 
                     { 
                         Id = x.SourceId, Name = x.Source.Name 
