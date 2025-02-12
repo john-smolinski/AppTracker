@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Menu from "../../Menu/Menu";
 import "../../../App.css";
@@ -20,6 +21,10 @@ export default function Applications() {
     city: item.city,
     state: item.state,
   }));
+  const navigate = useNavigate();
+  const handleRowDoubleClick = (params) => {
+    navigate(`/applications/${params.id}`);
+  };
 
   // map the columns
   const columns = [
@@ -45,6 +50,7 @@ export default function Applications() {
           disableColumnFilter
           disableColumnSelector
           disableDensitySelector
+          onRowDoubleClick={handleRowDoubleClick}
           slots={{ toolbar: GridToolbar }}
           slotProps={{
             toolbar: {
