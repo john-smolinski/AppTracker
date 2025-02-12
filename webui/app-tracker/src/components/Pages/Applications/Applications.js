@@ -3,9 +3,9 @@ import { useSelector } from "react-redux";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Menu from "../../Menu/Menu";
 import "../../../App.css";
-import "./ApplicationsView.css";
+import "./Applications.css";
 
-export default function ApplicationsView() {
+export default function Applications() {
   // application data from state
   const apps = useSelector((state) => state.applications.apps);
 

@@ -7,7 +7,7 @@ import { fetchJobTitles } from "./redux/jobTitlesSlice";
 import { fetchWorkEnvironments } from "./redux/workEnvironmentsSlice";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/Pages/Home/Home";
-import ApplicationsView from "./components/Pages/ApplicationsView/ApplicationsView";
+import Applications from "./components/Pages/Applications/Applications";
 import AddApplication from "./components/Pages/AddApplication/AddApplication";
 import NotFound from "./components/Pages/NotFound/NotFound";
 import Statistics from "./components/Pages/Statistics/Statistics";
@@ -28,7 +28,7 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/applications" element={<ApplicationsView />} />
+        <Route path="/applications" element={<Applications />} />
         <Route path="/add" element={<AddApplication />} />
         <Route path="/statistics" element={<Statistics />} />
         <Route path="*" element={<NotFound />} />
