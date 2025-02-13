@@ -44,13 +44,14 @@ export default function Applications() {
       <h2>Applications Submitted</h2>
       <div className="applications">
         <DataGrid
+          sx={{ cursor: "pointer" }}
           rows={formattedAppData}
           columns={columns}
           pageSize={50}
           disableColumnFilter
           disableColumnSelector
           disableDensitySelector
-          onRowDoubleClick={handleRowDoubleClick}
+          onRowClick={handleRowDoubleClick}
           slots={{ toolbar: GridToolbar }}
           slotProps={{
             toolbar: {
