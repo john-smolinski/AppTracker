@@ -1,11 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Menu from "../../Menu/Menu";
 import "../../../App.css";
-import "./ApplicationsView.css";
+import "./Applications.css";
 
-export default function ApplicationsView() {
+export default function Applications() {
   // application data from state
   const apps = useSelector((state) => state.applications.apps);
 
@@ -20,6 +21,10 @@ export default function ApplicationsView() {
     city: item.city,
     state: item.state,
   }));
+  const navigate = useNavigate();
+  const handleRowDoubleClick = (params) => {
+    navigate(`/applications/${params.id}`);
+  };
 
   // map the columns
   const columns = [
@@ -39,12 +44,14 @@ export default function ApplicationsView() {
       <h2>Applications Submitted</h2>
       <div className="applications">
         <DataGrid
+          sx={{ cursor: "pointer" }}
           rows={formattedAppData}
           columns={columns}
           pageSize={50}
           disableColumnFilter
           disableColumnSelector
           disableDensitySelector
+          onRowClick={handleRowDoubleClick}
           slots={{ toolbar: GridToolbar }}
           slotProps={{
             toolbar: {
