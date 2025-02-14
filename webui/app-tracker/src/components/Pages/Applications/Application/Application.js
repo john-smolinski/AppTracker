@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { FormControl, FormLabel, Box } from "@mui/material";
 import Menu from "../../../Menu/Menu";
@@ -11,28 +10,6 @@ export default function Application() {
   const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const applications = useSelector((state) => state.applications.apps);
-
-  // city and state options
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [cityOptions, setCityOptions] = useState([]);
-  const [stateOptions, setStateOptions] = useState([]);
-
-  useEffect(() => {
-    if (applications.length > 0) {
-      const uniqueCities = [
-        ...new Set(applications.map((app) => app.city).filter(Boolean)),
-      ];
-      const uniqueStates = [
-        ...new Set(applications.map((app) => app.state).filter(Boolean)),
-      ];
-
-      setCityOptions(uniqueCities);
-      setStateOptions(uniqueStates);
-    }
-  }, [applications]);
 
   useEffect(() => {
     async function fetchApplication() {
