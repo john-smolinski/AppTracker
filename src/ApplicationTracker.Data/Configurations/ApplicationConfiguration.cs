@@ -36,6 +36,11 @@ namespace ApplicationTracker.Data.Configurations
                    .HasForeignKey(a => a.SourceId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(a => a.AppEvents)
+                   .WithOne(e => e.Application)
+                   .HasForeignKey(e => e.ApplicationId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
             // Other Properties
             builder.Property(a => a.ApplicationDate)
                    .IsRequired();

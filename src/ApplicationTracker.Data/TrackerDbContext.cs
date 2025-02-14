@@ -13,11 +13,11 @@ namespace ApplicationTracker.Data
         public DbSet<JobTitle> JobTitles { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Source> Sources { get; set; }
+        public DbSet<AppEvent> AppEvents { get; set; }
 
         public TrackerDbContext(DbContextOptions<TrackerDbContext> options)
             : base(options)
         { }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

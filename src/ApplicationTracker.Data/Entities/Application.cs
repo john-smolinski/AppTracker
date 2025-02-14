@@ -19,6 +19,7 @@ namespace ApplicationTracker.Data.Entities
         public string? City { get; set; }
         [StringLength(2)]
         public string? State { get; set; }
+        public List<AppEvent> AppEvents { get; set; } = new List<AppEvent>();
     }
 #pragma warning restore CS8618
 }
