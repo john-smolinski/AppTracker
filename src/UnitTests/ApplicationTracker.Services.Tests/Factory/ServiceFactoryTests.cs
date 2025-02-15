@@ -23,7 +23,7 @@ namespace ApplicationTracker.Services.Tests.Factory
         [Test]
         public void GetService_ReturnsService_WhenServiceExists()
         {
-            // Setup
+            // Arrange
             var mockJobTitleService = new Mock<IService<JobTitleDto>>();
             _mockServiceProvider
                 .Setup(sp => sp.GetService(typeof(JobTitleService)))
@@ -44,7 +44,7 @@ namespace ApplicationTracker.Services.Tests.Factory
         [Test]
         public void GetService_ThrowsInvalidOperationException_WhenServiceExistsInMapButNotInProvider()
         {
-            // Setup
+            // Arrange
             _mockServiceProvider
                 .Setup(sp => sp.GetService(typeof(JobTitleService)))
                 .Returns(default(IService<JobTitleDto>));

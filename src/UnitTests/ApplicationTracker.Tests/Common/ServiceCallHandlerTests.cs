@@ -28,7 +28,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public async Task HandleServiceCall_ReturnsResult_WhenActionExecutesSuccessfully()
         {
-            // Setup
+            // Arrange
             _mockServiceFactory
                 .Setup(factory => factory.GetService<TestService>())
                 .Returns(_mockService.Object);
@@ -50,7 +50,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public async Task HandleServiceCall_ReturnsInternalServerError_WhenActionReturnsNull()
         {
-            // Setup
+            // Arrange
             _mockServiceFactory
                 .Setup(factory => factory.GetService<TestService>())
                 .Returns(_mockService.Object);
@@ -82,7 +82,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public async Task HandleServiceCall_ReturnsInternalServerError_WhenServiceFactoryThrowsInvalidOperationException()
         {
-            // Setup
+            // Arrange
             _mockServiceFactory
                 .Setup(factory => factory.GetService<TestService>())
                 .Throws(new InvalidOperationException("Service not found"));
@@ -114,7 +114,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public async Task HandleServiceCall_ReturnsInternalServerError_WhenServiceFactoryThrowsArgumentException()
         {
-            // Setup
+            // Arrange
             _mockServiceFactory
                 .Setup(factory => factory.GetService<TestService>())
                 .Throws(new ArgumentException("Service not registered"));
@@ -145,7 +145,7 @@ namespace ApplicationTracker.Tests.Common
         [Test]
         public async Task HandleServiceCall_ReturnsInternalServerError_WhenUnhandledExceptionOccurs()
         {
-            // Setup
+            // Arrange
             _mockServiceFactory
                 .Setup(factory => factory.GetService<TestService>())
                 .Returns(_mockService.Object);

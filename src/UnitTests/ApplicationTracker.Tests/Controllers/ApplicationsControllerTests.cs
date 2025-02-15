@@ -26,7 +26,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetAllApplications_ReturnsOkResult_WhenApplicationsExist()
         {
-            // Setup
+            // Arrange
             var applications = new List<ApplicationDto>
             {
                 new ApplicationDto { Id = 1, ApplicationDate = DateOnly.FromDateTime(DateTime.Now) },
@@ -51,7 +51,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetAllApplications_ReturnsNotFound_WhenNoApplicationsExist()
         {
-            // Setup
+            // Arrange
             _mockService.Setup(s => s.GetAllAsync()).ReturnsAsync(new List<ApplicationDto>());
 
             // Act
@@ -73,7 +73,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetApplication_ReturnsOkResult_WhenApplicationExists()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto { Id = 1, ApplicationDate = DateOnly.FromDateTime(DateTime.Now) };
             _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(true);
             _mockService.Setup(s => s.GetByIdAsync(1)).ReturnsAsync(application);
@@ -94,7 +94,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetApplication_ReturnsNotFound_WhenApplicationDoesNotExist()
         {
-            // Setup
+            // Arrange
             _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(false);
 
             // Act
@@ -116,7 +116,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task PostNewApplication_ReturnsOkResult_WhenApplicationIsValid()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto
             {
                 ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
@@ -144,7 +144,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task PostNewApplication_Returns_Conflict_WhenApplicationAlreadyExists()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto
             {
                 ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
@@ -166,7 +166,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task PostNewApplication_ReturnsBadRequest_WhenApplicationIsInvalid()
         {
-            // Setup
+            // Arrange
             _mockService.Setup(s => s.PostAsync(It.IsAny<ApplicationDto>()))
                         .ThrowsAsync(new ArgumentException("Invalid application"));
 
@@ -194,7 +194,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task PostNewApplication_ReturnsInternalServerError_OnException()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto 
             { 
                 ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
@@ -247,7 +247,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task UpdateApplication_IdMismatch_ReturnsBadRequest()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto { Id = 2 };
 
             // Act
@@ -270,7 +270,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task UpdateApplication_InvalidApplication_ReturnsBadRequest()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto { Id = 1 };
 
 
@@ -293,7 +293,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task UpdateApplication_ApplicationNotFound_ReturnsNotFound()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto 
             { 
                 Id = 1, 
@@ -322,7 +322,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task UpdateApplication_ValidRequest_ReturnsOkWithUpdatedApplication()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto
             {
                 Id = 1,
@@ -360,7 +360,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task UpdateApplication_ThrowsException_ReturnsInternalServerError()
         {
-            // Setup
+            // Arrange
             var application = new ApplicationDto
             {
                 Id = 1,

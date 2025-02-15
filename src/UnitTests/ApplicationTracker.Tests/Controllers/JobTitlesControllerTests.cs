@@ -49,7 +49,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetJobTitles_ReturnsOk_WhenJobTitlesExists()
         {
-            // Setup
+            // Arrange
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(_jobTitles);
@@ -75,7 +75,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetJobTitles_ReturnsNotFound_WhenNoJobTitlesExists()
         {
-            // Setup
+            // Arrange
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(new List<JobTitleDto>());
@@ -100,7 +100,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetJobTitle_ReturnsOk_WhenJobTitleExists()
         {
-            // Setup
+            // Arrange
             var testId = 1;
 
             _mockService
@@ -132,7 +132,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetJobTitle_ReturnsNotFound_WhenJobTitleDoesNotExist()
         {
-            // Setup
+            // Arrange
             var testId = 99;
             _mockService
                 .Setup(service => service.ExistsAsync(testId))

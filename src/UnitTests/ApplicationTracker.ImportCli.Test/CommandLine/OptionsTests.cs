@@ -33,7 +33,7 @@ namespace ApplicationTracker.ImportCli.Test.CommandLine
         [Test]
         public void ValidateRequired_ShouldReturnFalse_WhenFilePathIsMissing()
         {
-            // Setup
+            // Arrange
             var options = new Options { FilePath = string.Empty };
 
             // Act
@@ -50,7 +50,7 @@ namespace ApplicationTracker.ImportCli.Test.CommandLine
         [Test]
         public void ValidateRequired_ShouldReturnTrue_WhenFilePathIsProvided()
         {
-            // Setup
+            // Arrange
             var options = new Options { FilePath = "somefile.txt" };
 
             // Act 
@@ -63,7 +63,7 @@ namespace ApplicationTracker.ImportCli.Test.CommandLine
         [Test]
         public void ValidateFilePath_ShouldReturnFalse_WhenFilePathIsEmpty()
         {
-            // Setup
+            // Arrange
             var options = new Options { FilePath = string.Empty };
 
             // Act
@@ -80,7 +80,7 @@ namespace ApplicationTracker.ImportCli.Test.CommandLine
         [Test]
         public void ValidateFilePath_ShouldReturnFalse_WhenFileDoesNotExist()
         {
-            // Setup
+            // Arrange
             var options = new Options { FilePath = "nonexistentfile.txt" };
 
             // Act
@@ -97,7 +97,7 @@ namespace ApplicationTracker.ImportCli.Test.CommandLine
         [Test]
         public void ValidateFilePath_ShouldReturnTrue_WhenFileExists()
         {
-            // Setup 
+            // Arrange 
             var options = new Options { FilePath = ValidFilePath };
 
             // Act 
