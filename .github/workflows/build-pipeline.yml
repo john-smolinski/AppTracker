@@ -22,9 +22,12 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
+        working-directory: ./src
 
       - name: Build Solution
         run: dotnet build --configuration Release --no-restore
+        working-directory: ./src
 
       - name: Run Unit Tests
         run: dotnet test --configuration Release --no-build --verbosity normal
+        working-directory: ./src
