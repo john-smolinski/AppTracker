@@ -48,7 +48,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetSources_ReturnsOk_WhenSourcesExists()
         {
-            // Setup 
+            // Arrange 
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(_sources);
@@ -74,7 +74,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetSources_ReturnsNotFound_WhenNoSourcesExists()
         {
-            // Setup
+            // Arrange
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(new List<SourceDto>());
@@ -99,7 +99,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetSource_ReturnsOk_WhenEnvironmentExists()
         {
-            // Setup 
+            // Arrange 
             var testId = 1;
 
             _mockService
@@ -133,7 +133,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetSource_ReturnsNotFound_WhenNoSourceExist()
         {
-            // Setup 
+            // Arrange 
             var testId = 99;
             _mockService
                 .Setup(service => service.ExistsAsync(testId))

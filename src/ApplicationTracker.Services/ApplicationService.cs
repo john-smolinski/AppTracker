@@ -1,6 +1,7 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Data.Enum;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -24,14 +25,21 @@ namespace ApplicationTracker.Services
             try
             {
 
-                return await _context.Applications
-                                     .AsNoTracking()
-                                     .Include(a => a.Source)
-                                     .Include(a => a.Organization)
-                                     .Include(a => a.JobTitle)
-                                     .Include(a => a.WorkEnvironment)
-                                     .Select(x => MapToDto(x))
-                                     .ToListAsync();
+                var applications = await _context.Applications
+                            .AsNoTracking()
+                            .Include(a => a.Source)
+                            .Include(a => a.Organization)
+                            .Include(a => a.JobTitle)
+                            .Include(a => a.WorkEnvironment)
+                            .Select(a => new
+                            {
+                                Application = a,
+                                HasRejectionEvent = _context.AppEvents
+                                    .Any(e => e.ApplicationId == a.Id && e.EventType == EventType.Rejection)
+                            })
+                            .ToListAsync();
+
+                return applications.Select(a => MapToDto(a.Application, a.HasRejectionEvent));
             }
             catch (Exception ex)
             {
@@ -44,15 +52,23 @@ namespace ApplicationTracker.Services
         {
             try
             {
-                return await _context.Applications
-                                      .AsNoTracking()
-                                     .Include(a => a.Source)
-                                     .Include(a => a.Organization)
-                                     .Include(a => a.JobTitle)
-                                     .Include(a => a.WorkEnvironment)
-                                     .Where(x => x.Id == id)
-                                     .Select(x => MapToDto(x))
-                                     .FirstOrDefaultAsync();
+                var application = await _context.Applications
+                            .AsNoTracking()
+                            .Include(a => a.Source)
+                            .Include(a => a.Organization)
+                            .Include(a => a.JobTitle)
+                            .Include(a => a.WorkEnvironment)
+                            .Include(a => a.AppEvents)
+                            .Where(a => a.Id == id)
+                            .Select(a => new
+                            {
+                                Application = a,
+                                HasRejectionEvent = _context.AppEvents
+                                    .Any(e => e.ApplicationId == a.Id && e.EventType == EventType.Rejection)
+                            })
+                            .FirstOrDefaultAsync();
+
+                return application != null ? MapToDto(application.Application, application.HasRejectionEvent) : null;
             }
             catch (Exception ex)
             {
@@ -100,7 +116,7 @@ namespace ApplicationTracker.Services
                 _context.Applications.Add(newApplication);
                 await _context.SaveChangesAsync();
 
-                return MapToDto(newApplication);
+                return MapToDto(newApplication, false);
             }
             catch(Exception ex)
             {
@@ -246,7 +262,7 @@ namespace ApplicationTracker.Services
             }
         }
 
-        private static ApplicationDto MapToDto(Application application)
+        private static ApplicationDto MapToDto(Application application, bool hasRejectEvent)
         {
             return new ApplicationDto
             {
@@ -269,7 +285,8 @@ namespace ApplicationTracker.Services
                     Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name!
                 },
                 City = application.City,
-                State = application.State
+                State = application.State,
+                IsRejected = hasRejectEvent
             };
         }
     }

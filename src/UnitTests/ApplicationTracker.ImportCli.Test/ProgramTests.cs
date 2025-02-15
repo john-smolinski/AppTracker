@@ -30,7 +30,7 @@
         [Test]
         public void ProcessArguments_ShouldReturnError_WhenFileDoesNotExist()
         {
-            // Setup
+            // Arrange
             var args = new string[] { "-f", "nonexistent.txt" };
             
             // Act 
@@ -46,7 +46,7 @@
         [Test]
         public void ProcessArguments_ReturnsError_WhenNoArgumentsProvided()
         {
-            // Setup
+            // Arrange
             var args = new string[0];
 
             // Act

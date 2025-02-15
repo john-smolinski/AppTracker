@@ -48,7 +48,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetEnvironments_ReturnsOk_WhenEnvironmentsExist()
         {
-            // Setup 
+            // Arrange 
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(_workEnvironments);
@@ -74,7 +74,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetEnvironments_ReturnsNotFound_WhenNoEnvironmentsExist()
         {
-            // Setup
+            // Arrange
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(new List<WorkEnvironmentDto>());
@@ -99,7 +99,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetWorkEnvironment_ReturnsOk_WhenEnvironmentExists()
         {
-            // Setup
+            // Arrange
             var testId = 1;
 
             _mockService
@@ -131,7 +131,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetWorkEnvironment_ReturnsNotFound_WhenEnvironmentDoesNotExist()
         {
-            // Setup 
+            // Arrange 
             var testId = 99;
             _mockService
                 .Setup(service => service.ExistsAsync(testId))

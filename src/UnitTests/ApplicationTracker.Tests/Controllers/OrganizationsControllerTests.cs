@@ -48,7 +48,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetOrganizations_ReturnsOk_WhenOrganizationsExists()
         {
-            // Setup 
+            // Arrange 
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(_organizations);
@@ -74,7 +74,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetOrganizations_ReturnsNotFound_WhenNoOrganizationsExists()
         {
-            // Setup
+            // Arrange
             _mockService
                 .Setup(service => service.GetAllAsync())
                 .ReturnsAsync(new List<OrganizationDto>());
@@ -99,7 +99,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetOrganization_ReturnsOk_WhenOrganizationExists()
         {
-            // Setup 
+            // Arrange 
             var testId = 1;
 
             _mockService
@@ -131,7 +131,7 @@ namespace ApplicationTracker.Tests.Controllers
         [Test]
         public async Task GetOrganization_ReturnsNotFound_WhenNoOrganizationExist()
         {
-            // Setup 
+            // Arrange 
             var testId = 99;
             _mockService
                 .Setup(service => service.ExistsAsync(testId))

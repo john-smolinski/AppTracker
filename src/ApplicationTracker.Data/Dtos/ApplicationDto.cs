@@ -1,4 +1,6 @@
-﻿namespace ApplicationTracker.Data.Dtos
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+namespace ApplicationTracker.Data.Dtos
 {
 #pragma warning disable CS8618
     public class ApplicationDto
@@ -11,6 +13,7 @@
         public WorkEnvironmentDto WorkEnvironment { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
+        public bool IsRejected { get; set; } = true;
     }
 #pragma warning restore CS8618
 }

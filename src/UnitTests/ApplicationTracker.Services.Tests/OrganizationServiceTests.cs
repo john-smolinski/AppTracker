@@ -26,7 +26,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task GetAllAsync_ReturnsAllOrganizations()
         {
-            // Setup
+            // Arrange
             var testId = 1;
             var expected = $"Test {typeof(Organization).Name} {testId}";
 
@@ -45,7 +45,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task GetByIdAsync_ReturnsNull_WhenIdDoesNotExist()
         {
-            // Setup 
+            // Arrange 
             var testId = 99;
 
             // Act
@@ -58,7 +58,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task ExistsAsync_ReturnsTrue_WhenIdExists()
         {
-            // Setup
+            // Arrange
             var testId = 1;
 
             // Act
@@ -71,7 +71,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task ExistsAsync_ReturnsFalse_WhenIdDoesNotExist()
         {
-            // Setup 
+            // Arrange 
             var testId = 99;
 
             // Act

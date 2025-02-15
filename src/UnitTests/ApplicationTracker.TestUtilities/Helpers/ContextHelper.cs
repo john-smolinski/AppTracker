@@ -1,5 +1,6 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Data.Enum;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
@@ -57,6 +58,23 @@ namespace ApplicationTracker.TestUtilities.Helpers
             });
 
             context.Applications.AddRange(applications);
+            context.SaveChanges();
+        }
+
+        public static void AddRejectionEvent(TrackerDbContext context, int applicationId)
+        {
+            var application = context.Applications.Find(applicationId) ?? 
+                throw new InvalidOperationException("Application not found");
+            
+            var appEvent = new AppEvent
+            {
+                ApplicationId = applicationId,
+                EventDate = DateTime.Now,
+                EventType = EventType.Rejection,
+                Description = "Test Rejection"
+            };
+            
+            context.AppEvents.Add(appEvent);
             context.SaveChanges();
         }
 

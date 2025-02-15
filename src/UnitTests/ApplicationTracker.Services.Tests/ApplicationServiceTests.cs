@@ -16,6 +16,7 @@ namespace ApplicationTracker.Services.Tests
         [SetUp]
         public void SetUp()
         {
+            // add reject app event to context helper then test for reject 
             _context = ContextHelper.GetInMemoryContext<Application>(rows: 5);
             _logger = new LoggerFactory().CreateLogger<ApplicationService>();
             _service = new ApplicationService(_context, _logger);
@@ -50,9 +51,40 @@ namespace ApplicationTracker.Services.Tests
         }
 
         [Test]
+        public async Task GetByIdAsync_ShouldReturneApplicationWithIsRejectedTrue_WhenApplicationIsRejected()
+        {
+            // Arrange
+            ContextHelper.AddRejectionEvent(_context, 1);
+            
+            // Act
+            var result = await _service.GetByIdAsync(1);
+            
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.IsRejected, Is.True);
+            });
+        }
+
+        [Test]
+        public async Task GetByIdAsync_ShouldReturneApplicationWithIsRejectedFalse_WhenApplicationIsNotRejected()
+        {
+            // Act
+            var result = await _service.GetByIdAsync(1);
+            
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.IsRejected, Is.False);
+            });
+        }
+
+        [Test]
         public async Task PostAsync_ShouldAddNewApplication()
         {
-            // Setup
+            // Arrange
             var applicationDto = new ApplicationDto
             {
                 ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
@@ -120,7 +152,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task ExistsAsync_ShouldReturnFalse_WhenApplicationWithDtoDoesNotExist()
         {
-            // Setup
+            // Arrange
             var applicationDto = new ApplicationDto
             {
                 ApplicationDate = DateOnly.FromDateTime(DateTime.Now),
@@ -140,7 +172,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task UpdateAsync_ShouldThrowException_WhenApplicationIdIsNull()
         {
-            // Setup
+            // Arrange
             var applicationDto = new ApplicationDto { Id = null };
 
             // Act 
@@ -168,7 +200,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task UpdateAsync_ShouldThrowException_WhenSourceIdIsNull()
         {
-            // Setup
+            // Arrange
             var applicationDto = new ApplicationDto
             {
                 Id = 1,
@@ -200,7 +232,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task UpdateAsync_ShouldThrowKeyNotFoundException_WhenApplicationNotFound()
         {
-            // Setup
+            // Arrange
             var applicationDto = new ApplicationDto
             {
                 Id = 999, // non-existent Id
@@ -235,7 +267,7 @@ namespace ApplicationTracker.Services.Tests
         [Test]
         public async Task UpdateAsync_ShouldUpdateApplication_WhenValidApplicationExists()
         {
-            // Setup
+            // Arrange
             var existingApplication = _context.Applications.First(); // Get an existing application
             var applicationDto = new ApplicationDto
             {
