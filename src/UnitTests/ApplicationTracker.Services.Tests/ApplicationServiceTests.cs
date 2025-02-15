@@ -16,6 +16,7 @@ namespace ApplicationTracker.Services.Tests
         [SetUp]
         public void SetUp()
         {
+            // add reject app event to context helper then test for reject 
             _context = ContextHelper.GetInMemoryContext<Application>(rows: 5);
             _logger = new LoggerFactory().CreateLogger<ApplicationService>();
             _service = new ApplicationService(_context, _logger);
@@ -48,6 +49,9 @@ namespace ApplicationTracker.Services.Tests
                 Assert.That(result?.Source.Id, Is.EqualTo(1));
             });
         }
+
+        // Add test for IsActive 
+        
 
         [Test]
         public async Task PostAsync_ShouldAddNewApplication()
