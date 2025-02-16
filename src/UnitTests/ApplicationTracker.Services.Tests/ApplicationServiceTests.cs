@@ -621,7 +621,47 @@ namespace ApplicationTracker.Services.Tests
             Assert.That(result, Is.True);
         }
 
+        [Test]
+        public async Task DeleteEventAsync_ShouldThrowKeyNotFoundException_WhenAppEventNotFound()
+        {
+            // Act
+            var exception = await Task.Run(async () =>
+            {
+                try
+                {
+                    await _service.DeleteEvent(999);
+                    return null;
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    return ex;
+                }
+            });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<KeyNotFoundException>());
+                Assert.That(exception?.Message, Is.EqualTo("AppEvent with Id 999 not found."));
+            });
+        }
 
+        [Test]
+        public async Task DeleteEventAsync_ShouldDeleteAppEvent_WhenAppEventExists()
+        {
+            // Arrange
+            ContextHelper.AddAppEvents(_context, 1, 1);
+            // Act
+            var result = await _service.DeleteEvent(1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.True);
+                Assert.That(_context.AppEvents.Count(), Is.EqualTo(0));
+            });
+            
+        }
 
         [TearDown]
         public void TearDown()

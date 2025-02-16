@@ -396,9 +396,18 @@ namespace ApplicationTracker.Services
             }
         }
 
-        public Task<bool> DeleteEvent(int eventId)
+        public async Task<bool> DeleteEvent(int eventId)
         {
-            throw new NotImplementedException();
+            var appEvent = await _context.AppEvents.FindAsync(eventId);
+
+            if (appEvent == null)
+            {
+                throw new KeyNotFoundException($"AppEvent with Id {eventId} not found.");
+            }
+
+            _context.AppEvents.Remove(appEvent);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         private AppEventDto MapToDto(AppEvent appEvent)
