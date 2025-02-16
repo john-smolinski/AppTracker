@@ -571,6 +571,58 @@ namespace ApplicationTracker.Services.Tests
             });
         }
 
+        [Test]
+        public async Task UpdateEventAsync_ShouldUpdateAppEvent_WhenValidAppEventExists()
+        {
+            // Arrange
+            ContextHelper.AddAppEvents(_context, 1, 1);
+
+            var appEventDto = new AppEventDto
+            {
+                Id = 1,
+                ApplicationId = 1,
+                EventDate = DateTime.UtcNow,
+                ContactMethod = ContactMethod.Email.ToString(),
+                EventType = EventType.Interview.ToString(),
+                Description = "Updated Interview"
+            };
+            // Act
+            var result = await _service.UpdateEventAsync(1, appEventDto);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(appEventDto.Id));
+                Assert.That(result?.ApplicationId, Is.EqualTo(appEventDto.ApplicationId));
+                Assert.That(result?.EventDate, Is.EqualTo(appEventDto.EventDate));
+                Assert.That(result?.ContactMethod, Is.EqualTo(appEventDto.ContactMethod));
+                Assert.That(result?.EventType, Is.EqualTo(appEventDto.EventType));
+                Assert.That(result?.Description, Is.EqualTo(appEventDto.Description));
+            });
+        }
+
+        [Test]
+        public async Task EventExistsAsync_ShouldReturnFalse_WhenAppEventDoesNotExist()
+        {
+            // Act
+            var result = await _service.EventExistsAsync(1, 1);
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public async Task EventExistsAsynce_ShouldReturnTrue_WhenAppEventExists()
+        {
+            // Arrange
+            ContextHelper.AddAppEvents(_context, 1, 1);
+            // Act
+            var result = await _service.EventExistsAsync(1, 1);
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+
+
         [TearDown]
         public void TearDown()
         {
