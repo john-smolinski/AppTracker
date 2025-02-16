@@ -5,6 +5,7 @@ using ApplicationTracker.Data.Enums;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ApplicationTracker.Services
@@ -304,6 +305,15 @@ namespace ApplicationTracker.Services
                 if(!await ExistsAsync(applicationId))
                 {
                     throw new KeyNotFoundException($"Application with Id {applicationId} not found.");
+                }
+
+                if(!Enum.TryParse<ContactMethod>(appEvent.ContactMethod, out _)) 
+                {
+                    throw new InvalidEnumArgumentException($"Invalid ContactMethod. Expected values: {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}");
+                }
+                if(!Enum.TryParse<EventType>(appEvent.EventType, out _))
+                {
+                    throw new InvalidEnumArgumentException($"Invalid EventType. Expected values: {string.Join(", ", Enum.GetNames(typeof(EventType)))}");
                 }
 
                 var newEvent = new AppEvent

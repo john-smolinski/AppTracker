@@ -4,6 +4,7 @@ using ApplicationTracker.Data.Entities;
 using ApplicationTracker.Data.Enums;
 using ApplicationTracker.TestUtilities.Helpers;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 
 namespace ApplicationTracker.Services.Tests
 {
@@ -417,6 +418,74 @@ namespace ApplicationTracker.Services.Tests
                 Assert.That(exception, Is.Not.Null);
                 Assert.That(exception, Is.TypeOf<KeyNotFoundException>());
                 Assert.That(exception?.Message, Is.EqualTo("Application with Id 999 not found."));
+            });
+        }
+
+        [Test]
+        public async Task PostEventAsync_ShouldThrowInvalidEnumArgumentException_WhenContactMethodIsInvalid()
+        {
+            // Arrange
+            var appEventDto = new AppEventDto
+            {
+                ApplicationId = 1,
+                EventDate = DateTime.Now,
+                ContactMethod = "InvalidContactMethod",
+                EventType = EventType.Interview.ToString(),
+                Description = "Test Interview"
+            };
+            // Act
+            var exception = await Task.Run(async () =>
+            {
+                try
+                {
+                    await _service.PostEventAsync(1, appEventDto);
+                    return null;
+                }
+                catch (InvalidEnumArgumentException ex)
+                {
+                    return ex;
+                }
+            });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<InvalidEnumArgumentException>());
+                Assert.That(exception?.Message, Is.EqualTo($"Invalid ContactMethod. Expected values: {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}"));
+            });
+        }
+
+        [Test]
+        public async Task PostEventAsync_ShouldThrowInvalidEnumArgumentException_WhenEventTypeIsInvalid()
+        {
+            // Arrange
+            var appEventDto = new AppEventDto
+            {
+                ApplicationId = 1,
+                EventDate = DateTime.Now,
+                ContactMethod = ContactMethod.Email.ToString(),
+                EventType = "InvalidEventType",
+                Description = "Test Interview"
+            };
+            // Act
+            var exception = await Task.Run(async () =>
+            {
+                try
+                {
+                    await _service.PostEventAsync(1, appEventDto);
+                    return null;
+                }
+                catch (InvalidEnumArgumentException ex)
+                {
+                    return ex;
+                }
+            });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<InvalidEnumArgumentException>());
+                Assert.That(exception?.Message, Is.EqualTo($"Invalid EventType. Expected values: {string.Join(", ", Enum.GetNames(typeof(EventType)))}"));
             });
         }
 
