@@ -289,5 +289,47 @@ namespace ApplicationTracker.Services
                 IsRejected = hasRejectEvent
             };
         }
+
+        public Task<IEnumerable<AppEventDto>> GetEventsAsync(int applicationId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AppEventDto?> GetEventByIdAsync(int applicationId, int eventId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> EventExistsAsync(int applicationId, int eventId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> EventExistsAsync(AppEventDto appEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteEvent(int eventId)
+        {
+            throw new NotImplementedException();
+        }
+
+        private AppEventDto MapToDto(AppEvent appEvent)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }
