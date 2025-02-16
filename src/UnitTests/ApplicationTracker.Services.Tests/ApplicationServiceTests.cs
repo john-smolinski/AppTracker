@@ -298,8 +298,60 @@ namespace ApplicationTracker.Services.Tests
             });
         }
 
+        [Test]
+        public async Task GetEventsAsync_ShouldReturnAllEvents()
+        {
+            // Arrange
+            ContextHelper.AddAppEvents(_context, 1, 3);
+
+            // Act
+            var result = await _service.GetEventsAsync(1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Count, Is.EqualTo(3));
+            });
+        }
+
+        [Test]
+        public async Task GetEventsAsync_ShouldReturnEmptyList_WhenNoEventsExist()
+        {
+            // Act
+            var result = await _service.GetEventsAsync(1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Count, Is.EqualTo(0));
+            });
+        }
 
 
+        [Test]
+        public async Task GetEventByIdAsync_ShouldReturnEvent_WhenEventExists()
+        {
+            // Arrange
+            ContextHelper.AddAppEvents(_context, 1, 1);
+            // Act
+            var result = await _service.GetEventByIdAsync(1, 1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result?.Id, Is.EqualTo(1));
+            });
+        }
+
+        [Test]
+        public async Task GetEventByIdAsync_ShouldReturnNull_WhenEventDoesNotExist()
+        {
+            // Act
+            var result = await _service.GetEventByIdAsync(1, 1);
+            // Assert
+            Assert.That(result, Is.Null);
+        }
 
         [TearDown]
         public void TearDown()

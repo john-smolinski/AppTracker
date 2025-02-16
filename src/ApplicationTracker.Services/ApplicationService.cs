@@ -221,47 +221,6 @@ namespace ApplicationTracker.Services
             return await GetByIdAsync(application.Id.Value);
         }
 
-
-        private async Task<T> AddEntity<T>(BaseDto dto)
-            where T : BaseEntity, new()
-        {
-            try
-            {
-                var dbset = _context.Set<T>();
-
-                if (dto.Id.HasValue)
-                {
-                    var existing = await dbset.FirstOrDefaultAsync(x => x.Id == dto.Id.Value);
-                    if (existing != null)
-                    {
-                        return existing;
-                    }
-                }
-                else
-                {
-                    // double check 
-                    var existng = await dbset.FirstOrDefaultAsync(x => x.Name == dto.Name);
-                    if (existng != null)
-                    {
-                        return existng;
-                    }
-                }
-                var newEntity = new T
-                {
-                    Name = dto.Name
-                };
-                
-                _context.Set<T>().Add(newEntity);
-                await _context.SaveChangesAsync();
-                return newEntity;
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while adding or retrieving an entity of type {EntityType}.", typeof(T).Name);
-                throw;
-            }
-        }
-
         private static ApplicationDto MapToDto(Application application, bool hasRejectEvent)
         {
             return new ApplicationDto
@@ -290,14 +249,52 @@ namespace ApplicationTracker.Services
             };
         }
 
-        public Task<IEnumerable<AppEventDto>> GetEventsAsync(int applicationId)
+        public async Task<IEnumerable<AppEventDto>> GetEventsAsync(int applicationId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.AppEvents
+                    .AsNoTracking()
+                    .Where(x => x.ApplicationId == applicationId)
+                    .Select(x => new AppEventDto
+                    {
+                        Id = x.Id,
+                        ApplicationId = x.ApplicationId,
+                        EventDate = x.EventDate,
+                        ContactMethod = x.ContactMethod.ToString(),
+                        EventType = x.EventType.ToString(),
+                        Description = x.Description
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all events for application with Id {applicationId}.", applicationId);
+                throw;
+            }
         }
 
-        public Task<AppEventDto?> GetEventByIdAsync(int applicationId, int eventId)
+        public async Task<AppEventDto?> GetEventByIdAsync(int applicationId, int eventId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.AppEvents
+                    .AsNoTracking()
+                    .Where(x => x.ApplicationId == applicationId && x.Id == eventId)
+                    .Select(x => new AppEventDto
+                    {
+                        Id = x.Id,
+                        ApplicationId = x.ApplicationId,
+                        EventDate = x.EventDate,
+                        ContactMethod = x.ContactMethod.ToString(),
+                        EventType = x.EventType.ToString(),
+                        Description = x.Description
+                    }).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching event with Id {eventId} for application with Id {applicationId}.", eventId, applicationId);
+                throw;
+            }
         }
 
         public Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent)
@@ -331,5 +328,44 @@ namespace ApplicationTracker.Services
         }
 
 
+        private async Task<T> AddEntity<T>(BaseDto dto)
+            where T : BaseEntity, new()
+        {
+            try
+            {
+                var dbset = _context.Set<T>();
+
+                if (dto.Id.HasValue)
+                {
+                    var existing = await dbset.FirstOrDefaultAsync(x => x.Id == dto.Id.Value);
+                    if (existing != null)
+                    {
+                        return existing;
+                    }
+                }
+                else
+                {
+                    // double check 
+                    var existng = await dbset.FirstOrDefaultAsync(x => x.Name == dto.Name);
+                    if (existng != null)
+                    {
+                        return existng;
+                    }
+                }
+                var newEntity = new T
+                {
+                    Name = dto.Name
+                };
+
+                _context.Set<T>().Add(newEntity);
+                await _context.SaveChangesAsync();
+                return newEntity;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding or retrieving an entity of type {EntityType}.", typeof(T).Name);
+                throw;
+            }
+        }
     }
 }
