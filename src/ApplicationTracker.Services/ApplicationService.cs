@@ -187,11 +187,16 @@ namespace ApplicationTracker.Services
         public async Task<ApplicationDto?> UpdateAsync(ApplicationDto application)
         {
             // validate required fields 
-            if (application.Id == null) throw new InvalidOperationException("Application Id cannot be null.");
-            if (application.Source?.Id == null) throw new InvalidOperationException("Source Id cannot be null.");
-            if (application.Organization?.Id == null) throw new InvalidOperationException("Organization Id cannot be null.");
-            if (application.JobTitle?.Id == null) throw new InvalidOperationException("Job Title Id cannot be null.");
-            if (application.WorkEnvironment?.Id == null) throw new InvalidOperationException("Work Environment Id cannot be null.");
+            if (application.Id == null) 
+                throw new InvalidOperationException("Application Id cannot be null.");
+            if (application.Source?.Id == null) 
+                throw new InvalidOperationException("Source Id cannot be null.");
+            if (application.Organization?.Id == null) 
+                throw new InvalidOperationException("Organization Id cannot be null.");
+            if (application.JobTitle?.Id == null) 
+                throw new InvalidOperationException("Job Title Id cannot be null.");
+            if (application.WorkEnvironment?.Id == null) 
+                throw new InvalidOperationException("Work Environment Id cannot be null.");
             
             var app = await _context.Applications.FirstOrDefaultAsync(x => x.Id == application.Id.Value);
 
@@ -336,14 +341,59 @@ namespace ApplicationTracker.Services
             }
         }
 
-        public Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent)
+        public async Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent)
         {
-            throw new NotImplementedException();
+            // validate required fields
+            if (appEvent.Id == null) 
+                throw new InvalidOperationException("Event Id cannot be null.");
+            if(appEvent.ApplicationId != applicationId) 
+                throw new InvalidOperationException("Event does not belong to the specified application.");
+            if(appEvent.EventDate == default) 
+                throw new InvalidOperationException("Event Date cannot be null.");
+            
+            if(!Enum.TryParse<ContactMethod>(appEvent.ContactMethod, out _)) 
+                throw new InvalidEnumArgumentException($"Invalid ContactMethod. Expected values: {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}");
+            if(!Enum.TryParse<EventType>(appEvent.EventType, out _)) 
+                throw new InvalidEnumArgumentException($"Invalid EventType. Expected values: {string.Join(", ", Enum.GetNames(typeof(EventType)))}");
+
+            var app = await _context.AppEvents.FirstOrDefaultAsync(x => x.Id == appEvent.Id.Value);
+
+            if (app == null)
+            {
+                _logger.LogWarning("AppEvent with Id {Id} not found", appEvent.Id);
+                throw new KeyNotFoundException($"AppEvent with Id {appEvent.Id} not found.");
+            }
+
+            app.EventDate = appEvent.EventDate;
+            app.ContactMethod = Enum.Parse<ContactMethod>(appEvent.ContactMethod);
+            app.EventType = Enum.Parse<EventType>(appEvent.EventType);
+            app.Description = appEvent.Description;
+
+            try
+            {   
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating event with Id {Id}.", appEvent.Id);
+                throw;
+            }
+
+            return await GetEventByIdAsync(applicationId, appEvent.Id.Value);
         }
+
 
         public Task<bool> EventExistsAsync(int applicationId, int eventId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _context.AppEvents.AnyAsync(x => x.ApplicationId == applicationId && x.Id == eventId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while checking existence of event with Id {eventId} for application with Id {applicationId}.", eventId, applicationId);
+                throw;
+            }
         }
 
         public Task<bool> DeleteEvent(int eventId)

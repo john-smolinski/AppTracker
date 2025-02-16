@@ -9,6 +9,7 @@ namespace ApplicationTracker.Data.Enums
     public enum EventType
     {
         Interview = 1,
-        Rejection = 2,
+        CodingChallenge = 2,
+        Rejection = 3,
     }
 }

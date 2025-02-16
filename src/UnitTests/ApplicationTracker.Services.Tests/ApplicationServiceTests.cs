@@ -171,64 +171,55 @@ namespace ApplicationTracker.Services.Tests
             Assert.That(result, Is.False);
         }
 
-        [Test]
-        public async Task UpdateAsync_ShouldThrowException_WhenApplicationIdIsNull()
-        {
-            // Arrange
-            var applicationDto = new ApplicationDto { Id = null };
 
-            // Act 
-            var exception = await Task.Run(async () => {
+        [Test]
+        public async Task UpdateAsync_ShouldThrowException_WhenApplicationIsInvalid()
+        {
+            foreach(var testCase in InvalidApplicationTestCases())
+            {
+                var applicationDto = (ApplicationDto)testCase.Arguments[0]!;
+                var expectedExceptionType = (Type)testCase.Arguments[1]!;
+                // Act
+                Exception? exception = null;
                 try
                 {
                     await _service.UpdateAsync(applicationDto);
-                    return null;
                 }
-                catch (InvalidOperationException ex)
+                catch (Exception ex)
                 {
-                    return ex;
+                    exception = ex;
                 }
-            });
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(exception, Is.Not.Null);
-                Assert.That(exception, Is.TypeOf<InvalidOperationException>());
-                Assert.That(exception?.Message, Is.EqualTo("Application Id cannot be null."));
-            });
-
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(exception, Is.Not.Null);
+                    Assert.That(exception, Is.TypeOf(expectedExceptionType));
+                });
+            }
         }
 
-        [Test]
-        public async Task UpdateAsync_ShouldThrowException_WhenSourceIdIsNull()
+        public static IEnumerable<TestCaseData> InvalidApplicationTestCases()
         {
-            // Arrange
-            var applicationDto = new ApplicationDto
-            {
-                Id = 1,
-                Source = new SourceDto { Id = null }
-            };
-
-            // Act 
-            var exception = await Task.Run(async () => {
-                try
-                {
-                    await _service.UpdateAsync(applicationDto);
-                    return null;
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return ex;
-                }
-            });
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exception, Is.Not.Null);
-                Assert.That(exception, Is.TypeOf<InvalidOperationException>());
-                Assert.That(exception?.Message, Is.EqualTo("Source Id cannot be null."));
-            });
+            yield return new TestCaseData(
+                new ApplicationDto { Id = null, Source = new SourceDto { Id = 1 }, Organization = new OrganizationDto { Id = 1 }, JobTitle = new JobTitleDto { Id = 1 }, WorkEnvironment = new WorkEnvironmentDto { Id = 1 } },
+                typeof(InvalidOperationException)
+            ).SetName("Application_Id_Is_Null");
+            yield return new TestCaseData(
+                new ApplicationDto { Id = 1, Source = new SourceDto { Id = null }, Organization = new OrganizationDto { Id = 1 }, JobTitle = new JobTitleDto { Id = 1 }, WorkEnvironment = new WorkEnvironmentDto { Id = 1 } },
+                typeof(InvalidOperationException)
+            ).SetName("Source_Id_Is_Null");
+            yield return new TestCaseData(
+                new ApplicationDto { Id = 1, Source = new SourceDto { Id = 1 }, Organization = new OrganizationDto { Id = null }, JobTitle = new JobTitleDto { Id = 1 }, WorkEnvironment = new WorkEnvironmentDto { Id = 1 } },
+                typeof(InvalidOperationException)
+            ).SetName("Organization_Id_Is_Null");
+            yield return new TestCaseData(
+                new ApplicationDto { Id = 1, Source = new SourceDto { Id = 1 }, Organization = new OrganizationDto { Id = 1 }, JobTitle = new JobTitleDto { Id = null }, WorkEnvironment = new WorkEnvironmentDto { Id = 1 } },
+                typeof(InvalidOperationException)
+            ).SetName("JobTitle_Id_Is_Null");
+            yield return new TestCaseData(
+                new ApplicationDto { Id = 1, Source = new SourceDto { Id = 1 }, Organization = new OrganizationDto { Id = 1 }, JobTitle = new JobTitleDto { Id = 1 }, WorkEnvironment = new WorkEnvironmentDto { Id = null } },
+                typeof(InvalidOperationException)
+            ).SetName("WorkEnvironment_Id_Is_Null");
         }
 
         [Test]
@@ -489,7 +480,96 @@ namespace ApplicationTracker.Services.Tests
             });
         }
 
+        [Test]
+        public async Task UpdateEventAsync_ShouldThrowException_WhenEventIsInvalid()
+        {
+            foreach (var testCase in InvalidAppEventTestCases())
+            {
+                var appEventDto = (AppEventDto)testCase.Arguments[0]!;
+                var expectedExceptionType = (Type)testCase.Arguments[1]!;
 
+                // Act
+                Exception? exception = null;
+                try
+                {
+                    await _service.UpdateEventAsync(1, appEventDto);
+                }
+                catch (Exception ex)
+                {
+                    exception = ex;
+                }
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(exception, Is.Not.Null);
+                    Assert.That(exception, Is.TypeOf(expectedExceptionType));
+                });
+            }
+        }
+
+        public static IEnumerable<TestCaseData> InvalidAppEventTestCases()
+        {
+            yield return new TestCaseData(
+                new AppEventDto { Id = null, ApplicationId = 1, EventDate = DateTime.UtcNow },
+                typeof(InvalidOperationException)
+            ).SetName("Id_Is_Null");
+
+            yield return new TestCaseData(
+                new AppEventDto { Id = 1, ApplicationId = 99, EventDate = DateTime.UtcNow },
+                typeof(InvalidOperationException)
+            ).SetName("Event_Does_Not_Belong_To_Application");
+
+            yield return new TestCaseData(
+                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = default },
+                typeof(InvalidOperationException)
+            ).SetName("EventDate_Is_Default");
+
+            yield return new TestCaseData(
+                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod = "InvalidMethod" , EventType="Email"},  // 🔴 Invalid Enum
+                typeof(InvalidEnumArgumentException)
+            ).SetName("Invalid_ContactMethod");
+
+            yield return new TestCaseData(
+                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod="Email", EventType = "InvalidMethod" },  // 🔴 Invalid Enum
+                typeof(InvalidEnumArgumentException)
+            ).SetName("Invalid_EventType");
+        }
+
+        [Test]
+        public async Task UpdateEventAsync_ShouldThrowKeyNotFoundException_WhenAppEventNotFound()
+        {
+            // Arrange
+            var appEventDto = new AppEventDto
+            {
+                Id = 999, // no app events exist
+                ApplicationId = 1, 
+                EventDate = DateTime.Now,
+                ContactMethod = ContactMethod.Email.ToString(),
+                EventType = EventType.Interview.ToString(),
+                Description = "Test Interview"
+            };
+            // Act
+            var exception = await Task.Run(async () =>
+            {
+                try
+                {
+                    await _service.UpdateEventAsync(1, appEventDto);
+                    return null;
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    return ex;
+                }
+            });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<KeyNotFoundException>());
+                Assert.That(exception?.Message, Is.EqualTo("AppEvent with Id 999 not found."));
+            });
+        }
 
         [TearDown]
         public void TearDown()
