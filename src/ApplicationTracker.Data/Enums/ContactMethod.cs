@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationTracker.Data.Enum
+namespace ApplicationTracker.Data.Enums
 {
     public enum ContactMethod
     {

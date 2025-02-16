@@ -1,10 +1,11 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
-using ApplicationTracker.Data.Enum;
+using ApplicationTracker.Data.Enums;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace ApplicationTracker.Services
@@ -186,11 +187,16 @@ namespace ApplicationTracker.Services
         public async Task<ApplicationDto?> UpdateAsync(ApplicationDto application)
         {
             // validate required fields 
-            if (application.Id == null) throw new InvalidOperationException("Application Id cannot be null.");
-            if (application.Source?.Id == null) throw new InvalidOperationException("Source Id cannot be null.");
-            if (application.Organization?.Id == null) throw new InvalidOperationException("Organization Id cannot be null.");
-            if (application.JobTitle?.Id == null) throw new InvalidOperationException("Job Title Id cannot be null.");
-            if (application.WorkEnvironment?.Id == null) throw new InvalidOperationException("Work Environment Id cannot be null.");
+            if (application.Id == null) 
+                throw new InvalidOperationException("Application Id cannot be null.");
+            if (application.Source?.Id == null) 
+                throw new InvalidOperationException("Source Id cannot be null.");
+            if (application.Organization?.Id == null) 
+                throw new InvalidOperationException("Organization Id cannot be null.");
+            if (application.JobTitle?.Id == null) 
+                throw new InvalidOperationException("Job Title Id cannot be null.");
+            if (application.WorkEnvironment?.Id == null) 
+                throw new InvalidOperationException("Work Environment Id cannot be null.");
             
             var app = await _context.Applications.FirstOrDefaultAsync(x => x.Id == application.Id.Value);
 
@@ -219,6 +225,202 @@ namespace ApplicationTracker.Services
             }
             
             return await GetByIdAsync(application.Id.Value);
+        }
+
+        private static ApplicationDto MapToDto(Application application, bool hasRejectEvent)
+        {
+            return new ApplicationDto
+            {
+                Id = application.Id,
+                ApplicationDate = application.ApplicationDate,
+                Source = new SourceDto 
+                { 
+                    Id = application.SourceId, Name = application.Source?.Name! 
+                },
+                Organization = new OrganizationDto 
+                { 
+                    Id = application.OrganizationId, Name = application.Organization?.Name! 
+                },
+                JobTitle = new JobTitleDto 
+                { 
+                    Id = application.JobTitleId, Name = application.JobTitle?.Name! 
+                },
+                WorkEnvironment = new WorkEnvironmentDto 
+                { 
+                    Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name!
+                },
+                City = application.City,
+                State = application.State,
+                IsRejected = hasRejectEvent
+            };
+        }
+
+        public async Task<IEnumerable<AppEventDto>> GetEventsAsync(int applicationId)
+        {
+            try
+            {
+                return await _context.AppEvents
+                    .AsNoTracking()
+                    .Where(x => x.ApplicationId == applicationId)
+                    .Select(x => new AppEventDto
+                    {
+                        Id = x.Id,
+                        ApplicationId = x.ApplicationId,
+                        EventDate = x.EventDate,
+                        ContactMethod = x.ContactMethod.ToString(),
+                        EventType = x.EventType.ToString(),
+                        Description = x.Description
+                    }).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching all events for application with Id {applicationId}.", applicationId);
+                throw;
+            }
+        }
+
+        public async Task<AppEventDto?> GetEventByIdAsync(int applicationId, int eventId)
+        {
+            try
+            {
+                return await _context.AppEvents
+                    .AsNoTracking()
+                    .Where(x => x.ApplicationId == applicationId && x.Id == eventId)
+                    .Select(x => new AppEventDto
+                    {
+                        Id = x.Id,
+                        ApplicationId = x.ApplicationId,
+                        EventDate = x.EventDate,
+                        ContactMethod = x.ContactMethod.ToString(),
+                        EventType = x.EventType.ToString(),
+                        Description = x.Description
+                    }).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching event with Id {eventId} for application with Id {applicationId}.", eventId, applicationId);
+                throw;
+            }
+        }
+
+        public async Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent)
+        {
+            try
+            {
+                if(!await ExistsAsync(applicationId))
+                {
+                    throw new KeyNotFoundException($"Application with Id {applicationId} not found.");
+                }
+
+                if(!Enum.TryParse<ContactMethod>(appEvent.ContactMethod, out _)) 
+                {
+                    throw new InvalidEnumArgumentException($"Invalid ContactMethod. Expected values: {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}");
+                }
+                if(!Enum.TryParse<EventType>(appEvent.EventType, out _))
+                {
+                    throw new InvalidEnumArgumentException($"Invalid EventType. Expected values: {string.Join(", ", Enum.GetNames(typeof(EventType)))}");
+                }
+
+                var newEvent = new AppEvent
+                {
+                    ApplicationId = applicationId,
+                    EventDate = appEvent.EventDate,
+                    ContactMethod = Enum.Parse<ContactMethod>(appEvent.ContactMethod),
+                    EventType = Enum.Parse<EventType>(appEvent.EventType),
+                    Description = appEvent.Description
+                };
+                _context.AppEvents.Add(newEvent);
+                await _context.SaveChangesAsync();
+
+                return MapToDto(newEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding a new event for application with Id {applicationId}.", applicationId);
+                throw;
+            }
+        }
+
+        public async Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent)
+        {
+            // validate required fields
+            if (appEvent.Id == null) 
+                throw new InvalidOperationException("Event Id cannot be null.");
+            if(appEvent.ApplicationId != applicationId) 
+                throw new InvalidOperationException("Event does not belong to the specified application.");
+            if(appEvent.EventDate == default) 
+                throw new InvalidOperationException("Event Date cannot be null.");
+            
+            if(!Enum.TryParse<ContactMethod>(appEvent.ContactMethod, out _)) 
+                throw new InvalidEnumArgumentException($"Invalid ContactMethod. Expected values: {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}");
+            if(!Enum.TryParse<EventType>(appEvent.EventType, out _)) 
+                throw new InvalidEnumArgumentException($"Invalid EventType. Expected values: {string.Join(", ", Enum.GetNames(typeof(EventType)))}");
+
+            var app = await _context.AppEvents.FirstOrDefaultAsync(x => x.Id == appEvent.Id.Value);
+
+            if (app == null)
+            {
+                _logger.LogWarning("AppEvent with Id {Id} not found", appEvent.Id);
+                throw new KeyNotFoundException($"AppEvent with Id {appEvent.Id} not found.");
+            }
+
+            app.EventDate = appEvent.EventDate;
+            app.ContactMethod = Enum.Parse<ContactMethod>(appEvent.ContactMethod);
+            app.EventType = Enum.Parse<EventType>(appEvent.EventType);
+            app.Description = appEvent.Description;
+
+            try
+            {   
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating event with Id {Id}.", appEvent.Id);
+                throw;
+            }
+
+            return await GetEventByIdAsync(applicationId, appEvent.Id.Value);
+        }
+
+
+        public Task<bool> EventExistsAsync(int applicationId, int eventId)
+        {
+            try
+            {
+                return _context.AppEvents.AnyAsync(x => x.ApplicationId == applicationId && x.Id == eventId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while checking existence of event with Id {eventId} for application with Id {applicationId}.", eventId, applicationId);
+                throw;
+            }
+        }
+
+        public async Task<bool> DeleteEvent(int eventId)
+        {
+            var appEvent = await _context.AppEvents.FindAsync(eventId);
+
+            if (appEvent == null)
+            {
+                throw new KeyNotFoundException($"AppEvent with Id {eventId} not found.");
+            }
+
+            _context.AppEvents.Remove(appEvent);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        private AppEventDto MapToDto(AppEvent appEvent)
+        {
+            return new AppEventDto
+            {
+                Id = appEvent.Id,
+                ApplicationId = appEvent.ApplicationId,
+                EventDate = appEvent.EventDate,
+                ContactMethod = appEvent.ContactMethod.ToString(),
+                EventType = appEvent.EventType.ToString(),
+                Description = appEvent.Description
+            };
         }
 
 
@@ -250,44 +452,16 @@ namespace ApplicationTracker.Services
                 {
                     Name = dto.Name
                 };
-                
+
                 _context.Set<T>().Add(newEntity);
                 await _context.SaveChangesAsync();
                 return newEntity;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while adding or retrieving an entity of type {EntityType}.", typeof(T).Name);
                 throw;
             }
-        }
-
-        private static ApplicationDto MapToDto(Application application, bool hasRejectEvent)
-        {
-            return new ApplicationDto
-            {
-                Id = application.Id,
-                ApplicationDate = application.ApplicationDate,
-                Source = new SourceDto 
-                { 
-                    Id = application.SourceId, Name = application.Source?.Name! 
-                },
-                Organization = new OrganizationDto 
-                { 
-                    Id = application.OrganizationId, Name = application.Organization?.Name! 
-                },
-                JobTitle = new JobTitleDto 
-                { 
-                    Id = application.JobTitleId, Name = application.JobTitle?.Name! 
-                },
-                WorkEnvironment = new WorkEnvironmentDto 
-                { 
-                    Id = application.WorkEnvironmentId, Name = application.WorkEnvironment?.Name!
-                },
-                City = application.City,
-                State = application.State,
-                IsRejected = hasRejectEvent
-            };
         }
     }
 }

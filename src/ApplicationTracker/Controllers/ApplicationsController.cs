@@ -153,6 +153,5 @@ namespace ApplicationTracker.Controllers
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }
         }
-
     }
 }

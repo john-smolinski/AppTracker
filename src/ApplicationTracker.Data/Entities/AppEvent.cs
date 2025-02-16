@@ -1,4 +1,4 @@
-﻿using ApplicationTracker.Data.Enum;
+﻿using ApplicationTracker.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

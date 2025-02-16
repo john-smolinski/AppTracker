@@ -1,6 +1,6 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
-using ApplicationTracker.Data.Enum;
+using ApplicationTracker.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 
@@ -78,6 +78,21 @@ namespace ApplicationTracker.TestUtilities.Helpers
             context.SaveChanges();
         }
 
+        public static void AddAppEvents(TrackerDbContext context, int applicationId, int count)
+        {
+            var events = Enumerable.Range(1, count).Select(i => new AppEvent
+            {
+                ApplicationId = applicationId,
+                EventDate = DateTime.Now.AddDays(-i),
+                ContactMethod = ContactMethod.Email,
+                EventType = EventType.Interview,
+                Description = $"Test Event {i}"
+            });
+
+            context.AppEvents.AddRange(events);
+            context.SaveChanges();
+        }
+
         public static void AddTestEntities<T>(TrackerDbContext context, int count)
             where T : BaseEntity, new()
         {
@@ -86,7 +101,7 @@ namespace ApplicationTracker.TestUtilities.Helpers
             context.SaveChanges();
         }
 
-        public static IEnumerable<T> GenerateTestEntities<T>(int count)
+        private static IEnumerable<T> GenerateTestEntities<T>(int count)
             where T : BaseEntity, new()
         {
             return Enumerable.Range(1, count).Select(i => new T
@@ -96,7 +111,7 @@ namespace ApplicationTracker.TestUtilities.Helpers
             });
         }
 
-        public static void AddBaseEntityTestEntities(TrackerDbContext context, Type entityType, int count)
+        private static void AddBaseEntityTestEntities(TrackerDbContext context, Type entityType, int count)
         {
             var method = typeof(ContextHelper)
                 .GetMethod(nameof(AddTestEntities))!

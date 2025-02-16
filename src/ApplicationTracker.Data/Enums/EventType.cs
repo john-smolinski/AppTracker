@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationTracker.Data.Enum
+namespace ApplicationTracker.Data.Enums
 {
     public enum EventType
     {
         Interview = 1,
-        Rejection = 2,
+        CodingChallenge = 2,
+        Rejection = 3,
     }
 }
