@@ -1,7 +1,7 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
-using ApplicationTracker.Data.Enum;
+using ApplicationTracker.Data.Enums;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -297,9 +297,33 @@ namespace ApplicationTracker.Services
             }
         }
 
-        public Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent)
+        public async Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if(!await ExistsAsync(applicationId))
+                {
+                    throw new KeyNotFoundException($"Application with Id {applicationId} not found.");
+                }
+
+                var newEvent = new AppEvent
+                {
+                    ApplicationId = applicationId,
+                    EventDate = appEvent.EventDate,
+                    ContactMethod = Enum.Parse<ContactMethod>(appEvent.ContactMethod),
+                    EventType = Enum.Parse<EventType>(appEvent.EventType),
+                    Description = appEvent.Description
+                };
+                _context.AppEvents.Add(newEvent);
+                await _context.SaveChangesAsync();
+
+                return MapToDto(newEvent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding a new event for application with Id {applicationId}.", applicationId);
+                throw;
+            }
         }
 
         public Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent)
@@ -312,11 +336,6 @@ namespace ApplicationTracker.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> EventExistsAsync(AppEventDto appEvent)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> DeleteEvent(int eventId)
         {
             throw new NotImplementedException();
@@ -324,7 +343,15 @@ namespace ApplicationTracker.Services
 
         private AppEventDto MapToDto(AppEvent appEvent)
         {
-            throw new NotImplementedException();
+            return new AppEventDto
+            {
+                Id = appEvent.Id,
+                ApplicationId = appEvent.ApplicationId,
+                EventDate = appEvent.EventDate,
+                ContactMethod = appEvent.ContactMethod.ToString(),
+                EventType = appEvent.EventType.ToString(),
+                Description = appEvent.Description
+            };
         }
 
 

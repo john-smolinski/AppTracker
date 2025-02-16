@@ -1,6 +1,6 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Entities;
-using ApplicationTracker.Data.Enum;
+using ApplicationTracker.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.CodeAnalysis;
 

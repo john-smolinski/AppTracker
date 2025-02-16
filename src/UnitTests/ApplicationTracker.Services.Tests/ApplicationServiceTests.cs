@@ -1,6 +1,7 @@
 ﻿using ApplicationTracker.Data;
 using ApplicationTracker.Data.Dtos;
 using ApplicationTracker.Data.Entities;
+using ApplicationTracker.Data.Enums;
 using ApplicationTracker.TestUtilities.Helpers;
 using Microsoft.Extensions.Logging;
 
@@ -349,9 +350,77 @@ namespace ApplicationTracker.Services.Tests
         {
             // Act
             var result = await _service.GetEventByIdAsync(1, 1);
+            
             // Assert
             Assert.That(result, Is.Null);
         }
+
+        [Test]
+        public async Task PostEventAsync_ShouldAddNewEvent()
+        {
+            // Arrange
+            var applicationId = 1;
+
+            var appEventDto = new AppEventDto
+            {
+                ApplicationId = applicationId,
+                EventDate = DateTime.Now,
+                ContactMethod = ContactMethod.Email.ToString(),           
+                EventType = EventType.Interview.ToString(),
+                Description = "Test Interview"
+
+            };
+
+            // Act
+            var result = await _service.PostEventAsync(applicationId, appEventDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.ApplicationId, Is.EqualTo(appEventDto.ApplicationId));
+                Assert.That(result.EventDate, Is.EqualTo(appEventDto.EventDate));
+                Assert.That(result.ContactMethod, Is.EqualTo(appEventDto.ContactMethod));
+                Assert.That(result.EventType, Is.EqualTo(appEventDto.EventType));
+                Assert.That(result.Description, Is.EqualTo(appEventDto.Description));
+            });
+        }
+
+        [Test]
+        public async Task PostEventAsync_ShouldThrowKeyNotFoundException_WhenApplicationNotFound()
+        {
+            // Arrange
+            var appEventDto = new AppEventDto
+            {
+                ApplicationId = 999, // non-existent Id
+                EventDate = DateTime.Now,
+                ContactMethod = ContactMethod.Email.ToString(),
+                EventType = EventType.Interview.ToString(),
+                Description = "Test Interview"
+            };
+            // Act
+            var exception = await Task.Run(async () =>
+            {
+                try
+                {
+                    await _service.PostEventAsync(999, appEventDto);
+                    return null;
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    return ex;
+                }
+            });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception, Is.TypeOf<KeyNotFoundException>());
+                Assert.That(exception?.Message, Is.EqualTo("Application with Id 999 not found."));
+            });
+        }
+
+
 
         [TearDown]
         public void TearDown()

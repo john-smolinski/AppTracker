@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ApplicationTracker.Data.Enum
+namespace ApplicationTracker.Data.Enums
 {
-    public enum ContactMethod
+    public enum EventType
     {
-        Call = 1,
-        Email = 2,
-        SMS = 3,
+        Interview = 1,
+        Rejection = 2,
     }
 }
