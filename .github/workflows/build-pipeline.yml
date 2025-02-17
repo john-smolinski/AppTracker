@@ -33,6 +33,8 @@ jobs:
       - name: Run Unit Tests with Report
         run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx" --results-directory ./src/TestResults
         working-directory: ./src
+
+# debug print - test results not being created - un-comment after resolving
 #      - name: Debug - List test result files
 #        run: ls -R ./src/TestResults
 #
@@ -41,9 +43,9 @@ jobs:
 #        if: success() || failure()
 #        with:
 #          name: .NET Unit Tests
-#          path: ./src/TestResults/*.trx # ✅ Correct path
+#          path: ./src/TestResults/*.trx  
 #          reporter: dotnet-trx
-#
+#          
 #      - name: Run Tests with Coverage
 #        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./src/TestResults
 #        working-directory: ./src
