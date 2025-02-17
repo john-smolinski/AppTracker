@@ -29,10 +29,11 @@ jobs:
       - name: Build Solution
         run: dotnet build --configuration Release --no-restore
         working-directory: ./src
-      
+
       - name: Run Unit Tests with Report
         run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx" --results-directory ./src/TestResults
         working-directory: ./src
+
 # debug print - test results not being created - un-comment after resolving
 #      - name: Debug - List test result files
 #        run: ls -R ./src/TestResults
