@@ -45,10 +45,10 @@ jobs:
           path: ./src/TestResults/*.trx  
           reporter: dotnet-trx
           
-#      - name: Run Tests with Coverage
-#        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./src/TestResults
-#        working-directory: ./src
-#
+      - name: Run Tests with Coverage
+        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./src/TestResults
+        working-directory: ./src
+
 #      - name: Upload Coverage to Codecov
 #        uses: codecov/codecov-action@v3
 #        with:
