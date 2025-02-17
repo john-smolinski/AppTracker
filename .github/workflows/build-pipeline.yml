@@ -31,12 +31,13 @@ jobs:
         working-directory: ./src
 
       - name: Run Unit Tests with Report
-        run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx" --results-directory ./src/TestResults
+        #run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx" --results-directory ./src/TestResults
+        run: dotnet test --configuration Release --logger "trx" --results-directory ./TestResults/
         working-directory: ./src
 
 # debug print - test results not being created - un-comment after resolving
-#      - name: Debug - List test result files
-#        run: ls -R ./src/TestResults
+      - name: Debug - List test result files
+        run: ls -R ./src/TestResults
 #
 #      - name: Publish Test Results to PR
 #        uses: dorny/test-reporter@v1
