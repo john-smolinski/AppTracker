@@ -174,22 +174,11 @@ namespace ApplicationTracker.Controllers
                 }
                 var result = await _applicationService.GetEventsAsync(id);
                 
-                if(!result.Any())
-                {
-                    _logger.LogInformation("No Events found for Application with Id {id}", id);
-                    return NotFound(new ErrorResponse
-                    {
-                        Message = "Events not found",
-                        StatusCode = StatusCodes.Status404NotFound,
-                        Detail = $"No Events found for Application with Id {id}"
-                    });
-                }
-
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                var message = $"An unexpected error occured while fetching Application with Id {id}";
+                var message = $"An unexpected error occurred while getting AppEvents for Application with Id {id}";
                 _logger.LogError(ex, message);
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }

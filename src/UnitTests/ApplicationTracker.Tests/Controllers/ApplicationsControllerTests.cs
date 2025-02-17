@@ -1,6 +1,7 @@
 ﻿using ApplicationTracker.Common;
 using ApplicationTracker.Controllers;
 using ApplicationTracker.Data.Dtos;
+using ApplicationTracker.Data.Enums;
 using ApplicationTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -386,5 +387,102 @@ namespace ApplicationTracker.Tests.Controllers
                 Assert.That(errorResponse?.Message, Is.EqualTo("An unexpected error occurred while updating the application"));
             });
         }
+
+        [Test]
+        public async Task GetApplicationEvents_ReturnsBadRequest_WhenApplicationIdIsInvalid()
+        {
+            // Act
+            var result = await _controller.GetApplicationEvents(0);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<BadRequestObjectResult>());
+
+                var badRequestResult = result.Result as BadRequestObjectResult;
+                Assert.That(badRequestResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = badRequestResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("Invalid ID"));
+            });
+        }
+
+        [Test]
+        public async Task GetApplicationEvents_ReturnsNotFound_WhenApplicationDoesNotExist()
+        {
+            // Arrange
+            _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(false);
+            // Act
+            var result = await _controller.GetApplicationEvents(1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+                var notFoundResult = result.Result as NotFoundObjectResult;
+                Assert.That(notFoundResult?.Value, Is.EqualTo("Application with ID 1 not found."));
+            });
+        }
+
+        [Test]
+        public async Task GetApplicationEvents_ReturnsOkResult_WhenEventsExist()
+        {
+            // Arrange
+            var events = new List<AppEventDto>
+            {
+                new AppEventDto
+                {
+                    Id = 1, 
+                    ApplicationId = 1, 
+                    EventDate = DateTime.Now,  
+                    ContactMethod = ContactMethod.Email.ToString(), 
+                    EventType = EventType.Interview.ToString()
+                },
+                new AppEventDto
+                {
+                    Id = 2, 
+                    ApplicationId = 1, 
+                    EventDate = DateTime.Now.AddDays(-1), 
+                    ContactMethod = ContactMethod.Email.ToString(), 
+                    EventType = EventType.Interview.ToString()
+                }
+            };
+            _mockService.Setup(s => s.ExistsAsync(1)).ReturnsAsync(true);
+            _mockService.Setup(s => s.GetEventsAsync(1)).ReturnsAsync(events);
+            
+            // Act
+            var result = await _controller.GetApplicationEvents(1);
+            
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<OkObjectResult>());
+                
+                var okResult = result.Result as OkObjectResult;
+                Assert.That(okResult?.Value, Is.EqualTo(events));
+            });
+        }
+
+        [Test]
+        public async Task GetApplicationEvents_RetrunsInternalServerError_OnException()
+        {
+            // Arrange
+            var applictionId = 1;
+            _mockService.Setup(s => s.ExistsAsync(applictionId)).ThrowsAsync(new Exception("Database error"));
+            // Act
+            var result = await _controller.GetApplicationEvents(1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Result, Is.TypeOf<ObjectResult>());
+
+                var objectResult = result.Result as ObjectResult;
+                Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+                Assert.That(objectResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = objectResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo($"An unexpected error occurred while getting AppEvents for Application with Id {applictionId}"));
+            });
+        }
+
+
     }
 }
