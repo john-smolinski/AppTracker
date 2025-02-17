@@ -218,7 +218,7 @@ namespace ApplicationTracker.Controllers
             }
             catch (Exception ex)
             {
-                var message = $"An unexpected error occured while fetching Event with Id {eventId} for Application with Id {applicationId}";
+                var message = $"An unexpected error occurred while getting AppEvent with Id {eventId} for Application with Id {applicationId}";
                 _logger.LogError(ex, message);
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }
