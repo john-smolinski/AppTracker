@@ -417,8 +417,13 @@ namespace ApplicationTracker.Tests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result.Result, Is.TypeOf<NotFoundObjectResult>());
+
                 var notFoundResult = result.Result as NotFoundObjectResult;
-                Assert.That(notFoundResult?.Value, Is.EqualTo("Application with ID 1 not found."));
+                Assert.That(notFoundResult?.StatusCode, Is.EqualTo(StatusCodes.Status404NotFound));
+                Assert.That(notFoundResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = notFoundResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("Application not found"));
             });
         }
 
