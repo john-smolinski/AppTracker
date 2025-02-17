@@ -656,7 +656,6 @@ namespace ApplicationTracker.Services.Tests
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.Not.Null);
                 Assert.That(result, Is.True);
                 Assert.That(_context.AppEvents.Count(), Is.EqualTo(0));
             });
