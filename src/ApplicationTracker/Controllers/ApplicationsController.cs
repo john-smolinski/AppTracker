@@ -153,5 +153,89 @@ namespace ApplicationTracker.Controllers
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("{id}/events")]
+        public async Task<ActionResult<IEnumerable<AppEventDto>>> GetApplicationEvents(int id)
+        {
+            try
+            {
+                if (!ValidationHelper.IsValidId(id, out var badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Id provided: {id}", id);
+                    return badRequestResult;
+                }
+                if (!await _applicationService.ExistsAsync(id))
+                {
+                    _logger.LogInformation("Application with id {id} not found", id);
+                    return ErrorHelper.NotFound("Application not found", $"No Application with Id {id} found");
+                }
+                var result = await _applicationService.GetEventsAsync(id);
+                
+                if(!result.Any())
+                {
+                    _logger.LogInformation("No Events found for Application with Id {id}", id);
+                    return NotFound(new ErrorResponse
+                    {
+                        Message = "Events not found",
+                        StatusCode = StatusCodes.Status404NotFound,
+                        Detail = $"No Events found for Application with Id {id}"
+                    });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var message = $"An unexpected error occured while fetching Application with Id {id}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpGet("{applicationId}/events/{eventId}")]
+        public async Task<ActionResult<AppEventDto>> GetAppEventById(int applicationId, int eventId)
+        {
+            try
+            {
+                if (!ValidationHelper.IsValidId(applicationId, out var badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Application Id provided: {applicationId}", applicationId);
+                    return badRequestResult;
+                }
+                if (!ValidationHelper.IsValidId(eventId, out badRequestResult))
+                {
+                    _logger.LogInformation("Invalid Event Id provided: {eventId}", eventId);
+                    return badRequestResult;
+                }
+                if (!await _applicationService.ExistsAsync(applicationId))
+                {
+                    _logger.LogInformation("Application with id {applicationId} not found", applicationId);
+                    return ErrorHelper.NotFound("Application not found", $"No Application with Id {applicationId} found");
+                }
+                if (!await _applicationService.EventExistsAsync(applicationId, eventId))
+                {
+                    _logger.LogInformation("Event with id {eventId} not found for Application with id {applicationId}", eventId, applicationId);
+                    return ErrorHelper.NotFound("Event not found", $"No Event with Id {eventId} found for Application with Id {applicationId}");
+                }
+                var result = await _applicationService.GetEventByIdAsync(applicationId, eventId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var message = $"An unexpected error occured while fetching Event with Id {eventId} for Application with Id {applicationId}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
+
+
+
     }
 }
