@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - develop
+  workflow_dispatch:
 
 jobs:
   test:
@@ -41,7 +42,7 @@ jobs:
         if: success() || failure()
         with:
           name: .NET Unit Tests
-          path: ./src/TestResults/*.trx  # ✅ Correct path
+          path: ./src/TestResults/*.trx  
           reporter: dotnet-trx
           
       - name: Run Tests with Coverage
