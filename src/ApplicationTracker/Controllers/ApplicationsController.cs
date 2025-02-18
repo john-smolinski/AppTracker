@@ -193,16 +193,9 @@ namespace ApplicationTracker.Controllers
         {
             try
             {
-                if (!ValidationHelper.IsValidId(applicationId, out var badRequestResult))
-                {
-                    _logger.LogInformation("Invalid Application Id provided: {applicationId}", applicationId);
-                    return badRequestResult;
-                }
-                if (!ValidationHelper.IsValidId(eventId, out badRequestResult))
-                {
-                    _logger.LogInformation("Invalid Event Id provided: {eventId}", eventId);
-                    return badRequestResult;
-                }
+                var validationError = ValidateRequest(applicationId, eventId);
+                if (validationError != null) return validationError;
+
                 if (!await _applicationService.ExistsAsync(applicationId))
                 {
                     _logger.LogInformation("Application with id {applicationId} not found", applicationId);
@@ -253,6 +246,26 @@ namespace ApplicationTracker.Controllers
             }
         }
 
+        // put
+
+        // delete
+
+
+        private ActionResult? ValidateRequest(int applicationId, int eventId)
+        {
+            if (!ValidationHelper.IsValidId(applicationId, out var badRequestResult))
+            {
+                _logger.LogInformation("Invalid Application Id provided: {applicationId}", applicationId);
+                return badRequestResult;
+            }
+            if (!ValidationHelper.IsValidId(eventId, out badRequestResult))
+            {
+                _logger.LogInformation("Invalid Event Id provided: {eventId}", eventId);
+                return badRequestResult;
+            }
+            return null;
+        }
+
         private ActionResult? ValidateAppEvent(int applicationId, AppEventDto appEvent)
         {
             if (appEvent == null)
@@ -276,9 +289,7 @@ namespace ApplicationTracker.Controllers
 
 
 
-        // put
 
-        // delete
 
 
     }
