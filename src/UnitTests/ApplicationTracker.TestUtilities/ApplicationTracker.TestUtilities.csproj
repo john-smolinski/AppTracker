@@ -15,4 +15,8 @@
     <ProjectReference Include="..\..\ApplicationTracker.Data\ApplicationTracker.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestCases\" />
+  </ItemGroup>
+
 </Project>

@@ -223,7 +223,62 @@ namespace ApplicationTracker.Controllers
                 return ErrorHelper.InternalServerError(message, ex.Message);
             }
         }
+        
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPost("{applicationId}/events")]
+        public async Task<ActionResult<AppEventDto>> PostAppEvent(int applicationId, AppEventDto appEvent)
+        {
+            try
+            {
+                var validationError = ValidateAppEvent(applicationId, appEvent);
+                if (validationError != null) return validationError;
 
+                if (!await _applicationService.ExistsAsync(applicationId))
+                {
+                    _logger.LogInformation("Application with id {applicationId} not found", applicationId);
+                    return ErrorHelper.NotFound("Application not found", $"No Application with Id {applicationId} found");
+                }
+
+                var result = await _applicationService.PostEventAsync(applicationId, appEvent);
+                return CreatedAtAction(nameof(GetAppEventById), new { applicationId = result.ApplicationId, eventId = result.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                var message = $"An unexpected error occurred while posting new AppEvent for Application with Id {applicationId}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
+
+        private ActionResult? ValidateAppEvent(int applicationId, AppEventDto appEvent)
+        {
+            if (appEvent == null)
+            {
+                _logger.LogInformation("NULL AppEvent DTO received");
+                return ErrorHelper.BadRequest("Invalid AppEvent", "The AppEvent DTO cannot be null");
+            }
+            if (!ValidationHelper.IsValidId(applicationId, out var badRequestResult) ||
+                !ValidationHelper.IsValidAppEvent(appEvent, out badRequestResult))
+            {
+                _logger.LogInformation("Invalid AppEvent posted");
+                return badRequestResult;
+            }
+            if (appEvent.ApplicationId != applicationId)
+            {
+                _logger.LogInformation("Mismatch between applicationId in URL ({applicationId}) and AppEvent.ApplicationId ({appEvent.ApplicationId})", applicationId, appEvent.ApplicationId);
+                return ErrorHelper.BadRequest("Invalid AppEvent", "Mismatch between applicationId in the URL and in the payload.");
+            }
+            return null;
+        }
+
+
+
+        // put
+
+        // delete
 
 
     }

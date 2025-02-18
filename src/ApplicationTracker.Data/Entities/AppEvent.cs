@@ -20,7 +20,7 @@ namespace ApplicationTracker.Data.Entities
         [StringLength(50)]
         public EventType EventType { get; set; }
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 #pragma warning restore CS8618
 }

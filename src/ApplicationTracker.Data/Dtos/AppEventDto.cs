@@ -14,7 +14,7 @@ namespace ApplicationTracker.Data.Dtos
         public DateTime EventDate { get; set; }
         public string ContactMethod { get; set; }
         public string EventType { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
     }
 #pragma warning restore CS8618
