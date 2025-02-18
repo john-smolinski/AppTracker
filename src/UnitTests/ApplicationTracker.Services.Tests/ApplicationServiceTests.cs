@@ -508,7 +508,7 @@ namespace ApplicationTracker.Services.Tests
             }
         }
 
-        public static IEnumerable<TestCaseData> InvalidAppEventTestCases()
+        private static IEnumerable<TestCaseData> InvalidAppEventTestCases()
         {
             yield return new TestCaseData(
                 new AppEventDto { Id = null, ApplicationId = 1, EventDate = DateTime.UtcNow },
@@ -629,7 +629,7 @@ namespace ApplicationTracker.Services.Tests
             {
                 try
                 {
-                    await _service.DeleteEvent(999);
+                    await _service.DeleteEventAsync(999);
                     return null;
                 }
                 catch (KeyNotFoundException ex)
@@ -652,7 +652,7 @@ namespace ApplicationTracker.Services.Tests
             // Arrange
             ContextHelper.AddAppEvents(_context, 1, 1);
             // Act
-            var result = await _service.DeleteEvent(1);
+            var result = await _service.DeleteEventAsync(1);
             // Assert
             Assert.Multiple(() =>
             {

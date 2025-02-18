@@ -134,7 +134,7 @@ namespace ApplicationTracker.Services
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while checking existence of application with ID {Id}.", id);
+                _logger.LogError(ex, "An error occurred while checking existence of application with Id {Id}.", id);
                 throw;
             }
         }
@@ -382,7 +382,6 @@ namespace ApplicationTracker.Services
             return await GetEventByIdAsync(applicationId, appEvent.Id.Value);
         }
 
-
         public Task<bool> EventExistsAsync(int applicationId, int eventId)
         {
             try
@@ -396,7 +395,7 @@ namespace ApplicationTracker.Services
             }
         }
 
-        public async Task<bool> DeleteEvent(int eventId)
+        public async Task<bool> DeleteEventAsync(int eventId)
         {
             var appEvent = await _context.AppEvents.FindAsync(eventId);
 
@@ -422,7 +421,6 @@ namespace ApplicationTracker.Services
                 Description = appEvent.Description
             };
         }
-
 
         private async Task<T> AddEntity<T>(BaseDto dto)
             where T : BaseEntity, new()

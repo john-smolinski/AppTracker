@@ -19,7 +19,7 @@ namespace ApplicationTracker.Services.Interfaces
         Task<AppEventDto> PostEventAsync(int applicationId, AppEventDto appEvent);
         Task<AppEventDto?> UpdateEventAsync(int applicationId, AppEventDto appEvent);
         Task<bool> EventExistsAsync(int applicationId, int eventId);
-        Task<bool> DeleteEvent(int eventId);
+        Task<bool> DeleteEventAsync(int eventId);
 
     }
 }
