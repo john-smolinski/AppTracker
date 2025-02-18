@@ -127,8 +127,8 @@ namespace ApplicationTracker.Controllers
 
                 if (id != application.Id)
                 {
-                    _logger.LogInformation("Application ID mismatch");
-                    return ErrorHelper.BadRequest("Invalid request", "The ID in the URL does not match the ID in the body");
+                    _logger.LogInformation("Application Id mismatch");
+                    return ErrorHelper.BadRequest("Invalid request", "The Id in the URL does not match the Id in the body");
                 }
 
                 if (!ValidationHelper.IsValidApplication(application, out var badRequestResult))
@@ -140,7 +140,7 @@ namespace ApplicationTracker.Controllers
                 if (!await _applicationService.ExistsAsync(id))
                 {
                     _logger.LogWarning("Application not found");
-                    return NotFound($"Application with ID {id} not found.");
+                    return NotFound($"Application with Id {id} not found.");
                 }
 
                 var updatedApplication = await _applicationService.UpdateAsync(application);
@@ -246,7 +246,47 @@ namespace ApplicationTracker.Controllers
             }
         }
 
-        // put
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpPut("{applicationId}/events/{eventId}")]
+        public async Task<ActionResult<AppEventDto>> UpdateAppEvent(int applicationId, int eventId, AppEventDto appEvent)
+        {
+            try
+            {
+                var validationError = ValidateAppEvent(applicationId, appEvent);
+                if (validationError != null) return validationError;
+                
+                if(!appEvent.Id.HasValue)
+                {
+                    _logger.LogInformation("Missing Event Id provided in AppEvent DTO");
+                    return ErrorHelper.BadRequest("Invalid AppEvent", "The AppEvent DTO must have an Id value");
+                }
+
+                if (appEvent.Id.Value != eventId)
+                {
+                    _logger.LogInformation("Event Id mismatch");
+                    return ErrorHelper.BadRequest("Invalid request", "The Id in the URL does not match the Id in the body");
+                }
+
+                if (!await _applicationService.EventExistsAsync(applicationId, appEvent.Id.Value))
+                {
+                    _logger.LogInformation("AppEvent with id {eventId} not found for Application with id {applicationId}", eventId, applicationId);
+                    return ErrorHelper.NotFound("AppEvent not found", $"No Event with Id {eventId} found for Application with Id {applicationId}");
+                }
+
+                var result = await _applicationService.UpdateEventAsync(applicationId, appEvent);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                var message = $"An unexpected error occurred while updating AppEvent with Id {eventId} for Application with Id {applicationId}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
+
 
         // delete
 
@@ -266,6 +306,16 @@ namespace ApplicationTracker.Controllers
             return null;
         }
 
+
+        /// <summary>
+        /// Validate the AppEvent DTO is not null
+        /// Validate that the Application Id is a valid value (ValidationHelper.IsValidId)
+        /// Validate the AppEvent DTO (ValidationHelper.IsValidAppEvent)
+        /// Validate that the Application Id in the URL matches the Application Id in the AppEvent DTO
+        /// </summary>
+        /// <param name="applicationId"></param>
+        /// <param name="appEvent"></param>
+        /// <returns></returns>
         private ActionResult? ValidateAppEvent(int applicationId, AppEventDto appEvent)
         {
             if (appEvent == null)
@@ -286,11 +336,6 @@ namespace ApplicationTracker.Controllers
             }
             return null;
         }
-
-
-
-
-
 
     }
 }

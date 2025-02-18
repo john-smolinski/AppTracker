@@ -7,6 +7,13 @@ namespace ApplicationTracker.Common
 {
     public static class ValidationHelper
     {
+
+        /// <summary>
+        /// Validates that the provided Id is greater than zero
+        /// </summary>
+        /// <param name="id">The Id to validate</param>
+        /// <param name="badRequestResult">BadRequestObjectResult or null</param>
+        /// <returns>true if valid</returns>
         public static bool IsValidId(int id, out ActionResult badRequestResult)
         {
             if (id > 0)
@@ -14,10 +21,16 @@ namespace ApplicationTracker.Common
                 badRequestResult = null!;
                 return true;
             }
-            badRequestResult = ErrorHelper.BadRequest("Invalid ID", "The provided ID must be greater than zero.");
+            badRequestResult = ErrorHelper.BadRequest("Invalid Id", "The provided Id must be greater than zero.");
             return false;
         }
 
+        /// <summary>
+        /// Validates that the provided Application is valid
+        /// </summary>
+        /// <param name="application">ApplicationDto to validate</param>
+        /// <param name="badRequestResult">BadRequestObjectResult or null</param>
+        /// <returns>true if valid</returns>
         public static bool IsValidApplication(ApplicationDto application, out ActionResult badRequestResult)
         {
             var badRequest = new StringBuilder();
@@ -47,6 +60,12 @@ namespace ApplicationTracker.Common
             return false;
         }
 
+        /// <summary>
+        /// Validates that the provided AppEvent is valid
+        /// </summary>
+        /// <param name="appEvent">AppEventDto to validate</param>
+        /// <param name="badRequestResult">BadRequestObjectResult or null</param>
+        /// <returns>true if valid</returns>
         public static bool IsValidAppEvent(AppEventDto appEvent, out ActionResult badRequestResult)
         {
             var badRequest = new StringBuilder();
@@ -81,7 +100,5 @@ namespace ApplicationTracker.Common
             badRequestResult = ErrorHelper.BadRequest("Invalid AppEvent", badRequest.ToString());
             return false;
         }
-
-
     }
 }

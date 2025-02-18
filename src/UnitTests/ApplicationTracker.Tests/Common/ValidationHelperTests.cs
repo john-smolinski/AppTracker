@@ -45,8 +45,8 @@ namespace ApplicationTracker.Tests.Common
 
                 var errorResponse = badRequestObjectResult.Value as ErrorResponse;
                 Assert.That(errorResponse, Is.Not.Null);
-                Assert.That(errorResponse!.Message, Is.EqualTo("Invalid ID"));
-                Assert.That(errorResponse.Detail, Is.EqualTo("The provided ID must be greater than zero."));
+                Assert.That(errorResponse!.Message, Is.EqualTo("Invalid Id"));
+                Assert.That(errorResponse.Detail, Is.EqualTo("The provided Id must be greater than zero."));
             });
         }
     }
