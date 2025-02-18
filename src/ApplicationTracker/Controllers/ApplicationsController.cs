@@ -287,10 +287,47 @@ namespace ApplicationTracker.Controllers
             }
         }
 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [HttpDelete("{applicationId}/events/{eventId}")]
+        public async Task<IActionResult> DeleteAsyc(int applicationId, int eventId)
+        {
+            try
+            {
+                var validationError = ValidateRequest(applicationId, eventId);
+                if (validationError != null) return validationError;
+                
+                if (!await _applicationService.EventExistsAsync(applicationId, eventId))
+                {
+                    _logger.LogInformation("AppEvent with id {eventId} not found for Application with id {applicationId}", eventId, applicationId);
+                    return ErrorHelper.NotFound("AppEvent not found", $"No Event with Id {eventId} found for Application with Id {applicationId}");
+                }
+                var result = await _applicationService.DeleteEventAsync(eventId);
+                
+                if(!result)
+                {
+                    _logger.LogWarning("Failed to delete AppEvent with Id {eventId} for Application with Id {applicationId}", eventId, applicationId);
+                    return ErrorHelper.NotFound("AppEvent not found", $"No Event with Id {eventId} found for Application with Id {applicationId}");
+                }
 
-        // delete
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                var message = $"An unexpected error occurred while deleting AppEvent with Id {eventId} for Application with Id {applicationId}";
+                _logger.LogError(ex, message);
+                return ErrorHelper.InternalServerError(message, ex.Message);
+            }
+        }
 
-
+        /// <summary>
+        /// Validate the Application Id and Event Id are valid values (ValidationHelper.IsValidId)
+        /// </summary>
+        /// <param name="applicationId">int Id of Application</param>
+        /// <param name="eventId">int Id of AppEvent</param>
+        /// <returns>BadRequestObjectResult or null</returns>
         private ActionResult? ValidateRequest(int applicationId, int eventId)
         {
             if (!ValidationHelper.IsValidId(applicationId, out var badRequestResult))

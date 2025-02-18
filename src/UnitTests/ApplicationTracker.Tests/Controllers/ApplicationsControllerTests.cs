@@ -1029,11 +1029,11 @@ namespace ApplicationTracker.Tests.Controllers
                 ContactMethod = ContactMethod.Email.ToString(),
                 EventType = EventType.Interview.ToString()
             };
-            
+
             _mockService.Setup(s => s.EventExistsAsync(1, 1)).ThrowsAsync(new Exception("Database error"));
             // Act
             var result = await _controller.UpdateAppEvent(applicationId, 1, appEvent);
-            
+
             // Assert
             Assert.Multiple(() =>
             {
@@ -1041,10 +1041,118 @@ namespace ApplicationTracker.Tests.Controllers
                 var objectResult = result.Result as ObjectResult;
                 Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
                 Assert.That(objectResult?.Value, Is.TypeOf<ErrorResponse>());
-                
+
                 var errorResponse = objectResult?.Value as ErrorResponse;
                 Assert.That(errorResponse?.Message, Is.EqualTo($"An unexpected error occurred while updating AppEvent with Id {appEvent.Id} for Application with Id {applicationId}"));
             });
+            _mockService.Verify(s => s.EventExistsAsync(1, 1), Times.Once);
+        }
+
+        [Test]
+        [TestCase(0, 1)]
+        [TestCase(1, 0)]
+        public async Task DeleteAsync_ReturnsBadRequest_WhenApplicationIdIsInvalid(int applicationId, int appEventId)
+        {
+            // Act
+            var result = await _controller.DeleteAsyc(applicationId, appEventId);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<BadRequestObjectResult>());
+                var badRequestResult = result as BadRequestObjectResult;
+
+                Assert.That(badRequestResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = badRequestResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("Invalid Id"));
+            });
+        }
+
+        [Test]
+        public async Task DeleteAsync_ReturnsNotFound_WhenAppEventDoesNotExist()
+        {
+            // Arrange
+            _mockService.Setup(s => s.EventExistsAsync(1, 1)).ReturnsAsync(false);
+
+            // Act
+            var result = await _controller.DeleteAsyc(1, 1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+                var notFoundResult = result as NotFoundObjectResult;
+
+                Assert.That(notFoundResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = notFoundResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("AppEvent not found"));
+            });
+
+            _mockService.Verify(s => s.EventExistsAsync(1, 1), Times.Once);
+        }
+
+        [Test]
+        public async Task DeleteAsync_ReturnsNotFound_WhenDeleteEventRuturnsFalse()
+        {
+            // Arrange
+            _mockService.Setup(s => s.EventExistsAsync(1, 1)).ReturnsAsync(true);
+            _mockService.Setup(s => s.DeleteEventAsync(1)).ReturnsAsync(false);
+
+            // Act
+            var result = await _controller.DeleteAsyc(1, 1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<NotFoundObjectResult>());
+
+                var notFoundResult = result as NotFoundObjectResult;
+                Assert.That(notFoundResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = notFoundResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("AppEvent not found"));
+            });
+        }
+
+        [Test]
+        public async Task DeleteAsync_ReturnsNoContent_WhenAppEventIsDeleted()
+        {
+            // Arrange
+            _mockService.Setup(s => s.EventExistsAsync(1, 1)).ReturnsAsync(true);
+            _mockService.Setup(s => s.DeleteEventAsync(1)).ReturnsAsync(true);
+
+            // Act
+            var result = await _controller.DeleteAsyc(1, 1);
+
+            // Assert
+            Assert.That(result, Is.TypeOf<NoContentResult>());
+
+            _mockService.Verify(s => s.EventExistsAsync(1, 1), Times.Once);
+            _mockService.Verify(s => s.DeleteEventAsync(1), Times.Once);
+        }
+
+        [Test]
+        public async Task DeleteAsync_ReturnsInternalServerError_OnException()
+        {
+            // Arrange
+            _mockService.Setup(s => s.EventExistsAsync(1, 1)).ThrowsAsync(new Exception("Database error"));
+            // Act
+            var result = await _controller.DeleteAsyc(1, 1);
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<ObjectResult>());
+
+                var objectResult = result as ObjectResult;
+                Assert.That(objectResult?.StatusCode, Is.EqualTo(StatusCodes.Status500InternalServerError));
+                Assert.That(objectResult?.Value, Is.TypeOf<ErrorResponse>());
+
+                var errorResponse = objectResult?.Value as ErrorResponse;
+                Assert.That(errorResponse?.Message, Is.EqualTo("An unexpected error occurred while deleting AppEvent with Id 1 for Application with Id 1"));
+            });
+
             _mockService.Verify(s => s.EventExistsAsync(1, 1), Times.Once);
         }
     }

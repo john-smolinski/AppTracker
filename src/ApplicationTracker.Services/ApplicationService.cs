@@ -395,7 +395,7 @@ namespace ApplicationTracker.Services
             }
         }
 
-        public async Task<bool> DeleteEvent(int eventId)
+        public async Task<bool> DeleteEventAsync(int eventId)
         {
             var appEvent = await _context.AppEvents.FindAsync(eventId);
 
