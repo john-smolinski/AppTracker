@@ -1,4 +1,5 @@
 ﻿using ApplicationTracker.Data.Dtos;
+using ApplicationTracker.Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 
@@ -45,5 +46,42 @@ namespace ApplicationTracker.Common
             badRequestResult = ErrorHelper.BadRequest("Invalid Application", badRequest.ToString());
             return false;
         }
+
+        public static bool IsValidAppEvent(AppEventDto appEvent, out ActionResult badRequestResult)
+        {
+            var badRequest = new StringBuilder();
+            
+            if (appEvent.ApplicationId <= 0)
+            {
+                badRequest.AppendLine("ApplicationId is a required value for a AppEvent");
+            }
+            if(appEvent.EventDate == default)
+            {
+                badRequest.AppendLine("EventDate is a required value for a AppEvent");
+            }
+            if(appEvent.EventType == null || !Enum.TryParse<EventType>(appEvent.EventType, out _))
+            {
+                badRequest.AppendLine($"A valid EventType is required. Expected values {string.Join(", ", Enum.GetNames(typeof(EventType)))}");
+            }
+            if(appEvent.ContactMethod == null || !Enum.TryParse<ContactMethod>(appEvent.ContactMethod, out _))
+            {
+                badRequest.AppendLine($"A valid ContactMethod is required. Expected values {string.Join(", ", Enum.GetNames(typeof(ContactMethod)))}");
+            }
+            if(appEvent.Description != null && appEvent.Description.Length > 1000)
+            {
+                badRequest.AppendLine("Description must be less than 1000 characters");
+            }
+
+            if (badRequest.Length == 0)
+            {
+                badRequestResult = null!;
+                return true;
+            }
+
+            badRequestResult = ErrorHelper.BadRequest("Invalid AppEvent", badRequest.ToString());
+            return false;
+        }
+
+
     }
 }

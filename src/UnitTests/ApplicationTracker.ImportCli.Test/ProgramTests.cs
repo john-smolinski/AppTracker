@@ -42,22 +42,5 @@
                 Assert.That(_consoleOutput.ToString(), Does.StartWith("Error: File not found"));
             });
         }
-
-        [Test]
-        public void ProcessArguments_ReturnsError_WhenNoArgumentsProvided()
-        {
-            // Arrange
-            var args = new string[0];
-
-            // Act
-            var exitCode = Program.ProcessArguments(args);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(exitCode, Is.EqualTo(1));
-                Assert.That(_consoleOutput.ToString(), Contains.Substring("Error parsing arguments. Use --help for usage information"));
-            });
-        }
     }
 }

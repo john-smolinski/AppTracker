@@ -526,12 +526,12 @@ namespace ApplicationTracker.Services.Tests
             ).SetName("EventDate_Is_Default");
 
             yield return new TestCaseData(
-                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod = "InvalidMethod" , EventType="Email"},  // 🔴 Invalid Enum
+                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod = "InvalidMethod" , EventType="Email"}, 
                 typeof(InvalidEnumArgumentException)
             ).SetName("Invalid_ContactMethod");
 
             yield return new TestCaseData(
-                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod="Email", EventType = "InvalidMethod" },  // 🔴 Invalid Enum
+                new AppEventDto { Id = 1, ApplicationId = 1, EventDate = DateTime.UtcNow, ContactMethod="Email", EventType = "InvalidMethod" }, 
                 typeof(InvalidEnumArgumentException)
             ).SetName("Invalid_EventType");
         }
