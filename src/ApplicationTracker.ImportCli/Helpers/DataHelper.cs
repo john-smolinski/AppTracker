@@ -1,10 +1,12 @@
 ﻿using ClosedXML.Excel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ApplicationTracker.ImportCli.Helpers
 {
     /// <summary>
     /// simple helper class for code reuse in reporting and importing
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class DataHelper
     {
 

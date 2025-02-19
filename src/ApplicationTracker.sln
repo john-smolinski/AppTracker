@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{7C450318-E211-459C-AA25-6EBBD2A06DC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.ImportCli.Test", "UnitTests\ApplicationTracker.ImportCli.Test\ApplicationTracker.ImportCli.Test.csproj", "{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Services.Tests", "UnitTests\ApplicationTracker.Services.Tests\ApplicationTracker.Services.Tests.csproj", "{56A21513-6BA9-4081-B6DE-0010F1F64DB7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApplicationTracker.Tests", "UnitTests\ApplicationTracker.Tests\ApplicationTracker.Tests.csproj", "{06A602D6-C176-4EEE-A39F-5F524D107C13}"
@@ -43,10 +41,6 @@ Global
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06D567F1-A672-4693-9C5D-C5F811CDBEC6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{56A21513-6BA9-4081-B6DE-0010F1F64DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{56A21513-6BA9-4081-B6DE-0010F1F64DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A21513-6BA9-4081-B6DE-0010F1F64DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -64,7 +58,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{7C19EADA-0706-44E6-B07A-2DF6FC5C3D7A} = {7C450318-E211-459C-AA25-6EBBD2A06DC4}
 		{56A21513-6BA9-4081-B6DE-0010F1F64DB7} = {7C450318-E211-459C-AA25-6EBBD2A06DC4}
 		{06A602D6-C176-4EEE-A39F-5F524D107C13} = {7C450318-E211-459C-AA25-6EBBD2A06DC4}
 		{087F3930-F593-4FA4-97F0-F8DB27A161A5} = {7C450318-E211-459C-AA25-6EBBD2A06DC4}

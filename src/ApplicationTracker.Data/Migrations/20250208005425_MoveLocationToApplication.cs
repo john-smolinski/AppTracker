@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-
+using System.Diagnostics.CodeAnalysis;
 #nullable disable
 
 namespace ApplicationTracker.Data.Migrations
@@ -8,6 +8,7 @@ namespace ApplicationTracker.Data.Migrations
     public partial class MoveLocationToApplication : Migration
     {
         /// <inheritdoc />
+        [ExcludeFromCodeCoverage]
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
