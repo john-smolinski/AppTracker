@@ -7,7 +7,6 @@ namespace ApplicationTracker.Common
 {
     public static class ValidationHelper
     {
-
         /// <summary>
         /// Validates that the provided Id is greater than zero
         /// </summary>
