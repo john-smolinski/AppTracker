@@ -1,6 +1,9 @@
-﻿namespace ApplicationTracker.Data.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace ApplicationTracker.Data.Entities
 {
 #pragma warning disable CS8618
+    [ExcludeFromCodeCoverage]
     public class Source : BaseEntity
     {
         public List<Application> Applications { get; set; }
