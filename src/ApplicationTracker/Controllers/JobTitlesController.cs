@@ -75,33 +75,5 @@ namespace ApplicationTracker.Controllers
                     return Ok(result);
                 });
         }
-
-        /// <summary>
-        /// Retrieves Applications related to a specific JobTitle 
-        /// </summary>
-        /// <param name="id">The JobTitle Id</param>
-        /// <returns>List of applications or an error response.</returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        [HttpGet("{id}/applications")]
-        public async Task<ActionResult<IEnumerable<ApplicationDto>>> GetRelatedApplications(int id)
-        {
-            if(!ValidationHelper.IsValidId(id, out var badRequestResult))
-            {
-                _logger.LogInformation("Invalid Id provided; {id}", id);
-                return badRequestResult;
-            }
-
-            return await ServiceCallHandler.HandleServiceCall<JobTitleDto>(
-                _serviceFactory,
-                _logger,
-                async service =>
-                {
-                    var result = await service.GetRelatedApplicationsAsync(id);
-                    return Ok(result);
-                });
-        }
     }
 }

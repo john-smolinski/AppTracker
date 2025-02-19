@@ -7,6 +7,5 @@ namespace ApplicationTracker.Services.Interfaces
         Task<IEnumerable<T>> GetAllAsync();
         Task<T?> GetByIdAsync(int id);
         Task<bool> ExistsAsync(int id);
-        Task<IEnumerable<ApplicationDto>?> GetRelatedApplicationsAsync(int id);
     }
 }
