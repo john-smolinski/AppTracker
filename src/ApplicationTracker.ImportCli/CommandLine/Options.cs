@@ -1,7 +1,9 @@
 ﻿using CommandLine;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ApplicationTracker.ImportCli.CommandLine
 {
+    [ExcludeFromCodeCoverage]
     public class Options
     {
         [Option('f', "file", Required = true, HelpText = "Path to the file to open")]

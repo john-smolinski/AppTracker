@@ -3,11 +3,13 @@ using ApplicationTracker.ImportCli.CommandLine;
 using ClosedXML.Excel;
 using CommandLine;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.Json;
 
 namespace ApplicationTracker.ImportCli
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         private static string? apiUrl;
