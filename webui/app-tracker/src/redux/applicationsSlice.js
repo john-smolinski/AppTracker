@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api/applications";
+import API_ROUTES from "../config/apiConfig";
 
 // Fetch Applications
 export const fetchApplications = createAsyncThunk(
   "applications/fetchApplications",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_BASE_URL);
+      const response = await axios.get(API_ROUTES.applications);
       return response.data;
     } catch (error) {
       return rejectWithValue({
@@ -24,7 +23,10 @@ export const postApplication = createAsyncThunk(
   "applications/postApplication",
   async (newApplication, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_BASE_URL, newApplication);
+      const response = await axios.post(
+        API_ROUTES.applications,
+        newApplication
+      );
       if (response.status === 201) {
         return response.data;
       } else {

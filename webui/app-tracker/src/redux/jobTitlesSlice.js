@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api/jobtitles";
+import API_ROUTES from "../config/apiConfig";
 
 // fetch Job Titles
 export const fetchJobTitles = createAsyncThunk(
   "jobtitles/fetchJobTitles",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_BASE_URL);
+      const response = await axios.get(API_ROUTES.jobTitles);
       return response.data;
     } catch (error) {
       return rejectWithValue({

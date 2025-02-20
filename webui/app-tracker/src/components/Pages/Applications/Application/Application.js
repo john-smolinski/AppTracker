@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FormControl, FormLabel, Box } from "@mui/material";
 import Menu from "../../../Menu/Menu";
+import API_ROUTES from "../../../../config/apiConfig";
 import "../../../../App.css";
 import "./Application.css";
 
@@ -14,9 +15,7 @@ export default function Application() {
   useEffect(() => {
     async function fetchApplication() {
       try {
-        const response = await fetch(
-          `http://localhost:5000/api/applications/${id}`
-        );
+        const response = await fetch(API_ROUTES.applicationById(id));
         if (!response.ok) {
           throw new Error("Failed to fetch application");
         }
