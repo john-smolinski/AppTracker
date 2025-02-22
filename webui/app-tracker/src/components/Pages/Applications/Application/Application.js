@@ -12,6 +12,9 @@ export default function Application() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [appEvents, setAppEvents] = useState([]);
+  const [appEventsError, setAppEventsError] = useState("");
+
   useEffect(() => {
     async function fetchApplication() {
       try {
@@ -28,6 +31,22 @@ export default function Application() {
       }
     }
     fetchApplication();
+  }, [id]);
+
+  useEffect(() => {
+    async function fetchAppEvents() {
+      try {
+        const response = await fetch(API_ROUTES.applicationEvents(id));
+        if (!response.ok) {
+          throw new Error("Failed to fetch application events");
+        }
+        const data = await response.json();
+        setAppEvents(data);
+      } catch (error) {
+        setAppEventsError(error.message);
+      }
+    }
+    fetchAppEvents();
   }, [id]);
 
   return (
