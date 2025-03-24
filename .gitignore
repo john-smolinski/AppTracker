@@ -91,7 +91,10 @@ StyleCopReport.xml
 *.svclog
 *.scc
 
-
+# next.js
+.next/
+out/
+build/
 
 # Visual Studio profiler
 *.psess
