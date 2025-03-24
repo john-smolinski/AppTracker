@@ -36,28 +36,28 @@ export default function Summary() {
 
   if (loading)
     return (
-      <div className={styles["summary"]}>
+      <div className={styles.summary}>
         <p>Loading...</p>
       </div>
     );
   if (isServerError)
     return (
       <div>
-        <h3 className={styles["summary"]}>
+        <h3 className={styles.summary}>
           Server error occurred. Please try again later.
         </h3>
       </div>
     );
   if (error)
     return (
-      <div className={styles["summary"]}>
+      <div className={styles.summary}>
         <h1>Error:</h1> <p> {error.message}</p>
       </div>
     );
   return (
     <div>
       <h2>Summary</h2>
-      <div className={styles["summary"]}>
+      <div className={styles.summary}>
         <h2>{apps.length} Total Applications Submitted </h2>
         <div className={styles["content-container"]}>
           <div className={styles["box"]}>

@@ -6,11 +6,6 @@
     padding: 15px;
 }
 
-.summary h2 {
-    margin-bottom: 8px;
-    font-size: 16px;
-}
-
 .content-container {
     display: flex;
     justify-content: space-between;
