@@ -6,7 +6,7 @@ import styles from "./Menu.module.css";
 export default function Menu() {
   return (
     <nav className={styles["menu-bar"]}>
-      <Link href="/" className="menu-button">
+      <Link href="/" className={styles["menu-button"]}>
         Home
       </Link>
       <Link href="/applications" className={styles["menu-button"]}>
